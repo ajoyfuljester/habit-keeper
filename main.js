@@ -1,5 +1,11 @@
 import { route } from "jsr:@std/http/unstable-route";
 import { serveDir } from "jsr:@std/http/file-server";
+import * as db from "./scripts/database.js";
+
+await db.addProfile('test', '0', 0)
+
+console.log(db.profiles())
+
 
 const routes = [
   {
