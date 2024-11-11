@@ -10,7 +10,7 @@ console.log(db.profiles())
 const routes = [
   {
     pattern: new URLPattern({ pathname: "/static/*" }),
-    handler: (req) => serveDir(req)
+    handler: (req) => serveDir(req, {fsRoot: 'static'})
   },
 ];
 

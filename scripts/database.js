@@ -10,14 +10,27 @@ db.prepare(`CREATE TABLE IF NOT EXISTS profile (
 	admin BOOLEAN DEFAULT 0
 );`).run();
 
+const validatingRegEx = /.+/ // idk even know if this export works as intended
+const nameRegEx = /\w/
+const passwordRegEx = validatingRegEx
+
+export function validateString(string, regex = validatingRegEx) {
+	return regex.test(string) && (regex.lastIndex == string.length);
+}
 
 export async function addProfile(name, password, admin = 0) {
 	if (profileExists(name)) {
-		return false;
+		return 1;
+	}
+	if (!validateString(name, nameRegEx)) {
+		return 2
+	}
+	if (!validateString(password, passwordRegEx)) {
+		return 3
 	}
 	const hashedPassword = await hash(password);
 	db.prepare('INSERT INTO profile (name, password, admin) VALUES (?, ?, ?)').run(name, hashedPassword, admin);
-	return true;
+	return 0;
 }
 
 export function profiles() {
