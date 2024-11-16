@@ -51,3 +51,15 @@ export async function updateProfile(name, newName, password, admin = 0) {
 	const hashedPassword = await hash(password);
 	db.prepare('UPDATE profile SET name = ?, password = ?, admin = ? WHERE name = ?').run(newName, hashedPassword, admin, name)
 }
+
+export async function login(name, password) {
+	const p = profile(name);
+	if (!p) {
+		return 1;
+	}
+	const hashedPassword = await hash(password)
+	if (p['password'] == hashedPassword) {
+		return 0
+	}
+	return 2;
+}

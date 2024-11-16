@@ -19,3 +19,4 @@ function defaultHandler(_req) {
 }
 
 Deno.serve(route(routes, defaultHandler));
+console.log(await db.login('test', '0'));

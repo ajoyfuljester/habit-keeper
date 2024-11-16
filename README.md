@@ -3,3 +3,6 @@
 first time using deno
 
 i wish you a good life and succesful new habits or something
+
+# TODO
+- add authentication
