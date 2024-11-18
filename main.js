@@ -4,7 +4,8 @@ import { setCookie, getCookies } from "jsr:@std/http/cookie"
 import * as db from "./scripts/database.js";
 import { handleLogin } from "./scripts/profile.js";
 
-await db.addProfile('test', '0', 0)
+
+ await db.addProfile('test', '0', 0)
 
 console.log(db.profiles())
 

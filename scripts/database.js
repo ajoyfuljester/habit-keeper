@@ -1,8 +1,13 @@
 import { assert } from "jsr:@std/assert/assert";
-import { hash } from "./hash.js";
+import { generateToken, hash } from "./encryption.js";
 import { Database } from "jsr:@db/sqlite";
 
 const db = new Database('habits.db');
+
+db.prepare('PRAGMA foreign_keys = ON;').run();
+
+db.prepare('DROP TABLE profile;').run(); // WARNING!!! REMEMBER TO DELETE IT LATER!!!
+db.prepare('DROP TABLE token;').run(); // WARNING!!! REMEMBER TO DELETE IT LATER!!!
 
 db.prepare(`CREATE TABLE IF NOT EXISTS profile (
 	name TEXT PRIMARY KEY,
@@ -10,22 +15,38 @@ db.prepare(`CREATE TABLE IF NOT EXISTS profile (
 	admin BOOLEAN DEFAULT 0
 );`).run();
 
-const validatingRegEx = /.+/ // idk even know if this export works as intended
-const nameRegEx = /\w/
+db.prepare(`CREATE TABLE IF NOT EXISTS token (
+	token TEXT PRIMARY KEY,
+	profileName TEXT NOT NULL,
+	expirationDate INTEGER NOT NULL,
+	FOREIGN KEY (profileName) REFERENCES profile(name)
+);`).run();
+
+
+const validatingRegEx = /.+/g // idk even know if this export works as intended
+const nameRegEx = /\w+/g
 const passwordRegEx = validatingRegEx
 
 export function validateString(string, regex = validatingRegEx) {
-	return regex.test(string) && (regex.lastIndex == string.length);
+	const matches = string.match(regex);
+	if (matches.length != 1) {
+		return 1
+	}
+	if (matches[0].length != string.length) {
+		return 2
+	}
+
+	return 0
 }
 
 export async function addProfile(name, password, admin = 0) {
 	if (profileExists(name)) {
 		return 1;
 	}
-	if (!validateString(name, nameRegEx)) {
+	if (validateString(name, nameRegEx) != 0) {
 		return 2
 	}
-	if (!validateString(password, passwordRegEx)) {
+	if (validateString(password, passwordRegEx) != 0) {
 		return 3
 	}
 	const hashedPassword = await hash(password);
@@ -62,4 +83,21 @@ export async function login(name, password) {
 		return 0
 	}
 	return 2;
+}
+
+export function createToken(name) {
+	const token = generateToken()
+	let expirationDate = Date.now()
+	expirationDate += 10 * (1000 * 60);
+	db.prepare('INSERT INTO token (profileName, token, expirationDate) VALUES (?, ?, ?)').run(name, token, expirationDate);
+	return [token, expirationDate]
+}
+
+export function verifyToken(name, token) {
+	const rows = db.prepare('SELECT * FROM token WHERE token = ?').all(token);
+	assert(rows.length <= 1, "more than one token with same value")
+	if (rows.length == 0 || rows[0]['profileName'] != name || rows[0]['expirationDate'] < Date.now()) {
+		return false;
+	}
+	return true;
 }
