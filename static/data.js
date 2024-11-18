@@ -1,4 +1,4 @@
 async function data() {
-	const req = new Request()
-	const res = await fetch('/api/data');
+	const req = new Request('/api/data', { headers: { 'Content-Type': 'application/json' } })
+	const res = await fetch(req);
 }
