@@ -1,13 +1,14 @@
 import { assert } from "jsr:@std/assert/assert";
 import { generateToken, hash } from "./encryption.js";
 import { Database } from "jsr:@db/sqlite";
+import { now } from "./utils.js";
 
 const db = new Database('habits.db');
 
 db.prepare('PRAGMA foreign_keys = ON;').run();
 
-db.prepare('DROP TABLE profile;').run(); // WARNING!!! REMEMBER TO DELETE IT LATER!!!
-db.prepare('DROP TABLE token;').run(); // WARNING!!! REMEMBER TO DELETE IT LATER!!!
+db.prepare('DROP TABLE IF EXISTS token;').run(); // WARNING!!! REMEMBER TO DELETE IT LATER!!!
+db.prepare('DROP TABLE IF EXISTS profile;').run(); // WARNING!!! REMEMBER TO DELETE IT LATER!!!
 
 db.prepare(`CREATE TABLE IF NOT EXISTS profile (
 	name TEXT PRIMARY KEY,
@@ -19,7 +20,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS token (
 	token TEXT PRIMARY KEY,
 	profileName TEXT NOT NULL,
 	expirationDate INTEGER NOT NULL,
-	FOREIGN KEY (profileName) REFERENCES profile(name)
+	FOREIGN KEY (profileName) REFERENCES profile(name) ON UPDATE CASCADE ON DELETE CASCADE
 );`).run();
 
 
@@ -65,6 +66,7 @@ export function profile(name) {
 }
 
 export function profileExists(name) {
+	assert(name != undefined, 'name not provided');
 	return profile(name) !== undefined;
 }
 
@@ -86,18 +88,27 @@ export async function login(name, password) {
 }
 
 export function createToken(name) {
+	assert(name != undefined, 'name not provided');
 	const token = generateToken()
-	let expirationDate = Date.now()
-	expirationDate += 10 * (1000 * 60);
+	let expirationDate = now();
+	const maxAge = 10 * (60);
+	expirationDate += maxAge;
 	db.prepare('INSERT INTO token (profileName, token, expirationDate) VALUES (?, ?, ?)').run(name, token, expirationDate);
-	return [token, expirationDate]
+	return [token, expirationDate, maxAge]
 }
 
-export function verifyToken(name, token) {
+export function verifyToken(token) {
+	assert(token != undefined, 'token not provided');
 	const rows = db.prepare('SELECT * FROM token WHERE token = ?').all(token);
 	assert(rows.length <= 1, "more than one token with same value")
-	if (rows.length == 0 || rows[0]['profileName'] != name || rows[0]['expirationDate'] < Date.now()) {
-		return false;
+	if (rows.length == 0) {
+		return null;
 	}
-	return true;
+	if (rows[0]['expirationDate'] < now()) {
+		db.prepare('DELETE FROM token WHERE token = ?').run(token);
+		return null;
+	}
+	return rows[0].profileName;
 }
+
+

@@ -1,8 +1,8 @@
 import { route } from "jsr:@std/http/unstable-route";
 import { serveDir } from "jsr:@std/http/file-server";
-import { setCookie, getCookies } from "jsr:@std/http/cookie"
 import * as db from "./scripts/database.js";
-import { handleLogin } from "./scripts/profile.js";
+import { handleLogin } from "./scripts/login.js";
+import { handleData } from "./scripts/data.js";
 
 
  await db.addProfile('test', '0', 0)
@@ -12,13 +12,21 @@ console.log(db.profiles())
 
 const routes = [
   {
+    pattern: new URLPattern({ pathname: "/" }),
+    handler: _ => new Response(null, { status: 308, headers: {"Location": "/static/login.html"}}),
+  },
+  {
     pattern: new URLPattern({ pathname: "/static/*" }),
-    handler: (req) => serveDir(req),
+    handler: req => serveDir(req),
   },
   {
     pattern: new URLPattern({ pathname: "/api/login" }),
     handler: handleLogin,
 	method: ['POST'],
+  },
+  {
+    pattern: new URLPattern({ pathname: "/api/data" }),
+    handler: handleData,
   },
 ];
 

@@ -11,13 +11,16 @@ async function login(data) {
 		body: JSON.stringify(data),
 	});
 	const res = await fetch(req);
-	const result = await res.text()
+	const result = await res.json()
 	return result
 }
-function handleLogin() {
+async function handleLogin() {
 	const data = inputData()
-	const result = login(data)
-	return result
+	const result = await login(data)
+	console.log(result)
+	const {token, maxAge} = result;
+	document.cookie = `token=${token}; Max-Age=${maxAge || 1000*60*3}; SameSite=Strict; Secure; Path=/`
+		
 }
 
 document.querySelector('input#login').addEventListener('click', handleLogin)

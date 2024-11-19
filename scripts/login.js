@@ -14,7 +14,8 @@ export async function handleLogin(req) {
 	}
 
 	const token = db.createToken(data.name);
-	res.token = token;
+	res.token = token[0];
+	res.maxAge = token[2];
 
 	return new Response(JSON.stringify(res), { status: 200, headers: {'Content-Type': 'application/json'} });
 }
