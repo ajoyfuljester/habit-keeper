@@ -91,10 +91,10 @@ export function createToken(name) {
 	assert(name != undefined, 'name not provided');
 	const token = generateToken()
 	let expirationDate = now();
-	const maxAge = 10 * (60);
+	const maxAge = 3 * (60);
 	expirationDate += maxAge;
 	db.prepare('INSERT INTO token (profileName, token, expirationDate) VALUES (?, ?, ?)').run(name, token, expirationDate);
-	return [token, expirationDate, maxAge]
+	return {token, expirationDate, maxAge}
 }
 
 export function verifyToken(token) {

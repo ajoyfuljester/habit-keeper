@@ -6,7 +6,6 @@ export async function handleLogin(req) {
 
 	const res = {
 		code: loginResponse,
-		token: null,
 	}
 
 	if (loginResponse != 0) {
@@ -14,9 +13,10 @@ export async function handleLogin(req) {
 	}
 
 	const token = db.createToken(data.name);
-	res.token = token[0];
-	res.maxAge = token[2];
 
-	return new Response(JSON.stringify(res), { status: 200, headers: {'Content-Type': 'application/json'} });
+	return new Response(JSON.stringify(res), { status: 200, headers: {
+		'Content-Type': 'application/json',
+		'Set-Cookie': `token=${token.token}; Max-Age=${token.maxAge}; SameSite=Strict; Secure; Path=/; HttpOnly`,
+	}});
 }
 

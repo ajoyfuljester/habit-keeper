@@ -18,8 +18,6 @@ async function handleLogin() {
 	const data = inputData()
 	const result = await login(data)
 	console.log(result)
-	const {token, maxAge} = result;
-	document.cookie = `token=${token}; Max-Age=${maxAge || 1000*60*3}; SameSite=Strict; Secure; Path=/`
 		
 }
 
