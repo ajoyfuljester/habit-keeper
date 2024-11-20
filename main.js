@@ -34,5 +34,7 @@ function defaultHandler(_req) {
   return new Response("Not found", { status: 404 });
 }
 
-Deno.serve(route(routes, defaultHandler));
+Deno.serve({
+	port: 80,
+}, route(routes, defaultHandler));
 console.log(await db.login('test', '0'));
