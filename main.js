@@ -3,6 +3,7 @@ import { serveDir } from "jsr:@std/http/file-server";
 import * as db from "./scripts/database.js";
 import { handleLogin } from "./scripts/login.js";
 import { handleData } from "./scripts/data.js";
+import { encrypt, hashToKey } from "./scripts/encryption.js";
 
 
  await db.addProfile('test', '0', 0)
@@ -38,3 +39,5 @@ Deno.serve({
 	port: 80,
 }, route(routes, defaultHandler));
 console.log(await db.login('test', '0'));
+
+console.log(await encrypt('Hello', await hashToKey(db.profile('test').password), 'test'))
