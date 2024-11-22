@@ -24,8 +24,8 @@ db.prepare(`CREATE TABLE IF NOT EXISTS token (
 );`).run();
 
 
-const validatingRegEx = /.+/g // idk even know if this export works as intended
-const nameRegEx = /\w+/g
+const validatingRegEx = /.{1,128}/g
+const nameRegEx = /\w{1,64}/g
 const passwordRegEx = validatingRegEx
 
 export function validateString(string, regex = validatingRegEx) {

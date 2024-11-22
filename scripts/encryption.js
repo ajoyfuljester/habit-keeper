@@ -22,15 +22,16 @@ export async function encrypt(string, key, iv) {
 		iv: iv,
 	}, key,	data);
 
-	console.log(encryptedData);
-	return encryptedData;
+	const encryptedHex = arrayToHex(encryptedData)
+	return encryptedHex;
 }
 
 export async function decrypt(data, key, iv) {
+	const dataArray = hexToArray(data)
 	const decryptedData = await crypto.subtle.decrypt({
 		name: 'AES-GCM',
 		iv: iv,
-	}, key,	data);
+	}, key,	dataArray);
 
 	const encoder = new TextDecoder();
 	const string = encoder.decode(decryptedData);
@@ -39,16 +40,50 @@ export async function decrypt(data, key, iv) {
 	return string;
 }
 
-export async function hashToKey(hash) {
-	const arr = new ArrayBuffer(32);
-	const dataView = new DataView(arr)
-	for (let i = 0; i < hash.length; i += 2) {
-		dataView.setInt8(i / 2, parseInt(hash[i] + hash[i + 1], 16))
-	}
-	const key = await crypto.subtle.importKey('raw', arr, {name: 'AES-GCM'}, false, ['encrypt', 'decrypt'])
+export async function hashToKey(hashString) {
+	const array = hexToArray(hashString)
+
+	const key = await crypto.subtle.importKey('raw', array, {name: 'AES-GCM'}, false, ['encrypt', 'decrypt'])
 	return key
 }
 
-export async function nameToIV(name) {
+export function nameToIV(name) {
+	const array = new ArrayBuffer(16);
+	const dataView = new DataView(array)
+	let i = 0;
+	for (i = 0; i < name.length && i < 16; i += 1) {
+		dataView.setInt8(i, name.charCodeAt(i))
+	}
+	let j = 0;
+	while (i < 16) {
+		const cycleValue = dataView.getInt8(j);
+		dataView.setInt8(i, cycleValue)
+		i++;
+		j = (j + 1) % name.length
+	}
+	return array
+}
 
+function hexToArray(string) {
+	const array = new ArrayBuffer(Math.ceil(string.length / 2));
+	const dataView = new DataView(array)
+	for (let i = 0; i < string.length; i += 2) {
+		dataView.setInt8(i / 2, parseInt(string[i] + string[i + 1], 16))
+	}
+
+	return array;
+}
+
+function arrayToHex(array) {
+	let string = '';
+	const dataView = new DataView(array);
+	for (let i = 0; i < array.byteLength; i++) {
+		let value = dataView.getInt8(i)
+		if (value < 0) {
+			value += 256
+		}
+		value = value.toString(16).padStart(2, '0');
+		string += value
+	}
+	return string
 }
