@@ -13,7 +13,7 @@ export function generateToken() {
 	return token;
 }
 
-export async function encrypt(string, key, iv) {
+export async function encrypt(string, iv, key) {
 	const encoder = new TextEncoder();
 	const data = encoder.encode(string);
 
@@ -26,7 +26,7 @@ export async function encrypt(string, key, iv) {
 	return encryptedHex;
 }
 
-export async function decrypt(data, key, iv) {
+export async function decrypt(data, iv, key) {
 	const dataArray = hexToArray(data)
 	const decryptedData = await crypto.subtle.decrypt({
 		name: 'AES-GCM',
@@ -36,7 +36,6 @@ export async function decrypt(data, key, iv) {
 	const encoder = new TextDecoder();
 	const string = encoder.decode(decryptedData);
 
-	console.log(string);
 	return string;
 }
 

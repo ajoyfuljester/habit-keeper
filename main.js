@@ -40,4 +40,4 @@ Deno.serve({
 }, route(routes, defaultHandler));
 console.log(await db.login('test', '0'));
 
-console.log(await decrypt(await encrypt('Hello', await hashToKey(db.profile('test').password), nameToIV('test')), await hashToKey(db.profile('test').password), nameToIV('test')))
+// console.log(await decrypt(await encrypt('Hello', nameToIV('test'), await hashToKey(db.profile('test').password)), nameToIV('test'), await hashToKey(db.profile('test').password)))
