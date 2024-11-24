@@ -3,7 +3,6 @@ import { serveDir } from "jsr:@std/http/file-server";
 import * as db from "./scripts/database.js";
 import { handleLogin } from "./scripts/login.js";
 import { handleData } from "./scripts/data.js";
-import { decrypt, encrypt, hashToKey, nameToIV } from "./scripts/encryption.js";
 
 
  await db.addProfile('test', '0', 0)
@@ -26,7 +25,7 @@ const routes = [
 	method: ['POST'],
   },
   {
-    pattern: new URLPattern({ pathname: "/api/data" }),
+	pattern: new URLPattern({ pathname: "/api/data/:name/get" }),
     handler: handleData,
   },
 ];
