@@ -13,7 +13,7 @@ db.prepare('DROP TABLE IF EXISTS profile;').run(); // WARNING!!! REMEMBER TO DEL
 db.prepare(`CREATE TABLE IF NOT EXISTS profile (
 	name TEXT PRIMARY KEY,
 	password TEXT NOT NULL,
-	admin BOOLEAN DEFAULT 0
+	admin BOOLEAN NOT NULL DEFAULT 0
 );`).run();
 
 db.prepare(`CREATE TABLE IF NOT EXISTS token (
@@ -21,6 +21,14 @@ db.prepare(`CREATE TABLE IF NOT EXISTS token (
 	profileName TEXT NOT NULL,
 	expirationDate INTEGER NOT NULL,
 	FOREIGN KEY (profileName) REFERENCES profile(name) ON UPDATE CASCADE ON DELETE CASCADE
+);`).run();
+
+db.prepare(`CREATE TABLE IF NOT EXISTS permission (
+	owner TEXT NOT NULL,
+	guest TEXT NOT NULL,
+	accessLevel INT NOT NULL DEFAULT 0,
+	FOREIGN KEY (owner) REFERENCES profile(name) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (guest) REFERENCES profile(name) ON UPDATE CASCADE ON DELETE CASCADE
 );`).run();
 
 

@@ -2,7 +2,7 @@ import { route } from "jsr:@std/http/unstable-route";
 import { serveDir } from "jsr:@std/http/file-server";
 import * as db from "./scripts/database.js";
 import { handleLogin } from "./scripts/login.js";
-import { handleData } from "./scripts/data.js";
+import { handleDataGet, handleDataSet } from "./scripts/data.js";
 
 
  await db.addProfile('test', '0', 0)
@@ -26,7 +26,11 @@ const routes = [
   },
   {
 	pattern: new URLPattern({ pathname: "/api/data/:name/get" }),
-    handler: handleData,
+    handler: handleDataGet,
+  },
+  {
+	pattern: new URLPattern({ pathname: "/api/data/:name/set" }),
+    handler: handleDataSet,
   },
 ];
 

@@ -2,11 +2,7 @@ import { profile, verifyToken } from "./database.js";
 import { getCookies } from "jsr:@std/http/cookie"
 import { encrypt, decrypt, nameToIV, hashToKey } from "./encryption.js"
 
-function data(name) {
-	return profile(name)
-}
-
-export async function handleData(req, _info, params) {
+export async function handleDataGet(req, _info, params) {
 	const token = getCookies(req.headers).token;
 	if (!token) {
 		return new Response('Hi not logged in, if you are someone, you have a cookie!', {status: 401})
@@ -41,6 +37,21 @@ async function getDataFile(name, token) {
 
 	const decrypted = await decrypt(file, iv, key)
 	return decrypted
+}
+
+
+export async function handleDataSet(req, _info, params) {
+	const token = getCookies(req.headers).token;
+	if (!token) {
+		return new Response('Hi not logged in, if you are someone, you have a cookie!', {status: 401})
+	}
+	const tokenOwner = verifyToken(token);
+	const name = params.pathname.groups.name
+	if (tokenOwner != name) {
+		return new Response(`PERMISSION DENIED, you (${tokenOwner}) are not (${name})`, {status: 401})
+	}
+	const data = await getDataFile(name, token)
+	return new Response(`Hi ${tokenOwner}, you have a cookie!\nHere's your data:\n${data}`, {status: 200})
 }
 
 
