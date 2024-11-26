@@ -26,9 +26,10 @@ db.prepare(`CREATE TABLE IF NOT EXISTS token (
 db.prepare(`CREATE TABLE IF NOT EXISTS permission (
 	owner TEXT NOT NULL,
 	guest TEXT NOT NULL,
-	accessLevel INT NOT NULL DEFAULT 0,
+	accessMode INT NOT NULL DEFAULT 0,
 	FOREIGN KEY (owner) REFERENCES profile(name) ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY (guest) REFERENCES profile(name) ON UPDATE CASCADE ON DELETE CASCADE
+	FOREIGN KEY (guest) REFERENCES profile(name) ON UPDATE CASCADE ON DELETE CASCADE,
+	PRIMARY KEY (owner, guest)
 );`).run();
 
 
@@ -107,7 +108,7 @@ export function createToken(name) {
 
 export function verifyToken(token) {
 	assert(token != undefined, 'token not provided');
-	const rows = db.prepare('SELECT * FROM token WHERE token = ?').all(token);
+	const rows = db.prepare('SELECT profileName, expirationDate FROM token WHERE token = ?').all(token);
 	assert(rows.length <= 1, "more than one token with same value")
 	if (rows.length == 0) {
 		return null;
@@ -120,3 +121,13 @@ export function verifyToken(token) {
 }
 
 
+export function verifyPermission(owner, guest, neededMode) {
+	const rows = db.prepare('SELECT * FROM permission WHERE owner = ? AND guest = ?').all(owner, guest)
+	assert(rows.length <= 1, "more than one profile with same name");
+	if (rows.length == 0) {
+		return false;
+	}
+	const accessMode = rows[0].accessMode
+
+	return (neededMode & accessMode) == neededMode
+}

@@ -5,9 +5,10 @@ import { handleLogin } from "./scripts/login.js";
 import { handleDataGet, handleDataSet } from "./scripts/data.js";
 
 
- await db.addProfile('test', '0', 0)
+await db.addProfile('test', '0', 0)
 
 console.log(db.profiles())
+
 
 
 const routes = [
