@@ -2,7 +2,7 @@ import { route } from "jsr:@std/http/unstable-route";
 import { serveDir } from "jsr:@std/http/file-server";
 import * as db from "./scripts/database.js";
 import { handleLogin } from "./scripts/login.js";
-import { handleDataGet, handleDataSet } from "./scripts/data.js";
+import { handleDataGet, handleDataSet, handleDefaultGet, handleDefaultSet } from "./scripts/data.js";
 
 
 await db.addProfile('test', '0', 0)
@@ -33,10 +33,18 @@ const routes = [
 	pattern: new URLPattern({ pathname: "/api/data/:name/set" }),
     handler: handleDataSet,
   },
+  {
+	pattern: new URLPattern({ pathname: "/api/me/get" }),
+    handler: handleDefaultGet,
+  },
+  {
+	pattern: new URLPattern({ pathname: "/api/me/set" }),
+    handler: handleDefaultSet,
+  },
 ];
 
 function defaultHandler(_req) {
-  return new Response("Not found", { status: 404 });
+  return new Response("not found", { status: 404 });
 }
 
 Deno.serve({

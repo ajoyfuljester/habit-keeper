@@ -9,8 +9,8 @@ export async function handleDataGet(req, _info, params) {
 	}
 	const tokenOwner = verifyToken(token);
 	const name = params.pathname.groups.name
-	if (tokenOwner != name || verifyPermission(name, tokenOwner, 2)) {
-		return new Response(`not found: permission for ${tokenOwner}`, {status: 401})
+	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 2)) {
+		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
 	}
 	const data = await getDataFile(name, token)
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
@@ -18,7 +18,7 @@ export async function handleDataGet(req, _info, params) {
 
 async function getDataFile(name, token) {
 	const tokenOwner = verifyToken(token)
-	if (name != tokenOwner) {
+	if (name !== tokenOwner) {
 		return null
 	}
 	const hash = profile(name).password
@@ -40,15 +40,15 @@ async function getDataFile(name, token) {
 }
 
 
-export async function handleDataSet(req, _info, params) {
+export async function handleDataSet(req, _info, params) { // TODO: write this
 	const token = getCookies(req.headers).token;
 	if (!token) {
 		return new Response('not found: token', {status: 401})
 	}
 	const tokenOwner = verifyToken(token);
 	const name = params.pathname.groups.name
-	if (tokenOwner != name || verifyPermission(name, tokenOwner, 1)) {
-		return new Response(`not found: permission for ${tokenOwner}`, {status: 401})
+	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 1)) {
+		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
 	}
 	const data = await getDataFile(name, token)
 	return new Response(`Hi ${tokenOwner}, you have a cookie!\nHere's your data:\n${data}`, {status: 200})
@@ -57,7 +57,7 @@ export async function handleDataSet(req, _info, params) {
 
 async function setDataFile(name, token, string) {
 	const tokenOwner = verifyToken(token)
-	if (name != tokenOwner) {
+	if (name !== tokenOwner) {
 		return null
 	}
 	const hash = profile(name).password
@@ -72,5 +72,32 @@ async function setDataFile(name, token, string) {
 
 }
 
-// console.log(await setDataFile('test', '5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9', 'HelloWorld'))
-// console.log(await getDataFile('test', '5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9'))
+export async function handleDefaultGet(req) {
+	const token = getCookies(req.headers).token;
+	if (!token) {
+		return new Response('not found: token', {status: 401})
+	}
+	const name = verifyToken(token);
+	if (!name) {
+		return new Response(`not found: user associated with token`, {status: 401})
+	}
+
+	const data = await getDataFile(name, token);
+	
+	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
+}
+
+export async function handleDefaultSet(req) { // TODO: write this
+	const token = getCookies(req.headers).token;
+	if (!token) {
+		return new Response('not found: token', {status: 401})
+	}
+	const name = verifyToken(token);
+	if (!name) {
+		return new Response(`not found: user associated with token`, {status: 401})
+	}
+
+	const data = await getDataFile(name, token);
+	
+	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
+}
