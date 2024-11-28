@@ -1,0 +1,56 @@
+:root {
+	font-family: 'Helvetica';
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+
+	--clr-1: #38e;
+	--clr-2: #eee;
+	--clr-3: #7c4;
+
+
+	background-color: var(--clr-1);
+}
+
+.card {
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: fit-content;
+	border-radius: 1rem;
+	gap: 2rem;
+	padding: 2rem;
+
+	background-color: var(--clr-2);
+}
+
+h1 {
+	margin: 0;
+}
+
+input {
+	font-family: inherit;
+	font-size: 1.2rem;
+	border-radius: 0.3em;
+	border: solid 0.2em var(--clr-1);
+	padding: 0.2em 0.4em;
+
+	transition-duration: 300ms;
+}
+
+input:is([type='text'], [type='password']) {
+	background-color: transparent;
+}
+
+input:is([type='button'], [type='submit']) {
+	background-color: var(--clr-1);
+	color: var(--clr-2);
+}
+
+input:is([type='button'], [type='submit']):hover {
+	background-color: var(--clr-3);
+}

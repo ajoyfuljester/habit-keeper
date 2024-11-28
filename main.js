@@ -14,7 +14,7 @@ console.log(db.profiles())
 const routes = [
   {
     pattern: new URLPattern({ pathname: "/" }),
-    handler: _ => new Response(null, { status: 308, headers: {"Location": "/static/login.html"}}),
+    handler: _ => new Response(null, { status: 308, headers: {"Location": "/static/sites/login.html"}}),
   },
   {
     pattern: new URLPattern({ pathname: "/static/*" }),
