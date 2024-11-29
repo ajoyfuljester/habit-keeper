@@ -17,7 +17,18 @@ async function login(data) {
 async function handleLogin() {
 	const data = inputData()
 	const result = await login(data)
-	console.log(result)
+	const code = result.code;
+
+	let message = ''
+	if (code == 0) {
+		message += 'Succes'
+	}	else if (code == 1) {
+		message += 'Profile not found';
+	} else if (code == 2) {
+		message += 'Password is incorrect';
+	}
+
+	document.querySelector('#result').innerText = message
 		
 }
 
