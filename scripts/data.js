@@ -32,7 +32,7 @@ async function getDataFile(name, token) {
 		if (!(error instanceof Deno.errors.NotFound)) {
 			throw error
 		}
-		return null
+		return "null"
 	}
 
 	const decrypted = await decrypt(file, iv, key)

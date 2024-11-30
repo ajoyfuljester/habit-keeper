@@ -1,3 +1,6 @@
+import { redirect } from './Utils.js';
+
+
 function inputData() {
 	const name = document.querySelector('input#name').value
 	const password = document.querySelector('input#password').value
@@ -22,6 +25,7 @@ async function handleLogin() {
 	let message = ''
 	if (code == 0) {
 		message += 'Succes'
+		redirect('/static/sites/dashboard.html')
 	}	else if (code == 1) {
 		message += 'Profile not found';
 	} else if (code == 2) {
