@@ -101,3 +101,18 @@ export async function handleDefaultSet(req) { // TODO: write this
 	
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
+
+export function handleWho(req) {
+	const token = getCookies(req.headers).token;
+
+	if (!token) {
+		return new Response("null", {status: 401, headers: {'Content-Type': 'application/json'}});
+	}
+
+	const name = verifyToken(token)
+	if (!name) {
+		return new Response("null", {status: 401, headers: {'Content-Type': 'application/json'}});
+	}
+
+	return new Response(JSON.stringify({ name }), {status: 200, headers: {'Content-Type': 'application/json'}});
+}

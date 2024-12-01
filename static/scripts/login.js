@@ -25,7 +25,7 @@ async function handleLogin() {
 	let message = ''
 	if (code == 0) {
 		message += 'Succes'
-		redirect('/static/sites/dashboard.html')
+		redirect(`/profile/${data.name}/habits`)
 	}	else if (code == 1) {
 		message += 'Profile not found';
 	} else if (code == 2) {
@@ -36,4 +36,17 @@ async function handleLogin() {
 		
 }
 
+async function handleAlreadyLoggedIn() {
+	const nameRes = await fetch('/api/who')
+	const name = await nameRes.json()
+
+	if (!name) {
+		document.querySelector('#result').innerText = 'Not logged in';
+		return false
+	}
+
+	redirect(`/profile/${name}/habits`)
+}
+
 document.querySelector('input#login').addEventListener('click', handleLogin)
+document.querySelector('input#alreadyLoggedIn').addEventListener('click', handleAlreadyLoggedIn)
