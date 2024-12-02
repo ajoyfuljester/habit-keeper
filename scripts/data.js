@@ -3,7 +3,7 @@ import { getCookies } from "jsr:@std/http/cookie"
 import { encrypt, decrypt, nameToIV, hashToKey } from "./encryption.js"
 
 export async function handleDataGet(req, _info, params) {
-	const token = getCookies(req.headers).token;
+	const token = extractToken(req);
 	if (!token) {
 		return new Response('not found: token', {status: 401})
 	}
@@ -16,11 +16,7 @@ export async function handleDataGet(req, _info, params) {
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
 
-async function getDataFile(name, token) {
-	const tokenOwner = verifyToken(token)
-	if (name !== tokenOwner) {
-		return null
-	}
+async function getDataFile(name) {
 	const hash = profile(name).password
 	const iv = nameToIV(name);
 	const key = await hashToKey(hash);
@@ -41,7 +37,7 @@ async function getDataFile(name, token) {
 
 
 export async function handleDataSet(req, _info, params) { // TODO: write this
-	const token = getCookies(req.headers).token;
+	const token = extractToken(req);
 	if (!token) {
 		return new Response('not found: token', {status: 401})
 	}
@@ -55,11 +51,7 @@ export async function handleDataSet(req, _info, params) { // TODO: write this
 }
 
 
-async function setDataFile(name, token, string) {
-	const tokenOwner = verifyToken(token)
-	if (name !== tokenOwner) {
-		return null
-	}
+async function setDataFile(name, string) {
 	const hash = profile(name).password
 	const iv = nameToIV(name);
 	const key = await hashToKey(hash);
@@ -72,15 +64,27 @@ async function setDataFile(name, token, string) {
 
 }
 
+export function handleDataInit(req) {
+	const token = extractToken(req)
+	if (!token) {
+		return new Response('not found: token', {status: 401})
+	}
+
+	const tokenOwner = verifyToken(token);
+	const name = params.pathname.groups.name
+	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 4)) {
+		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
+	}
+
+	setDataFile(name, JSON.stringify(dataTemplate))
+}
+
 export async function handleDefaultGet(req) {
-	const token = getCookies(req.headers).token;
+	const token = extractToken(req);
 	if (!token) {
 		return new Response('not found: token', {status: 401})
 	}
 	const name = verifyToken(token);
-	if (!name) {
-		return new Response(`not found: user associated with token`, {status: 401})
-	}
 
 	const data = await getDataFile(name, token);
 	
@@ -88,7 +92,7 @@ export async function handleDefaultGet(req) {
 }
 
 export async function handleDefaultSet(req) { // TODO: write this
-	const token = getCookies(req.headers).token;
+	const token = extractToken(req);
 	if (!token) {
 		return new Response('not found: token', {status: 401})
 	}
@@ -102,8 +106,22 @@ export async function handleDefaultSet(req) { // TODO: write this
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
 
+export function handleDefaultInit(req) {
+	const token = extractToken(req)
+	if (!token) {
+		return new Response('not found: token', {status: 401})
+	}
+
+	const name = verifyToken(token);
+	if (!name) {
+		return new Response(`not found: user associated with token`, {status: 401})
+	}
+
+	setDataFile(name, JSON.stringify(dataTemplate))
+}
+
 export function handleWho(req) {
-	const token = getCookies(req.headers).token;
+	const token = extractToken(req);
 
 	if (!token) {
 		return new Response("null", {status: 401, headers: {'Content-Type': 'application/json'}});
@@ -115,4 +133,13 @@ export function handleWho(req) {
 	}
 
 	return new Response(JSON.stringify({ name }), {status: 200, headers: {'Content-Type': 'application/json'}});
+}
+
+function extractToken(req) {
+	return getCookies(req.headers).token
+}
+
+const dataTemplate = {
+	boards: [],
+	lists: [],
 }
