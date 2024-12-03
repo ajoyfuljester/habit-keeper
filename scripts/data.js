@@ -43,11 +43,13 @@ export async function handleDataSet(req, _info, params) { // TODO: write this
 	}
 	const tokenOwner = verifyToken(token);
 	const name = params.pathname.groups.name
-	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 1)) {
+	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 2)) {
 		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
 	}
-	const data = await getDataFile(name, token)
-	return new Response(`Hi ${tokenOwner}, you have a cookie!\nHere's your data:\n${data}`, {status: 200})
+	
+	data = req.text()
+	setDataFile(name, data)
+	return new Response(`Hi ${tokenOwner}, you have a cookie!\nHere's your data:\n${data}`, {status: 200}) // TODO: change response, verify data scheme
 }
 
 
@@ -72,7 +74,7 @@ export function handleDataInit(req) {
 
 	const tokenOwner = verifyToken(token);
 	const name = params.pathname.groups.name
-	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 4)) {
+	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 2)) {
 		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
 	}
 
@@ -101,8 +103,8 @@ export async function handleDefaultSet(req) { // TODO: write this
 		return new Response(`not found: user associated with token`, {status: 401})
 	}
 
-	const data = await getDataFile(name, token);
-	
+	data = req.text()
+	setDataFile(name, data)
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
 
