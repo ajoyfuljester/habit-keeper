@@ -28,7 +28,7 @@ async function getDataFile(name) {
 		if (!(error instanceof Deno.errors.NotFound)) {
 			throw error
 		}
-		return "null"
+		return "null" // TODO: change this back to normal null and handle whatever chaos it creates
 	}
 
 	const decrypted = await decrypt(file, iv, key)
@@ -78,6 +78,9 @@ export function handleDataInit(req) {
 		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
 	}
 
+	if (!(force || getDataFile(name) !== "null")) {
+		return new Response(`not found: force to overwrite existing file`, {status: 403})
+	}
 	setDataFile(name, JSON.stringify(dataTemplate))
 }
 
@@ -108,7 +111,7 @@ export async function handleDefaultSet(req) { // TODO: write this
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
 
-export function handleDefaultInit(req) {
+export function handleDefaultInit(req, force = false) {
 	const token = extractToken(req)
 	if (!token) {
 		return new Response('not found: token', {status: 401})
@@ -119,6 +122,9 @@ export function handleDefaultInit(req) {
 		return new Response(`not found: user associated with token`, {status: 401})
 	}
 
+	if (!(force || getDataFile(name) !== "null")) {
+		return new Response(`not found: force to overwrite existing file`, {status: 403})
+	}
 	setDataFile(name, JSON.stringify(dataTemplate))
 }
 
@@ -145,3 +151,4 @@ const dataTemplate = {
 	boards: [],
 	lists: [],
 }
+
