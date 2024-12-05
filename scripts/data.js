@@ -36,7 +36,7 @@ async function getDataFile(name) {
 }
 
 
-export async function handleDataSet(req, _info, params) { // TODO: write this
+export function handleDataSet(req, _info, params) { // TODO: write this
 	const token = extractToken(req);
 	if (!token) {
 		return new Response('not found: token', {status: 401})
@@ -47,7 +47,7 @@ export async function handleDataSet(req, _info, params) { // TODO: write this
 		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
 	}
 	
-	data = req.text()
+	const data = req.text()
 	setDataFile(name, data)
 	return new Response(`Hi ${tokenOwner}, you have a cookie!\nHere's your data:\n${data}`, {status: 200}) // TODO: change response, verify data scheme
 }
@@ -96,7 +96,7 @@ export async function handleDefaultGet(req) {
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
 
-export async function handleDefaultSet(req) { // TODO: write this
+export function handleDefaultSet(req) { // TODO: write this
 	const token = extractToken(req);
 	if (!token) {
 		return new Response('not found: token', {status: 401})
@@ -106,7 +106,7 @@ export async function handleDefaultSet(req) { // TODO: write this
 		return new Response(`not found: user associated with token`, {status: 401})
 	}
 
-	data = req.text()
+	const data = req.text()
 	setDataFile(name, data)
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
@@ -152,3 +152,28 @@ const dataTemplate = {
 	lists: [],
 }
 
+function validateData(dataString) {
+	try {
+		JSON.parse(dataString)
+	} catch (error) {
+		if (error instanceof SyntaxError) {
+			return [1, null] // maybe i should start doing what i saw was going on in `go`, something like return [value, error], well, maybe in the next project
+		} // well now it will be [errorCode, aditionalInfo]
+		throw error
+	} // idk how to write this properly, i don't really want to use `let`
+	const data = JSON.parse(dataString)
+	if (typeof data != 'object') {
+		return [2, null]
+	}
+	const dataKeys = Object.keys(data)
+	const templateKeys = Object.keys(dataTemplate)
+	for (key of dataKeys) {
+		if (!templateKeys.includes(key)) {
+			return [3, key]
+		}
+	}
+
+	// TODO: check nested things
+	
+	return [0, null]
+}
