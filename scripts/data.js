@@ -48,6 +48,9 @@ export function handleDataSet(req, _info, params) { // TODO: write this
 	}
 	
 	const data = req.text()
+	
+	const validationResult = validateData(data)
+
 	setDataFile(name, data)
 	return new Response(`Hi ${tokenOwner}, you have a cookie!\nHere's your data:\n${data}`, {status: 200}) // TODO: change response, verify data scheme
 }
@@ -107,6 +110,8 @@ export function handleDefaultSet(req) { // TODO: write this
 	}
 
 	const data = req.text()
+	const validationResult = validateData(data)
+
 	setDataFile(name, data)
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
