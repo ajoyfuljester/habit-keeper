@@ -50,9 +50,12 @@ export function handleDataSet(req, _info, params) { // TODO: write this
 	const data = req.text()
 	
 	const validationResult = validateData(data)
+	if (validationResult[0] !== 0) {
+		return validationResponse(validationResult)
+	}
 
 	setDataFile(name, data)
-	return new Response(`Hi ${tokenOwner}, you have a cookie!\nHere's your data:\n${data}`, {status: 200}) // TODO: change response, verify data scheme
+	return new Response(`success`, {status: 200})
 }
 
 
@@ -111,9 +114,12 @@ export function handleDefaultSet(req) { // TODO: write this
 
 	const data = req.text()
 	const validationResult = validateData(data)
+	if (validationResult[0] !== 0) {
+		return validationResponse(validationResult)
+	}
 
 	setDataFile(name, data)
-	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
+	return new Response('success', {status: 200})
 }
 
 export function handleDefaultInit(req, force = false) {
@@ -162,7 +168,7 @@ function validateData(dataString) {
 		JSON.parse(dataString)
 	} catch (error) {
 		if (error instanceof SyntaxError) {
-			return [1, null] // maybe i should start doing what i saw was going on in `go`, something like return [value, error], well, maybe in the next project
+			return [1, error.message] // maybe i should start doing what i saw was going on in `go`, something like return [value, error], well, maybe in the next project
 		} // well now it will be [errorCode, aditionalInfo]
 		throw error
 	} // idk how to write this properly, i don't really want to use `let`
@@ -181,4 +187,16 @@ function validateData(dataString) {
 	// TODO: check nested things
 	
 	return [0, null]
+}
+
+function validationResponse([status, info]) {
+	if (status == 0) {
+		return new Response('success', {status: 200})
+	} else if (status == 1) {
+		return new Response(`validation failed: json failed: ${info}`, {status: 400})
+	} else if (status == 2) {
+		return new Response(`validation failed: schema failed: type of request is not 'object'`, {status: 400})
+	} else if (status == 3) {
+		return new Response(`validation failed: schema failed: unsupported key '${info}'`, {status: 400})
+	}
 }
