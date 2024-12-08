@@ -7,7 +7,7 @@ export async function handleDataGet(req, _info, params) {
 	if (!token) {
 		return new Response('not found: token', {status: 401})
 	}
-	const tokenOwner = verifyToken(token);
+	const tokenOwner = verifyToken(token); // TODO: probably get this thing to a function too
 	const name = params.pathname.groups.name
 	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 2)) {
 		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
@@ -28,7 +28,8 @@ async function getDataFile(name) {
 		if (!(error instanceof Deno.errors.NotFound)) {
 			throw error
 		}
-		return "null" // TODO: change this back to normal null and handle whatever chaos it creates
+		return null
+		// i am pretty sure i forgot about something
 	}
 
 	const decrypted = await decrypt(file, iv, key)
@@ -37,7 +38,7 @@ async function getDataFile(name) {
 
 
 export function handleDataSet(req, _info, params) { // TODO: write this
-	const token = extractToken(req);
+	const token = extractToken(req); // TODO: extract these 4 lines into a function
 	if (!token) {
 		return new Response('not found: token', {status: 401})
 	}
@@ -51,7 +52,7 @@ export function handleDataSet(req, _info, params) { // TODO: write this
 	
 	const validationResult = validateData(data)
 	if (validationResult[0] !== 0) {
-		return validationResponse(validationResult)
+		return validateDataResponse(validationResult)
 	}
 
 	setDataFile(name, data)
@@ -84,10 +85,11 @@ export function handleDataInit(req) {
 		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
 	}
 
-	if (!(force || getDataFile(name) !== "null")) {
+	if (!(force || getDataFile(name) !== null)) {
 		return new Response(`not found: force to overwrite existing file`, {status: 403})
 	}
 	setDataFile(name, JSON.stringify(dataTemplate))
+	return new Response('success', {status: 201})
 }
 
 export async function handleDefaultGet(req) {
@@ -115,11 +117,11 @@ export function handleDefaultSet(req) { // TODO: write this
 	const data = req.text()
 	const validationResult = validateData(data)
 	if (validationResult[0] !== 0) {
-		return validationResponse(validationResult)
+		return validateDataResponse(validationResult)
 	}
 
 	setDataFile(name, data)
-	return new Response('success', {status: 200})
+	return new Response('success', {status: 201})
 }
 
 export function handleDefaultInit(req, force = false) {
@@ -133,22 +135,23 @@ export function handleDefaultInit(req, force = false) {
 		return new Response(`not found: user associated with token`, {status: 401})
 	}
 
-	if (!(force || getDataFile(name) !== "null")) {
+	if (!(force || getDataFile(name) !== null)) {
 		return new Response(`not found: force to overwrite existing file`, {status: 403})
 	}
 	setDataFile(name, JSON.stringify(dataTemplate))
+	return new Response('success', {status: 201})
 }
 
 export function handleWho(req) {
 	const token = extractToken(req);
 
 	if (!token) {
-		return new Response("null", {status: 401, headers: {'Content-Type': 'application/json'}});
+		return new Response(null, {status: 401, headers: {'Content-Type': 'application/json'}});
 	}
 
 	const name = verifyToken(token)
 	if (!name) {
-		return new Response("null", {status: 401, headers: {'Content-Type': 'application/json'}});
+		return new Response(null, {status: 401, headers: {'Content-Type': 'application/json'}});
 	}
 
 	return new Response(JSON.stringify({ name }), {status: 200, headers: {'Content-Type': 'application/json'}});
@@ -189,7 +192,7 @@ function validateData(dataString) {
 	return [0, null]
 }
 
-function validationResponse([status, info]) {
+function validateDataResponse([status, info]) {
 	if (status == 0) {
 		return new Response('success', {status: 200})
 	} else if (status == 1) {
@@ -199,4 +202,5 @@ function validationResponse([status, info]) {
 	} else if (status == 3) {
 		return new Response(`validation failed: schema failed: unsupported key '${info}'`, {status: 400})
 	}
+	return new Response(`not found: reason for this error`, {status: 400})
 }
