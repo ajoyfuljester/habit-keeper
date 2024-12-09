@@ -1,20 +1,7 @@
 import { profile, verifyToken, verifyPermission } from "./database.js";
 import { getCookies } from "jsr:@std/http/cookie"
 import { encrypt, decrypt, nameToIV, hashToKey } from "./encryption.js"
-
-export async function handleDataGet(req, _info, params) {
-	const token = extractToken(req);
-	if (!token) {
-		return new Response('not found: token', {status: 401})
-	}
-	const tokenOwner = verifyToken(token); // TODO: probably get this thing to a function too
-	const name = params.pathname.groups.name
-	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 2)) {
-		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
-	}
-	const data = await getDataFile(name, token)
-	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
-}
+import { assert } from "jsr:@std/assert/assert";
 
 async function getDataFile(name) {
 	const hash = profile(name).password
@@ -28,37 +15,13 @@ async function getDataFile(name) {
 		if (!(error instanceof Deno.errors.NotFound)) {
 			throw error
 		}
-		return null
+		return "null"
 		// i am pretty sure i forgot about something
 	}
 
 	const decrypted = await decrypt(file, iv, key)
 	return decrypted
 }
-
-
-export function handleDataSet(req, _info, params) { // TODO: write this
-	const token = extractToken(req); // TODO: extract these 4 lines into a function
-	if (!token) {
-		return new Response('not found: token', {status: 401})
-	}
-	const tokenOwner = verifyToken(token);
-	const name = params.pathname.groups.name
-	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 2)) {
-		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
-	}
-	
-	const data = req.text()
-	
-	const validationResult = validateData(data)
-	if (validationResult[0] !== 0) {
-		return validateDataResponse(validationResult)
-	}
-
-	setDataFile(name, data)
-	return new Response(`success`, {status: 200})
-}
-
 
 async function setDataFile(name, string) {
 	const hash = profile(name).password
@@ -73,31 +36,57 @@ async function setDataFile(name, string) {
 
 }
 
-export function handleDataInit(req) {
-	const token = extractToken(req)
-	if (!token) {
-		return new Response('not found: token', {status: 401})
+export async function handleDataGet(req, _info, params) {
+	const res = tokenResponse(req, {params, permissions: 1})
+	if (res[0]) {
+		return res[0]
 	}
 
-	const tokenOwner = verifyToken(token);
-	const name = params.pathname.groups.name
-	if (tokenOwner !== name || verifyPermission(name, tokenOwner, 2)) {
-		return new Response(`not found: permission for ${tokenOwner}`, {status: 403})
+	const name = res[1]
+
+	const data = await getDataFile(name, token)
+	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
+}
+
+
+export function handleDataSet(req, _info, params) { // TODO: write this
+	const res = tokenResponse(req, {params, permissions: 2})
+	if (res[0]) {
+		return res[0]
+	}
+	
+	const data = req.text()
+	
+	const validationResult = validateData(data)
+	if (validationResult[0] !== 0) {
+		return validateDataResponse(validationResult)
 	}
 
-	if (!(force || getDataFile(name) !== null)) {
-		return new Response(`not found: force to overwrite existing file`, {status: 403})
+	setDataFile(name, data)
+	return new Response(`success`, {status: 200})
+}
+
+
+export function handleDataInit(req, force, params) {
+	const res = tokenResponse(req, {params, permissions: 2})
+	if (res[0]) {
+		return res[0]
+	}
+	const name = res[1]
+
+	if (!force && getDataFile(name) !== "null") { // i am getting dizzy with these conditions today
+		return new Response(`not found: force to overwrite existing file, use /api/.../init/force`, {status: 403})
 	}
 	setDataFile(name, JSON.stringify(dataTemplate))
 	return new Response('success', {status: 201})
 }
 
 export async function handleDefaultGet(req) {
-	const token = extractToken(req);
-	if (!token) {
-		return new Response('not found: token', {status: 401})
+	const res = tokenResponse(req)
+	if (res[0]) {
+		return res[0]
 	}
-	const name = verifyToken(token);
+	const name = res[1]
 
 	const data = await getDataFile(name, token);
 	
@@ -105,14 +94,11 @@ export async function handleDefaultGet(req) {
 }
 
 export function handleDefaultSet(req) { // TODO: write this
-	const token = extractToken(req);
-	if (!token) {
-		return new Response('not found: token', {status: 401})
+	const res = tokenResponse(req)
+	if (res[0]) {
+		return res[0]
 	}
-	const name = verifyToken(token);
-	if (!name) {
-		return new Response(`not found: user associated with token`, {status: 401})
-	}
+	const name = res[1]
 
 	const data = req.text()
 	const validationResult = validateData(data)
@@ -125,18 +111,14 @@ export function handleDefaultSet(req) { // TODO: write this
 }
 
 export function handleDefaultInit(req, force = false) {
-	const token = extractToken(req)
-	if (!token) {
-		return new Response('not found: token', {status: 401})
+	const res = tokenResponse(req)
+	if (res[0]) {
+		return res[0]
 	}
+	const name = res[1]
 
-	const name = verifyToken(token);
-	if (!name) {
-		return new Response(`not found: user associated with token`, {status: 401})
-	}
-
-	if (!(force || getDataFile(name) !== null)) {
-		return new Response(`not found: force to overwrite existing file`, {status: 403})
+	if (!force && getDataFile(name) !== "null") { // i am getting dizzy with these conditions today
+		return new Response(`not found: force to overwrite existing file, use /api/.../init/force`, {status: 403})
 	}
 	setDataFile(name, JSON.stringify(dataTemplate))
 	return new Response('success', {status: 201})
@@ -146,12 +128,12 @@ export function handleWho(req) {
 	const token = extractToken(req);
 
 	if (!token) {
-		return new Response(null, {status: 401, headers: {'Content-Type': 'application/json'}});
+		return new Response("null", {status: 401, headers: {'Content-Type': 'application/json'}});
 	}
 
 	const name = verifyToken(token)
 	if (!name) {
-		return new Response(null, {status: 401, headers: {'Content-Type': 'application/json'}});
+		return new Response("null", {status: 401, headers: {'Content-Type': 'application/json'}});
 	}
 
 	return new Response(JSON.stringify({ name }), {status: 200, headers: {'Content-Type': 'application/json'}});
@@ -203,4 +185,25 @@ function validateDataResponse([status, info]) {
 		return new Response(`validation failed: schema failed: unsupported key '${info}'`, {status: 400})
 	}
 	return new Response(`not found: reason for this error`, {status: 400})
+}
+
+function tokenResponse(req, {params, permissions}) {
+	if (permissions && !params) {
+		console.warn('permissions provided, but no params')
+		console.trace()
+	}
+	const token = extractToken(req);
+	if (!token) {
+		return [new Response('not found: token', {status: 401}), null]
+	}
+	const tokenOwner = verifyToken(token);
+	if (!params) {
+		return [null, tokenOwner]
+	}
+	assert(!!permissions, 'params provided, but no permissions')
+	const name = params.pathname.groups.name
+	if (tokenOwner !== name && verifyPermission(name, tokenOwner, permissions)) {
+		return [new Response(`not found: permission for ${tokenOwner}`, {status: 403}), null]
+	}
+	return [null, name]
 }

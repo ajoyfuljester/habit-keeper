@@ -1,4 +1,4 @@
-import { redirect } from './Utils.js';
+import { redirect } from './utils.js';
 
 
 function inputData() {
@@ -26,7 +26,7 @@ async function handleLogin() {
 	if (code == 0) {
 		message += 'Succes'
 		redirect(`/profile/${data.name}/habits`)
-	}	else if (code == 1) {
+	} else if (code == 1) {
 		message += 'Profile not found';
 	} else if (code == 2) {
 		message += 'Password is incorrect';

@@ -1,4 +1,4 @@
-import { redirect } from './Utils.js'
+import { redirect } from './utils.js'
 
 async function data() {
 	const path = location.pathname

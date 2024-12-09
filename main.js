@@ -43,13 +43,13 @@ const routes = [
   },
   {
 	pattern: new URLPattern({ pathname: "/api/data/:name/init" }),
-	handler: req => handleDataInit(req),
+	handler: (req, params) => handleDataInit(req, false, params),
   },
   {
 	pattern: new URLPattern({ pathname: "/api/data/:name/init/force" }),
-	handler: req => handleDataInit(req, true),
+	handler: (req, params) => handleDataInit(req, true, params),
   },
-  { // possibly deprecated, but it will be convinient, so i might leave it as is
+  { // TODO? possibly deprecated, but it will be convinient, so i might leave it as is
 	pattern: new URLPattern({ pathname: "/api/me/get" }),
 	handler: handleDefaultGet,
   },
