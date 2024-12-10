@@ -1,4 +1,4 @@
-# a habit keeper app inspired by [Everyday](https://everyday.app) habit app
+# a habit keeper app inspired[#why?] by [Everyday](https://everyday.app) habit app
 
 first time using deno
 
@@ -19,3 +19,8 @@ i wish you a good life and succesful new habits or something
 ## PERMISSIONS:
 1. read (1)
 2. write (2)
+
+# why?
+because i saw it. it was bautiful. and then i got angry because it wasn't open source and i want it to run locally
+if i'm wrong, please tell me somehow, maybe through issues on github
+also it's very likely that i will copy the design, because it would be very hard to come up with a better one, maybe even impossible

@@ -44,7 +44,7 @@ export async function handleDataGet(req, _info, params) {
 
 	const name = res[1]
 
-	const data = await getDataFile(name, token)
+	const data = await getDataFile(name)
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
 
@@ -88,7 +88,7 @@ export async function handleDefaultGet(req) {
 	}
 	const name = res[1]
 
-	const data = await getDataFile(name, token);
+	const data = await getDataFile(name);
 	
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
@@ -197,6 +197,9 @@ function tokenResponse(req, {params, permissions}) {
 		return [new Response('not found: token', {status: 401}), null]
 	}
 	const tokenOwner = verifyToken(token);
+	if (!tokenOwner) {
+		return new Response("not found: user associated with token", {status: 403})
+	}
 	if (!params) {
 		return [null, tokenOwner]
 	}
