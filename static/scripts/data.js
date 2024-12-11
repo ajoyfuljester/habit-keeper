@@ -1,6 +1,6 @@
 import { redirect } from './utils.js'
 
-async function data() {
+async function fetchdata() {
 	const path = location.pathname
 
 	if (!/\/profile\/\w+/.test(path)) {
@@ -17,7 +17,27 @@ async function data() {
 		return false
 	}
 	const result = await res.json();
-	document.querySelector('#result').innerText = JSON.stringify(result);
+	console.log(result)
 }
 
-data()
+function loadHabits(data) {
+
+}
+
+function main() {
+	const data = fetchdata()
+	if (!data) {
+		return 1
+	}
+	
+	for (const board of data.boards) {
+		createBoard()
+	}
+}
+
+function createBoard(boardInfo) { // TODO: this
+}
+
+const exitCode = main()
+
+console.log(exitCode)
