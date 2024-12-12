@@ -14,6 +14,8 @@ i wish you a good life and succesful new habits or something
 - add data file validation when using /set
 - should i add routes for each 'set' action client does?
 - should i add a log on the client side to display the status of changes?
+- write documentation
+    - json schema
 
 # IMPORTANT (for me):
 ## PERMISSIONS:

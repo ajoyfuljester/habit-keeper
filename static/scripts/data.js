@@ -36,6 +36,36 @@ function main() {
 }
 
 function createBoard(boardInfo) { // TODO: this
+	const board = document.createElement('div');
+	board.classList.add('board')
+	for (const habitInfo of boardInfo) {
+
+
+
+		board.appendChild(habit)
+	}
+}
+
+function createHabit(habitInfo) { // TODO: HERE!!!
+	const elHabit = document.createElement('div');
+	elHabit.classList.add('habit')
+
+	const elName = document.createElement('div');
+	elName.innerText(habitInfo.name)
+
+	const offsets = habitInfo.offsets
+	offsets.sort()
+
+	for (let i = 0; i < offsets.at(-1); i++) {
+		if (!offsets.includes(i)) {
+			continue;
+		}
+		const elOffset = document.createElement('div');
+		elOffset.classList.add('offset')
+	}
+
+	const stats = {}
+
 }
 
 const exitCode = main()
