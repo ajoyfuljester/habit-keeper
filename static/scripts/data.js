@@ -53,19 +53,26 @@ function createHabit(habitInfo) { // TODO: HERE!!!
 	const elName = document.createElement('div');
 	elName.innerText(habitInfo.name)
 
+	elHabit.appendChild(elName)
+
 	const offsets = habitInfo.offsets
 	offsets.sort()
 
 	for (let i = 0; i < offsets.at(-1); i++) {
+		const elOffset = document.createElement('div');
+		elHabit.appendChild(elOffset)
 		if (!offsets.includes(i)) {
 			continue;
 		}
-		const elOffset = document.createElement('div');
 		elOffset.classList.add('offset')
 	}
 
 	const stats = {}
 
+}
+
+function statisticks(habitInfo) { // TODO: HERE 2
+	const stats = {}
 }
 
 const exitCode = main()
