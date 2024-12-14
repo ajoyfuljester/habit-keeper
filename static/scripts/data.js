@@ -58,7 +58,7 @@ function createHabit(habitInfo) { // TODO: HERE!!!
 	const offsets = habitInfo.offsets
 	offsets.sort()
 
-	for (let i = 0; i < offsets.at(-1); i++) {
+	for (let i = 0; i < offsets.at(-1); i++) { // TODO: handle more than one success in a day
 		const elOffset = document.createElement('div');
 		elHabit.appendChild(elOffset)
 		if (!offsets.includes(i)) {
@@ -67,12 +67,32 @@ function createHabit(habitInfo) { // TODO: HERE!!!
 		elOffset.classList.add('offset')
 	}
 
-	const stats = {}
 
 }
 
-function statisticks(habitInfo) { // TODO: HERE 2
+function statistics(habitInfo) { // TODO: HERE 2
 	const stats = {}
+	stats.successes = habitInfo.offsets?.length
+
+
+	return stats;
+
+}
+
+function createStatistics(habitInfo) {
+	const elStats = document.createElement('div')
+	elStats.classList.add('stats')
+
+}
+
+function createStat(key, value) {
+	const elKey = document.createElement('div');
+	elKey.innerText = key
+	const elValue = document.createElement('div');
+	elValue.innerText = value
+
+	return [elKey, elValue]
+
 }
 
 const exitCode = main()
