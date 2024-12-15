@@ -21,7 +21,9 @@ async function fetchdata() {
 }
 
 function loadHabits(data) {
-
+	for (const board of data.boards) {
+		createBoard()
+	}
 }
 
 function main() {
@@ -29,9 +31,9 @@ function main() {
 	if (!data) {
 		return 1
 	}
-	
-	for (const board of data.boards) {
-		createBoard()
+
+	if (!data.boards || data.boards.length == 0) {
+		return 2
 	}
 }
 
@@ -93,6 +95,19 @@ function createStat(key, value) {
 
 	return [elKey, elValue]
 
+}
+
+function handleNoBoards() {
+	const el = document.createElement('div');
+	const elSpan = document.createElement('span')
+	elSpan.innerText = `Seems there are no boards here`
+	el.appendChild(elSpan)
+	const elButton = document.createElement('button')
+	elButton.classList.add('inline-button')
+	elButton.innerText = 'Click here to create one'
+	el.appendChild(elButton)
+
+	return el
 }
 
 const exitCode = main()
