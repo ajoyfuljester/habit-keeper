@@ -33,6 +33,8 @@ function main() {
 	}
 
 	if (!data.boards || data.boards.length == 0) {
+		const el = handleNoBoards()
+		document.querySelector('#boards').appendChild(el)
 		return 2
 	}
 }
