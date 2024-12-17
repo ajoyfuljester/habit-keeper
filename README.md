@@ -16,6 +16,7 @@ i wish you a good life and succesful new habits or something
 - should i add a log on the client side to display the status of changes?
 - write documentation
     - json schema
+    - decrypting datafile locally
 
 # IMPORTANT (for me):
 ## PERMISSIONS:

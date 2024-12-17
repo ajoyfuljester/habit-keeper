@@ -1,6 +1,6 @@
 import { redirect } from './utils.js'
 
-async function fetchdata() {
+export async function fetchdata() {
 	const path = location.pathname
 
 	if (!/\/profile\/\w+/.test(path)) {
