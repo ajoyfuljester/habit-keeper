@@ -6,3 +6,15 @@ export function redirect(path) {
 	const host = url.match(/.+\/\/.+?\//)[0]
 	location.assign(host + path)
 }
+
+export function extractName() {
+	const path = location.pathname
+
+	if (!/\/profile\/\w+/.test(path)) {
+		return false
+	}
+	
+	const name = path.split('/')[2]
+
+	return name;
+}

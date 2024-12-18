@@ -1,13 +1,11 @@
-import { redirect } from './utils.js'
+import { redirect, extractName } from './utils.js'
 
-export async function fetchdata() {
-	const path = location.pathname
+export async function getData() {
+	const name = extractName()
 
-	if (!/\/profile\/\w+/.test(path)) {
-		return false
+	if (!name) {
+		console.error(location.pathname)
 	}
-	
-	const name = path.split('/')[2]
 
 	const req = new Request(`/api/data/${name}/get`)
 	const res = await fetch(req);
@@ -27,7 +25,7 @@ function loadHabits(data) {
 }
 
 function main() {
-	const data = fetchdata()
+	const data = getData()
 	if (!data) {
 		return 1
 	}
