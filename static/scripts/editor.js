@@ -17,10 +17,15 @@ function loadBoardManager(boardsInfo) {
 		const elBoard = document.createElement('div')
 		const elRename = document.createElement('input')
 		elRename.value = board.name
+		elRename.placeholder = board.name
 		elRename.classList.add('cell')
-		elRename.innerText = "Rename"
-		elRename.title = "Change the name of the board"
 		elBoard.appendChild(elRename)
+
+		const elRenameConfirm = document.createElement('button')
+		elRenameConfirm.classList.add('cell')
+		elRenameConfirm.innerText = "Rename"
+		elRenameConfirm.title = "Change the name of the board"
+		elBoard.appendChild(elRenameConfirm)
 
 		const elDelete = document.createElement('button')
 		elDelete.classList.add('cell')
@@ -61,9 +66,7 @@ async function renameBoard(currentName, newName) {
 }
 
 async function handleBoardRenaming() {
-	// TODO: POPUP (MODAL (DIALOG)) HERE
 
-	
 }
 
 const exitCode = main()
