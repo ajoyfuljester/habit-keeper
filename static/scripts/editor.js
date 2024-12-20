@@ -13,18 +13,21 @@ function main() {
 function loadBoardManager(boardsInfo) {
 	const elManager = document.createElement('div')
 	elManager.classList.add('board-manager')
-	for (const board of boardsInfo) {
+	for (let i in boardsInfo) {
+		const board = boardsInfo[i]
 		const elBoard = document.createElement('div')
 		const elRename = document.createElement('input')
 		elRename.value = board.name
 		elRename.placeholder = board.name
 		elRename.classList.add('cell')
+		elRename.dataset.rowID = i
 		elBoard.appendChild(elRename)
 
 		const elRenameConfirm = document.createElement('button')
 		elRenameConfirm.classList.add('cell')
 		elRenameConfirm.innerText = "Rename"
 		elRenameConfirm.title = "Change the name of the board"
+		elRenameConfirm.dataset.rowID = i
 		elBoard.appendChild(elRenameConfirm)
 
 		const elDelete = document.createElement('button')
@@ -66,7 +69,7 @@ async function renameBoard(currentName, newName) {
 }
 
 async function handleBoardRenaming() {
-
+	// TODO: HERE 4, handle click event, get rowID and rename
 }
 
 const exitCode = main()
