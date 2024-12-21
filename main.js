@@ -25,6 +25,10 @@ const routes = [
 	handler: req => serveFile(req, 'dynamic/habits.html'),
   },
   {
+	pattern: new URLPattern({ pathname: "/profile/:name/editor" }),
+	handler: req => serveFile(req, 'dynamic/editor.html'),
+  },
+  {
 	pattern: new URLPattern({ pathname: "/profile/:name" }),
 	handler: (_req, _info, params) => new Response(null, { status: 308, headers: {"Location": `/profile/${params.pathname.groups.name}/habits`}}),
   },

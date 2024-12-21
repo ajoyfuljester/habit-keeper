@@ -1,5 +1,4 @@
-import { extractName } from './utils.js'
-import { getData } from './data.js'
+import { extractName, getData } from './utils.js'
 
 function main() {
 	const data = getData()
@@ -8,11 +7,22 @@ function main() {
 	}
 
 	// TODO: HERE 3
+	const boardManager = createBoardManager()
+	const editor = document.querySelector('#editor')
+	editor.appendChild(boardManager)
 }
 
-function loadBoardManager(boardsInfo) {
+function createBoardManager(boardsInfo) {
 	const elManager = document.createElement('div')
 	elManager.classList.add('board-manager')
+	
+	const elHeader = document.createElement('h1')
+	elHeader.innerText = 'Board manager'
+	elManager.appendChild(elHeader)
+
+	const elBoards = document.createElement('div')
+	elBoards.classList.add('grid-boards')
+
 	for (let i in boardsInfo) {
 		const board = boardsInfo[i]
 		const elBoard = document.createElement('div')
@@ -28,6 +38,7 @@ function loadBoardManager(boardsInfo) {
 		elRenameConfirm.innerText = "Rename"
 		elRenameConfirm.title = "Change the name of the board"
 		elRenameConfirm.dataset.rowID = i
+		elRenameConfirm.addEventListener('click', handleRename)
 		elBoard.appendChild(elRenameConfirm)
 
 		const elDelete = document.createElement('button')
@@ -36,8 +47,26 @@ function loadBoardManager(boardsInfo) {
 		elDelete.title = "Remove the board"
 		elBoard.appendChild(elDelete)
 
-		elManager.appendChild(elBoard)
+		elBoards.appendChild(elBoard)
 	}
+
+	elManager.appendChild(elBoards)
+
+	// TODO: row - create board
+	const elCreateRow = document.createElement('div')
+	const elCreate = document.createElement('input')
+	elCreate.placeholder = "Board name"
+	elCreateRow.appendChild(elCreate)
+
+	const elCreateConfirm = document.createElement('button')
+	elCreateConfirm.innerText = "Create"
+	elCreateConfirm.title = "Add a new board"
+	elCreateConfirm.addEventListener('click', handleCreate)
+	elCreateRow.appendChild(elCreateConfirm)
+
+	elManager.appendChild(elCreateRow)
+
+	return elManager
 }
 
 async function renameBoard(currentName, newName) {
@@ -68,10 +97,27 @@ async function renameBoard(currentName, newName) {
 	return 0
 }
 
-async function handleBoardRenaming() {
+async function handleRename(event) {
 	// TODO: HERE 4, handle click event, get rowID and rename
+	console.log(event.target)
+}
+
+async function deleteBoard(name) {
+
+}
+
+async function handleDelete(event) {
+
+}
+
+async function createBoard(name) {
+
+}
+
+async function handleCreate(event) {
+
 }
 
 const exitCode = main()
 
-console.log(exitCode)
+console.log("exitCode:", exitCode)

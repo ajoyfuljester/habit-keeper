@@ -1,22 +1,4 @@
-import { redirect, extractName } from './utils.js'
-
-export async function getData() {
-	const name = extractName()
-
-	if (!name) {
-		console.error(location.pathname)
-	}
-
-	const req = new Request(`/api/data/${name}/get`)
-	const res = await fetch(req);
-	const status = res.status
-	if (status == 401) {
-		redirect('/static/sites/login.html')
-		return false
-	}
-	const result = await res.json();
-	console.log(result)
-}
+import { extractName, getData } from './utils.js'
 
 function loadHabits(data) {
 	for (const board of data.boards) {
@@ -98,12 +80,13 @@ function createStat(key, value) {
 }
 
 function handleNoBoards() {
+	const name = extractName()
 	const el = document.createElement('div');
 	const elSpan = document.createElement('span')
-	elSpan.innerText = `Seems there are no boards here`
+	elSpan.innerText = `Seems there are no boards here `
 	el.appendChild(elSpan)
-	const elButton = document.createElement('button')
-	elButton.classList.add('inline-button')
+	const elButton = document.createElement('a')
+	elButton.href = `/profile/${name}/editor`
 	elButton.innerText = 'Click here to create one'
 	el.appendChild(elButton)
 
@@ -112,4 +95,4 @@ function handleNoBoards() {
 
 const exitCode = main()
 
-console.log(exitCode)
+console.log("exitCode:", exitCode)
