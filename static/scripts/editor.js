@@ -75,7 +75,7 @@ async function renameBoard(currentName, newName) {
 		console.error(location.pathname)
 	}
 
-	const req = new Request('/api/me/boards/rename', {method: 'POST', body: JSON.stringify({currentName, newName})}) // TODO: think about the route
+	const req = new Request(`/api/${name}/boards/rename`, {method: 'POST', body: JSON.stringify({currentName, newName})}) // TODO: think about the route
 	const res = await fetch(req)
 
 	if (res.status == 400) {

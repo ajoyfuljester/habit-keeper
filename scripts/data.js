@@ -3,7 +3,7 @@ import { getCookies } from "jsr:@std/http/cookie"
 import { encrypt, decrypt, nameToIV, hashToKey } from "./encryption.js"
 import { assert } from "jsr:@std/assert/assert";
 
-async function getDataFile(name) {
+export async function getDataFile(name) {
 	const hash = profile(name).password
 	const iv = nameToIV(name);
 	const key = await hashToKey(hash);
@@ -23,7 +23,7 @@ async function getDataFile(name) {
 	return decrypted
 }
 
-async function setDataFile(name, string) {
+export async function setDataFile(name, string) {
 	const hash = profile(name).password
 	const iv = nameToIV(name);
 	const key = await hashToKey(hash);
@@ -55,6 +55,7 @@ export function handleDataSet(req, _info, params) { // TODO: write this
 		return res[0]
 	}
 	
+	const name = res[1]
 	const data = req.text()
 	
 	const validationResult = validateData(data)
@@ -81,48 +82,6 @@ export function handleDataInit(req, force, params) {
 	return new Response('success', {status: 201})
 }
 
-export async function handleDefaultGet(req) {
-	const res = tokenResponse(req)
-	if (res[0]) {
-		return res[0]
-	}
-	const name = res[1]
-
-	const data = await getDataFile(name);
-	
-	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
-}
-
-export function handleDefaultSet(req) { // TODO: write this
-	const res = tokenResponse(req)
-	if (res[0]) {
-		return res[0]
-	}
-	const name = res[1]
-
-	const data = req.text()
-	const validationResult = validateData(data)
-	if (validationResult[0] !== 0) {
-		return validateDataResponse(validationResult)
-	}
-
-	setDataFile(name, data)
-	return new Response('success', {status: 201})
-}
-
-export function handleDefaultInit(req, force = false) {
-	const res = tokenResponse(req)
-	if (res[0]) {
-		return res[0]
-	}
-	const name = res[1]
-
-	if (!force && getDataFile(name) !== "null") { // i am getting dizzy with these conditions today
-		return new Response(`not found: force to overwrite existing file, use /api/.../init/force`, {status: 403})
-	}
-	setDataFile(name, JSON.stringify(dataTemplate))
-	return new Response('success', {status: 201})
-}
 
 export function handleWho(req) {
 	const token = extractToken(req);
@@ -143,12 +102,12 @@ function extractToken(req) {
 	return getCookies(req.headers).token
 }
 
-const dataTemplate = {
+export const dataTemplate = {
 	boards: [],
 	lists: [],
 }
 
-function validateData(dataString) {
+export function validateData(dataString) {
 	try {
 		JSON.parse(dataString)
 	} catch (error) {
@@ -187,7 +146,7 @@ function validateDataResponse([status, info]) {
 	return new Response(`not found: reason for this error`, {status: 400})
 }
 
-function tokenResponse(req, {params, permissions}) {
+export function tokenResponse(req, {params, permissions}) {
 	if (permissions && !params) {
 		console.warn('permissions provided, but no params')
 		console.trace()

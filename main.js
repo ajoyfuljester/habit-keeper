@@ -2,7 +2,8 @@ import { route } from "jsr:@std/http/unstable-route";
 import { serveDir, serveFile } from "jsr:@std/http/file-server";
 import * as db from "./scripts/database.js";
 import { handleLogin } from "./scripts/login.js";
-import { handleDataGet, handleDataSet, handleDataInit, handleDefaultGet, handleDefaultSet, handleDefaultInit, handleWho } from "./scripts/data.js";
+import { handleDataGet, handleDataSet, handleDataInit, handleWho } from "./scripts/data.js";
+import { handleDataAction } from "./scripts/action.js";
 
 
 await db.addProfile('test', '0', 0)
@@ -53,21 +54,10 @@ const routes = [
 	pattern: new URLPattern({ pathname: "/api/data/:name/init/force" }),
 	handler: (req, params) => handleDataInit(req, true, params),
   },
-  { // TODO? possibly deprecated, but it will be convinient, so i might leave it as is
-	pattern: new URLPattern({ pathname: "/api/me/get" }),
-	handler: handleDefaultGet,
-  },
   {
-	pattern: new URLPattern({ pathname: "/api/me/set" }),
-	handler: handleDefaultSet,
-  },
-  {
-	pattern: new URLPattern({ pathname: "/api/me/init" }),
-	handler: req => handleDefaultInit(req),
-  },
-  {
-	pattern: new URLPattern({ pathname: "/api/me/init/force" }),
-	handler: req => handleDefaultInit(req, true),
+	pattern: new URLPattern({ pathname: "/api/data/:name/action" }),
+	handler: handleDataAction,
+	method: ['POST'],
   },
   {
 	pattern: new URLPattern({ pathname: "/api/who" }),
