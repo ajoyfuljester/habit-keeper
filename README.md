@@ -17,6 +17,7 @@ i wish you a good life and succesful new habits or something
 - write documentation
     - json schema
     - decrypting datafile locally
+    - actions
 
 # IMPORTANT (for me):
 ## PERMISSIONS:
