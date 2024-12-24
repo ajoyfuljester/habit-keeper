@@ -75,7 +75,14 @@ async function renameBoard(currentName, newName) {
 		console.error(location.pathname)
 	}
 
-	const req = new Request(`/api/${name}/boards/rename`, {method: 'POST', body: JSON.stringify({currentName, newName})}) // TODO: think about the route
+	const req = new Request(`/api/data/${name}/action`, {
+		method: 'POST',
+		body: JSON.stringify({
+			action: "rename",
+			object: "board",
+			what: currentName,
+			toWhat: newName,
+		})})
 	const res = await fetch(req)
 
 	if (res.status == 400) {
@@ -110,12 +117,20 @@ async function handleDelete(event) {
 
 }
 
-async function createBoard(name) {
-
+async function createBoard(boardName) {
+	const name = extractName()
+	const req = new Request(`/api/data/${name}/action`, {
+		method: "POST",
+		body: JSON.stringify({
+			action: "create",
+			object: "board",
+			what: boardName,
+		})
+	})
 }
 
 async function handleCreate(event) {
-
+	
 }
 
 const exitCode = main()
