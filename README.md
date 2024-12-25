@@ -7,17 +7,20 @@ i wish you a good life and succesful new habits or something
 # TODO QUICK:
 
 # TODO
+- add clean up for expired tokens
+- add admin control panel
 - add option to not require logging in, choose default account
 - add well basically the whole client
 - add well almost the whole server (handling '/set' requests)
 - add data file backups
 - add data file validation when using /set
-- should i add routes for each 'set' action client does?
-- should i add a log on the client side to display the status of changes?
 - write documentation
     - json schema
     - decrypting datafile locally
     - actions
+- should i add routes for each 'set' action client does?
+- should i add a log on the client side to display the status of changes?
+- should i create some sort of teams/groups?
 
 # IMPORTANT (for me):
 ## PERMISSIONS:

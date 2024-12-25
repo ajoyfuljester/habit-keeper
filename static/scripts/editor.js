@@ -55,13 +55,14 @@ function createBoardManager(boardsInfo) {
 	// TODO: row - create board
 	const elCreateRow = document.createElement('div')
 	const elCreate = document.createElement('input')
+	elCreate.id = "createBoardInput"
 	elCreate.placeholder = "Board name"
 	elCreateRow.appendChild(elCreate)
 
 	const elCreateConfirm = document.createElement('button')
 	elCreateConfirm.innerText = "Create"
 	elCreateConfirm.title = "Add a new board"
-	elCreateConfirm.addEventListener('click', handleCreate)
+	elCreateConfirm.addEventListener('click', () => handleCreate(elCreate))
 	elCreateRow.appendChild(elCreateConfirm)
 
 	elManager.appendChild(elCreateRow)
@@ -109,15 +110,9 @@ async function handleRename(event) {
 	console.log(event.target)
 }
 
-async function deleteBoard(name) {
+async function handleCreate(boardName) {
+	console.log(boardName.value)
 
-}
-
-async function handleDelete(event) {
-
-}
-
-async function createBoard(boardName) {
 	const name = extractName()
 	const req = new Request(`/api/data/${name}/action`, {
 		method: "POST",
@@ -127,10 +122,8 @@ async function createBoard(boardName) {
 			what: boardName,
 		})
 	})
-}
-
-async function handleCreate(event) {
-	
+	// TODO: logging here too
+	location.reload()
 }
 
 const exitCode = main()
