@@ -26,6 +26,10 @@ export async function getData() {
 		console.error(location.pathname)
 	}
 
+	const initRes = await fetch(`/api/data/${name}/init`)
+	console.log('initRes:', initRes)
+	// TODO: handle this response
+
 	const req = new Request(`/api/data/${name}/get`)
 	const res = await fetch(req);
 	const status = res.status

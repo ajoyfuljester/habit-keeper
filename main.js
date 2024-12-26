@@ -48,11 +48,11 @@ const routes = [
   },
   {
 	pattern: new URLPattern({ pathname: "/api/data/:name/init" }),
-	handler: (req, params) => handleDataInit(req, false, params),
+	handler: (req, _info, params) => handleDataInit(req, false, params),
   },
   {
 	pattern: new URLPattern({ pathname: "/api/data/:name/init/force" }),
-	handler: (req, params) => handleDataInit(req, true, params),
+	handler: (req, _info, params) => handleDataInit(req, true, params),
   },
   {
 	pattern: new URLPattern({ pathname: "/api/data/:name/action" }),

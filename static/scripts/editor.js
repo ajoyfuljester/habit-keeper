@@ -55,7 +55,6 @@ function createBoardManager(boardsInfo) {
 	// TODO: row - create board
 	const elCreateRow = document.createElement('div')
 	const elCreate = document.createElement('input')
-	elCreate.id = "createBoardInput"
 	elCreate.placeholder = "Board name"
 	elCreateRow.appendChild(elCreate)
 
@@ -80,7 +79,7 @@ async function renameBoard(currentName, newName) {
 		method: 'POST',
 		body: JSON.stringify({
 			action: "rename",
-			object: "board",
+			type: "board",
 			what: currentName,
 			toWhat: newName,
 		})})
@@ -118,11 +117,19 @@ async function handleCreate(boardName) {
 		method: "POST",
 		body: JSON.stringify({
 			action: "create",
-			object: "board",
-			what: boardName,
+			type: "board",
+			what: {name: boardName},
 		})
 	})
 	// TODO: logging here too
+	
+	const res = await fetch(req)
+	
+	if (res.status !== 201) {
+		// TODO: logging here too
+		return res
+	}
+
 	location.reload()
 }
 

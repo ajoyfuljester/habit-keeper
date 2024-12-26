@@ -122,7 +122,7 @@ export function validateData(dataString) {
 	}
 	const dataKeys = Object.keys(data)
 	const templateKeys = Object.keys(dataTemplate)
-	for (key of dataKeys) {
+	for (const key of dataKeys) {
 		if (!templateKeys.includes(key)) {
 			return [3, key]
 		}

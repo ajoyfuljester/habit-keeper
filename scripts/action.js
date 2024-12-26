@@ -1,7 +1,8 @@
 import { tokenResponse, dataTemplate, validateData, getDataFile } from "./data.js";
 import { dateToISO } from "./utils.js";
+import { assert } from "jsr:@std/assert/assert";
 
-export function handleDataAction(req, _info, params) {
+export async function handleDataAction(req, _info, params) {
 	let res = tokenResponse(req, {params, permissions: 2})
 	if (res[0]) {
 		return res[0]
@@ -9,16 +10,27 @@ export function handleDataAction(req, _info, params) {
 
 	const name = res[1]
 
-	// TODO: validate this thing
 
 	
-	const body = req.json()
+	const body = await req.json()
 
 	if (body.action === "create") {
-		if (body.what === "board") { // the second `what` shall be `toWhat`
-			Action.boards.create(name, body.data)
+		if (body.type === "board") { // the second `what` shall be `toWhat`
+			const exitCode = Action.boards.create(name, body.what)
+			console.log("exitCode (action)", exitCode)
+			if (exitCode === 0) {
+				res = new Response("success", {status: 201})
+			}
 		}
+	} else {
+		res = new Response("unhandled error", {status: 500})
+		console.error(body)
+		console.trace()
 	}
+
+	console.log(res, body)
+
+	return res
 }
 
 const Action = {
@@ -27,8 +39,12 @@ const Action = {
 
 Action.boards.create = async (profileName, rawBoard) => {
 	const data = await Data.fromFile(profileName)
-	const exitCode = data.jsonAddBoard(rawBoard)
+	console.log(data)
+	console.log(rawBoard)
+	const exitCode = data.addBoard(new Board(rawBoard))
 	// TODO: handle exit codes...
+	
+	return exitCode
 }
 
 class Data {
@@ -49,14 +65,15 @@ class Data {
 		}
 	}
 
-	addBoard(obj) {
-		this.data.boards.push(new Board(obj))
+	addBoard(boardObj) {
+		this.data.boards.push(boardObj)
 	}
 
 	jsonAddBoard(json) {
 		// TODO: validate this board... so much validation :sob:
 		const obj = JSON.parse(json)
 		this.data.boards.push(new Board(obj))
+		return 0
 	}
 	static async fromFile(profileName) {
 		const json = await getDataFile(profileName)
@@ -68,9 +85,13 @@ class Data {
 
 class Board {
 	constructor({name, startingDate, offsets}) {
+		console.log(name)
+		assert(typeof name === "string", "typeof name is not string")
+		assert(typeof startingDate === "string", "typeof startingDate is not string")
+		assert(Array.isArray(offsets), "typeof offsets is not array")
 		this.name = name
 		this.startingDate = startingDate ?? dateToISO()
-		this.offsets = offsets
+		this.offsets = offsets ?? []
 	
 	}
 }
