@@ -109,8 +109,8 @@ async function handleRename(event) {
 	console.log(event.target)
 }
 
-async function handleCreate(boardName) {
-	console.log(boardName.value)
+async function handleCreate(elBoardName) {
+	const boardName = elBoardName.value
 
 	const name = extractName()
 	const req = new Request(`/api/data/${name}/action`, {

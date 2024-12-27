@@ -2,6 +2,7 @@ import { profile, verifyToken, verifyPermission } from "./database.js";
 import { getCookies } from "jsr:@std/http/cookie"
 import { encrypt, decrypt, nameToIV, hashToKey } from "./encryption.js"
 import { assert } from "jsr:@std/assert/assert";
+import { validateData, validateDataResponse } from "./validation.js";
 
 export async function getDataFile(name) {
 	const hash = profile(name).password
@@ -100,50 +101,6 @@ export function handleWho(req) {
 
 function extractToken(req) {
 	return getCookies(req.headers).token
-}
-
-export const dataTemplate = {
-	boards: [],
-	lists: [],
-}
-
-export function validateData(dataString) {
-	try {
-		JSON.parse(dataString)
-	} catch (error) {
-		if (error instanceof SyntaxError) {
-			return [1, error.message] // maybe i should start doing what i saw was going on in `go`, something like return [value, error], well, maybe in the next project
-		} // well now it will be [errorCode, aditionalInfo]
-		throw error
-	} // idk how to write this properly, i don't really want to use `let`
-	const data = JSON.parse(dataString)
-	if (typeof data != 'object') {
-		return [2, null]
-	}
-	const dataKeys = Object.keys(data)
-	const templateKeys = Object.keys(dataTemplate)
-	for (const key of dataKeys) {
-		if (!templateKeys.includes(key)) {
-			return [3, key]
-		}
-	}
-
-	// TODO: check nested things
-	
-	return [0, null]
-}
-
-function validateDataResponse([status, info]) {
-	if (status == 0) {
-		return new Response('success', {status: 200})
-	} else if (status == 1) {
-		return new Response(`validation failed: json failed: ${info}`, {status: 400})
-	} else if (status == 2) {
-		return new Response(`validation failed: schema failed: type of request is not 'object'`, {status: 400})
-	} else if (status == 3) {
-		return new Response(`validation failed: schema failed: unsupported key '${info}'`, {status: 400})
-	}
-	return new Response(`not found: reason for this error`, {status: 400})
 }
 
 export function tokenResponse(req, {params, permissions}) {

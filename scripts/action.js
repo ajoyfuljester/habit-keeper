@@ -1,6 +1,7 @@
 import { tokenResponse, dataTemplate, validateData, getDataFile } from "./data.js";
 import { dateToISO } from "./utils.js";
 import { assert } from "jsr:@std/assert/assert";
+import { validateBoard } from "./validation.js";
 
 export async function handleDataAction(req, _info, params) {
 	let res = tokenResponse(req, {params, permissions: 2})
@@ -49,6 +50,7 @@ Action.boards.create = async (profileName, rawBoard) => {
 
 class Data {
 	constructor(json) {
+		this.valid = true
 		const validationResult = validateData(json)
 		if (validationResult[0] !== 0) {
 			this.valid = false;
@@ -66,11 +68,15 @@ class Data {
 	}
 
 	addBoard(boardObj) {
+		if (!(boardObj instanceof Board)) {
+			return 1
+		}
+
 		this.data.boards.push(boardObj)
+		return 0
 	}
 
 	jsonAddBoard(json) {
-		// TODO: validate this board... so much validation :sob:
 		const obj = JSON.parse(json)
 		this.data.boards.push(new Board(obj))
 		return 0
@@ -85,10 +91,11 @@ class Data {
 
 class Board {
 	constructor({name, startingDate, offsets}) {
-		console.log(name)
-		assert(typeof name === "string", "typeof name is not string")
-		assert(typeof startingDate === "string", "typeof startingDate is not string")
-		assert(Array.isArray(offsets), "typeof offsets is not array")
+		this.valid = true
+		if (validateBoard({name, startingDate, offsets}) !== 0) {
+			this.valid = false
+			return
+		}
 		this.name = name
 		this.startingDate = startingDate ?? dateToISO()
 		this.offsets = offsets ?? []

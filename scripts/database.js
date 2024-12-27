@@ -2,6 +2,7 @@ import { assert } from "jsr:@std/assert/assert";
 import { generateToken, hash } from "./encryption.js";
 import { Database } from "jsr:@db/sqlite";
 import { now } from "./utils.js";
+import { validateString } from "./validation.js";
 
 const db = new Database('habits.db');
 
@@ -33,30 +34,15 @@ db.prepare(`CREATE TABLE IF NOT EXISTS permission (
 );`).run();
 
 
-const validatingRegEx = /.{1,128}/g
-const nameRegEx = /\w{1,64}/g
-const passwordRegEx = validatingRegEx
-
-export function validateString(string, regex = validatingRegEx) {
-	const matches = string.match(regex);
-	if (matches.length != 1) {
-		return 1
-	}
-	if (matches[0].length != string.length) {
-		return 2
-	}
-
-	return 0
-}
 
 export async function addProfile(name, password, admin = 0) {
 	if (profileExists(name)) {
 		return 1;
 	}
-	if (validateString(name, nameRegEx) != 0) {
+	if (validateName(name) != 0) {
 		return 2
 	}
-	if (validateString(password, passwordRegEx) != 0) {
+	if (validatePassword(password) != 0) {
 		return 3
 	}
 	const hashedPassword = await hash(password);
