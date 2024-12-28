@@ -2,7 +2,7 @@ import { assert } from "jsr:@std/assert/assert";
 import { generateToken, hash } from "./encryption.js";
 import { Database } from "jsr:@db/sqlite";
 import { now } from "./utils.js";
-import { validateString } from "./validation.js";
+import { validateName, validatePassword } from "./validation.js";
 
 const db = new Database('habits.db');
 
@@ -116,4 +116,17 @@ export function verifyPermission(owner, guest, neededMode) {
 	const accessMode = rows[0].accessMode
 
 	return (neededMode & accessMode) == neededMode
+}
+
+
+export function tokens({before, after, name}) {
+	let query = 'SELECT * FROM tokens'
+	if ([before, after, name].some()) {
+		query += ' WHERE'
+	}
+	// TODO here 5
+	const rows = db.prepare(query)
+
+	return rows
+
 }
