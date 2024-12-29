@@ -1,7 +1,6 @@
 import { tokenResponse, dataTemplate, validateData, getDataFile } from "./data.js";
 import { dateToISO } from "./utils.js";
-import { assert } from "jsr:@std/assert/assert";
-import { validateBoard } from "./validation.js";
+import { validateBoard, validateStringResponse } from "./validation.js";
 
 export async function handleDataAction(req, _info, params) {
 	let res = tokenResponse(req, {params, permissions: 2})
@@ -21,12 +20,12 @@ export async function handleDataAction(req, _info, params) {
 			console.log("exitCode (action)", exitCode)
 			if (exitCode === 0) {
 				res = new Response("success", {status: 201})
+			} else {
+				res = validateStringResponse(exitCode)
 			}
 		}
 	} else {
-		res = new Response("unhandled error", {status: 500})
-		console.error(body)
-		console.trace()
+		res = new Response("not found: schema for this action", {status: 400})
 	}
 
 	console.log(res, body)

@@ -135,3 +135,16 @@ function filterOffsets(offsets) {
 		filtered.push(offset)
 	} 
 }
+
+export function validateStringResponse(exitCode) {
+	if (exitCode === 0) {
+		return new Response('success', {status: 200})
+	} else if (exitCode === 1) {
+		return new Response('failure: type of value is not string', {status: 400})
+	} else if (exitCode === 2 || exitCode === 3) {
+		return new Response('failure: regex', {status: 400})
+	}
+	console.error(exitCode)
+	console.trace()
+	return new Response('failure: unknown error', {status: 500})
+}
