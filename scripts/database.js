@@ -17,6 +17,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS profile (
 	admin BOOLEAN NOT NULL DEFAULT 0
 );`).run();
 
+// REMEMBER expirationDate is unix timestamp in seconds
 db.prepare(`CREATE TABLE IF NOT EXISTS token (
 	token TEXT PRIMARY KEY,
 	profileName TEXT NOT NULL,
@@ -119,14 +120,30 @@ export function verifyPermission(owner, guest, neededMode) {
 }
 
 
-export function tokens({before, after, name}) {
+export function tokens({beforeOpen, afterOpen, beforeClosed, afterClosed, name}) {
+	const parameters = [beforeOpen, afterOpen, beforeClosed, afterClosed, name]
 	let query = 'SELECT * FROM tokens'
-	if ([before, after, name].some()) {
-		query += ' WHERE'
+	if (parameters.some(x => !!x)) {
+		query += ' WHERE (TRUE)' // REMEMBER parameters here need to be IN ORDER
+		if (beforeOpen !== undefined) {
+			query += ' AND (expirationDate < ?)'
+		}
+		if (afterOpen !== undefined) {
+			query += ' AND (expirationDate > ?)'
+		}
+		if (beforeClosed !== undefined) {
+			query += ' AND (expirationDate <= ?)'
+		}
+		if (afterClosed !== undefined) {
+			query += ' AND (expirationDate >= ?)'
+		}
+		if (name !== undefined) {
+			query += ' AND (profileName = ?)'
+		}
 	}
-	// TODO here 5
-	const rows = db.prepare(query)
+	query += ';'
+
+	const rows = db.prepare(query).all(parameters.filter(x => !!x))
 
 	return rows
-
 }
