@@ -8,36 +8,37 @@ const db = new Database('habits.db');
 
 db.prepare('PRAGMA foreign_keys = ON;').run();
 
-db.prepare('DROP TABLE IF EXISTS token;').run(); // WARNING!!! REMEMBER TO DELETE IT LATER!!!
-db.prepare('DROP TABLE IF EXISTS profile;').run(); // WARNING!!! REMEMBER TO DELETE IT LATER!!!
+db.prepare('DROP TABLE IF EXISTS token;').run(); // TODO: WARNING!!! REMEMBER TO DELETE IT LATER!!!
+db.prepare('DROP TABLE IF EXISTS user;').run(); // WARNING!!! REMEMBER TO DELETE IT LATER!!!
+db.prepare('DROP TABLE IF EXISTS permission;').run(); // WARNING!!! REMEMBER TO DELETE IT LATER!!!
 
-db.prepare(`CREATE TABLE IF NOT EXISTS profile (
+db.prepare(`CREATE TABLE IF NOT EXISTS user (
 	name TEXT PRIMARY KEY,
 	password TEXT NOT NULL,
-	admin BOOLEAN NOT NULL DEFAULT 0
+	adminMode INT NOT NULL DEFAULT 0
 );`).run();
 
 // REMEMBER expirationDate is unix timestamp in seconds
 db.prepare(`CREATE TABLE IF NOT EXISTS token (
 	token TEXT PRIMARY KEY,
-	profileName TEXT NOT NULL,
+	userName TEXT NOT NULL,
 	expirationDate INTEGER NOT NULL,
-	FOREIGN KEY (profileName) REFERENCES profile(name) ON UPDATE CASCADE ON DELETE CASCADE
+	FOREIGN KEY (userName) REFERENCES user(name) ON UPDATE CASCADE ON DELETE CASCADE
 );`).run();
 
 db.prepare(`CREATE TABLE IF NOT EXISTS permission (
 	owner TEXT NOT NULL,
 	guest TEXT NOT NULL,
 	accessMode INT NOT NULL DEFAULT 0,
-	FOREIGN KEY (owner) REFERENCES profile(name) ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY (guest) REFERENCES profile(name) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (owner) REFERENCES user(name) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (guest) REFERENCES user(name) ON UPDATE CASCADE ON DELETE CASCADE,
 	PRIMARY KEY (owner, guest)
 );`).run();
 
 
 
-export async function addProfile(name, password, admin = 0) {
-	if (profileExists(name)) {
+export async function addUser(name, password, admin = 0) {
+	if (userExists(name)) {
 		return 1;
 	}
 	if (validateName(name) != 0) {
@@ -47,32 +48,32 @@ export async function addProfile(name, password, admin = 0) {
 		return 3
 	}
 	const hashedPassword = await hash(password);
-	db.prepare('INSERT INTO profile (name, password, admin) VALUES (?, ?, ?)').run(name, hashedPassword, admin);
+	db.prepare('INSERT INTO user (name, password, adminMode) VALUES (?, ?, ?)').run(name, hashedPassword, admin);
 	return 0;
 }
 
-export function profiles() {
-	return db.prepare('SELECT * FROM profile').all();
+export function users() {
+	return db.prepare('SELECT * FROM user').all();
 }
 
-export function profile(name) {
-	const p = db.prepare('SELECT * FROM profile WHERE name = ?').all(name)
-	assert(p.length <= 1, "more than one profile with same name")
-	return p[0];
+export function user(name) {
+	const u = db.prepare('SELECT * FROM user WHERE name = ?').all(name)
+	assert(u.length <= 1, "more than one user with same name")
+	return u[0];
 }
 
-export function profileExists(name) {
+export function userExists(name) {
 	assert(name != undefined, 'name not provided');
-	return profile(name) !== undefined;
+	return user(name) !== undefined;
 }
 
-export async function updateProfile(name, newName, password, admin = 0) {
+export async function updateUser(name, newName, password, admin = 0) { // TODO: rewrite this (separate params, like in 'tokens')
 	const hashedPassword = await hash(password);
-	db.prepare('UPDATE profile SET name = ?, password = ?, admin = ? WHERE name = ?').run(newName, hashedPassword, admin, name)
+	db.prepare('UPDATE user SET name = ?, password = ?, adminMode = ? WHERE name = ?').run(newName, hashedPassword, admin, name)
 }
 
 export async function login(name, password) {
-	const p = profile(name);
+	const p = user(name);
 	if (!p) {
 		return 1;
 	}
@@ -89,14 +90,13 @@ export function createToken(name) {
 	let expirationDate = now();
 	const maxAge = 3 * (60);
 	expirationDate += maxAge;
-	db.prepare('INSERT INTO token (profileName, token, expirationDate) VALUES (?, ?, ?)').run(name, token, expirationDate);
+	db.prepare('INSERT INTO token (userName, token, expirationDate) VALUES (?, ?, ?)').run(name, token, expirationDate);
 	return {token, expirationDate, maxAge}
 }
 
 export function verifyToken(token) {
 	assert(token != undefined, 'token not provided');
-	const rows = db.prepare('SELECT profileName, expirationDate FROM token WHERE token = ?').all(token);
-	assert(rows.length <= 1, "more than one token with same value")
+	const rows = db.prepare('SELECT userName, expirationDate FROM token WHERE token = ?').all(token);
 	if (rows.length == 0) {
 		return null;
 	}
@@ -104,13 +104,12 @@ export function verifyToken(token) {
 		db.prepare('DELETE FROM token WHERE token = ?').run(token);
 		return null;
 	}
-	return rows[0].profileName;
+	return rows[0].userName;
 }
 
 
 export function verifyPermission(owner, guest, neededMode) {
 	const rows = db.prepare('SELECT * FROM permission WHERE owner = ? AND guest = ?').all(owner, guest)
-	assert(rows.length <= 1, "more than one profile with same name");
 	if (rows.length == 0) {
 		return false;
 	}
@@ -138,7 +137,7 @@ export function tokens({beforeOpen, afterOpen, beforeClosed, afterClosed, name})
 			query += ' AND (expirationDate >= ?)'
 		}
 		if (name !== undefined) {
-			query += ' AND (profileName = ?)'
+			query += ' AND (userName = ?)'
 		}
 	}
 	query += ';'

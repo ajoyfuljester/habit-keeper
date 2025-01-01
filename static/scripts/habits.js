@@ -86,7 +86,7 @@ function handleNoBoards() {
 	elSpan.innerText = `Seems there are no boards here `
 	el.appendChild(elSpan)
 	const elButton = document.createElement('a')
-	elButton.href = `/profile/${name}/editor`
+	elButton.href = `/u/${name}/editor`
 	elButton.innerText = 'Click here to create one'
 	el.appendChild(elButton)
 

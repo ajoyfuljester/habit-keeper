@@ -37,8 +37,8 @@ const Action = {
 	boards: {},
 }
 
-Action.boards.create = async (profileName, rawBoard) => {
-	const data = await Data.fromFile(profileName)
+Action.boards.create = async (userName, rawBoard) => {
+	const data = await Data.fromFile(userName)
 	console.log(data)
 	console.log(rawBoard)
 	const exitCode = data.addBoard(new Board(rawBoard))
@@ -80,8 +80,8 @@ class Data {
 		this.data.boards.push(new Board(obj))
 		return 0
 	}
-	static async fromFile(profileName) {
-		const json = await getDataFile(profileName)
+	static async fromFile(userName) {
+		const json = await getDataFile(userName)
 		return new Data(json)
 	}
 

@@ -1,11 +1,11 @@
-import { profile, verifyToken, verifyPermission } from "./database.js";
+import { user, verifyToken, verifyPermission } from "./database.js";
 import { getCookies } from "jsr:@std/http/cookie"
 import { encrypt, decrypt, nameToIV, hashToKey } from "./encryption.js"
 import { assert } from "jsr:@std/assert/assert";
 import { validateData, validateDataResponse } from "./validation.js";
 
 export async function getDataFile(name) {
-	const hash = profile(name).password
+	const hash = user(name).password
 	const iv = nameToIV(name);
 	const key = await hashToKey(hash);
 
@@ -25,7 +25,7 @@ export async function getDataFile(name) {
 }
 
 export async function setDataFile(name, string) {
-	const hash = profile(name).password
+	const hash = user(name).password
 	const iv = nameToIV(name);
 	const key = await hashToKey(hash);
 

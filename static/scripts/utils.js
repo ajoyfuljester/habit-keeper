@@ -10,7 +10,7 @@ export function redirect(path) {
 export function extractName() {
 	const path = location.pathname
 
-	if (!/\/profile\/\w+/.test(path)) {
+	if (!/\/u\/\w+/.test(path)) {
 		return false
 	}
 	

@@ -1,11 +1,17 @@
-import { profiles, tokens } from "./database.js";
+import { users, tokens } from "./database.js";
+import { tokenResponse } from "./data.js";
+
+export function handleAdmin(req) {
+	let res = tokenResponse(req)
+
+}
 
 function stats(tokenQueryParams) {
-	const profileData = profiles()
+	const userData = users()
 	const tokenData = tokens()
 
-	const countProfiles = profileData.length
+	const countUsers = userData.length
 	const countTokens = tokenData.length
 	
-	return {profileData, tokenData, countProfiles, countTokens}
+	return {userData, tokenData, countUsers, countTokens}
 }

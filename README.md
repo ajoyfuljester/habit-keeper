@@ -9,21 +9,22 @@ i wish you a good life and succesful new habits or something
 - add admin control panel
 - add option to not require logging in, choose default account
 - add well basically the whole client
-- add well almost the whole server (handling '/set' requests)
+- add well almost the whole server (handling '.../action' requests)
 - add data file backups
-- add data file validation when using /set
 - write documentation
     - json schema
     - decrypting datafile locally
     - actions
-- should i add routes for each 'set' action client does?
-- should i add a log on the client side to display the status of changes?
+- should i add a log (history) on the client side to display the status of changes?
 - should i create some sort of teams/groups?
 
 # IMPORTANT (for me):
 ## PERMISSIONS:
 1. read (1)
 2. write (2)
+
+## ADMIN PERMISSIONS:
+1. read (1)
 
 # why?
 because i saw it. it was bautiful. and then i got angry because it wasn't open source and i want it to run locally

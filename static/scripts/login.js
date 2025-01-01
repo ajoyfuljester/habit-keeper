@@ -25,9 +25,9 @@ async function handleLogin() {
 	let message = ''
 	if (code == 0) {
 		message += 'Succes'
-		redirect(`/profile/${data.name}/habits`)
+		redirect(`/u/${data.name}/habits`)
 	} else if (code == 1) {
-		message += 'Profile not found';
+		message += 'User not found';
 	} else if (code == 2) {
 		message += 'Password is incorrect';
 	}
@@ -45,7 +45,7 @@ async function handleAlreadyLoggedIn() {
 		return false
 	}
 
-	redirect(`/profile/${name}/habits`)
+	redirect(`/u/${name}/habits`)
 }
 
 document.querySelector('input#login').addEventListener('click', handleLogin)

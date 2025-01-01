@@ -4,11 +4,12 @@ import * as db from "./scripts/database.js";
 import { handleLogin } from "./scripts/login.js";
 import { handleDataGet, handleDataSet, handleDataInit, handleWho } from "./scripts/data.js";
 import { handleDataAction } from "./scripts/action.js";
+import { handleAdmin } from "./scripts/admin.js";
 
 
-await db.addProfile('test', '0', 0)
+await db.addUser('test', '0', 0)
 
-console.log(db.profiles())
+console.log(db.users())
 
 
 
@@ -22,16 +23,20 @@ const routes = [
 	handler: req => serveDir(req),
   },
   {
-	pattern: new URLPattern({ pathname: "/profile/:name/habits" }),
+	pattern: new URLPattern({ pathname: "/u/:name/habits" }),
 	handler: req => serveFile(req, 'dynamic/habits.html'),
   },
   {
-	pattern: new URLPattern({ pathname: "/profile/:name/editor" }),
+	pattern: new URLPattern({ pathname: "/u/:name/editor" }),
 	handler: req => serveFile(req, 'dynamic/editor.html'),
   },
   {
-	pattern: new URLPattern({ pathname: "/profile/:name" }),
-	handler: (_req, _info, params) => new Response(null, { status: 308, headers: {"Location": `/profile/${params.pathname.groups.name}/habits`}}),
+	pattern: new URLPattern({ pathname: "/u/:name" }),
+	handler: (_req, _info, params) => new Response(null, { status: 308, headers: {"Location": `/u/${params.pathname.groups.name}/habits`}}),
+  },
+  {
+	pattern: new URLPattern({ pathname: "/admin" }),
+	handler: handleAdmin,
   },
   {
 	pattern: new URLPattern({ pathname: "/api/login" }),
