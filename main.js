@@ -4,7 +4,7 @@ import * as db from "./scripts/database.js";
 import { handleLogin } from "./scripts/login.js";
 import { handleDataGet, handleDataSet, handleDataInit, handleWho } from "./scripts/data.js";
 import { handleDataAction } from "./scripts/action.js";
-import { handleAdmin } from "./scripts/admin.js";
+import { handleAdmin, handleAdminStats } from "./scripts/admin.js";
 
 
 await db.addUser('test', '0', 0)
@@ -67,6 +67,10 @@ const routes = [
   {
 	pattern: new URLPattern({ pathname: "/api/who" }),
 	handler: handleWho,
+  },
+  {
+	  pattern: new URLPattern({ pathname: "/api/admin/stats" }), // TODO: probably delete this particular route and compute stats on client side
+	handler: handleAdminStats,
   },
 ];
 

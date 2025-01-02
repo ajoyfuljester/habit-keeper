@@ -1,4 +1,4 @@
-import { user, verifyToken, verifyPermission } from "./database.js";
+import { user, verifyToken, verifyPermission, verifyAdminPermission } from "./database.js";
 import { getCookies } from "jsr:@std/http/cookie"
 import { encrypt, decrypt, nameToIV, hashToKey } from "./encryption.js"
 import { assert } from "jsr:@std/assert/assert";
@@ -103,26 +103,37 @@ function extractToken(req) {
 	return getCookies(req.headers).token
 }
 
-export function tokenResponse(req, {params, permissions}) {
-	if (permissions && !params) {
+export function tokenResponse(req, {params, permissions, adminPermissions}) { // TODO: clean up this function
+	assert(!!permissions === !!adminPermissions, 'both permissions and adminPermissions is set, does not make sense')
+	if ((permissions || adminPermissions) && !params) {
 		console.warn('permissions provided, but no params')
 		console.trace()
 	}
+
 	const token = extractToken(req);
 	if (!token) {
 		return [new Response('not found: token', {status: 401}), null]
 	}
+
 	const tokenOwner = verifyToken(token);
 	if (!tokenOwner) {
 		return new Response("not found: user associated with token", {status: 403})
 	}
+	if (adminPermissions !== undefined && !verifyAdminPermission(tokenOwner, adminPermissions)) {
+		return [new Response(`not found: admin permission for ${tokenOwner}`, {status: 403}), null]
+	}
+
 	if (!params) {
 		return [null, tokenOwner]
 	}
+
 	assert(!!permissions, 'params provided, but no permissions')
 	const name = params.pathname.groups.name
 	if (tokenOwner !== name && verifyPermission(name, tokenOwner, permissions)) {
 		return [new Response(`not found: permission for ${tokenOwner}`, {status: 403}), null]
 	}
+
+	console.log('i do not know if this code should be reachable')
+	console.trace()
 	return [null, name]
 }

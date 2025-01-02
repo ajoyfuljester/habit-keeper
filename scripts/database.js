@@ -109,13 +109,24 @@ export function verifyToken(token) {
 
 
 export function verifyPermission(owner, guest, neededMode) {
-	const rows = db.prepare('SELECT * FROM permission WHERE owner = ? AND guest = ?').all(owner, guest)
+	const rows = db.prepare('SELECT accessMode FROM permission WHERE owner = ? AND guest = ?').all(owner, guest)
 	if (rows.length == 0) {
 		return false;
 	}
 	const accessMode = rows[0].accessMode
 
 	return (neededMode & accessMode) == neededMode
+}
+
+export function verifyAdminPermission(name, neededMode) {
+	const rows = db.prepare('SELECT adminMode FROM user WHERE name = ?').all(name)
+	if (rows.length == 0) {
+		return false;
+	}
+	const adminMode = rows[0].adminMode
+
+	return (neededMode & adminMode) == neededMode
+	
 }
 
 
