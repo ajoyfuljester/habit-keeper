@@ -37,7 +37,18 @@ db.prepare(`CREATE TABLE IF NOT EXISTS permission (
 
 
 
-export async function addUser(name, password, admin = 0) {
+
+/**
+	* @param {string} name - user name
+	* @param {string} password - user password
+	* @param {number} [adminMode=0] - admin permission mode
+	* @returns {Promise<0 | 1 | 2 | 3>} error code
+	* `0` - success
+	* `1` - user already exists
+	* `2` - name is not valid
+	* `3` - password is not valid
+*/
+export async function addUser(name, password, adminMode = 0) {
 	if (userExists(name)) {
 		return 1;
 	}
@@ -48,30 +59,56 @@ export async function addUser(name, password, admin = 0) {
 		return 3
 	}
 	const hashedPassword = await hash(password);
-	db.prepare('INSERT INTO user (name, password, adminMode) VALUES (?, ?, ?)').run(name, hashedPassword, admin);
+	db.prepare('INSERT INTO user (name, password, adminMode) VALUES (?, ?, ?)').run(name, hashedPassword, adminMode);
 	return 0;
 }
 
+
+/**
+	* @returns {Record<string, any>[]} list of users and their informations in the database
+*/
 export function users() {
 	return db.prepare('SELECT * FROM user').all();
 }
 
+
+/**
+	* @param {string} name - user name
+	* @returns {Record<string, any> | undefined} user information
+*/
 export function user(name) {
 	const u = db.prepare('SELECT * FROM user WHERE name = ?').all(name)
-	assert(u.length <= 1, "more than one user with same name")
 	return u[0];
 }
 
+
+/**
+	* @param {string} name - user name
+	* @returns {boolean} does the user exist?
+*/
 export function userExists(name) {
-	assert(name != undefined, 'name not provided');
 	return user(name) !== undefined;
 }
 
+
+/**
+	* @deprecated should rewrite this before using
+*/
 export async function updateUser(name, newName, password, admin = 0) { // TODO: rewrite this (separate params, like in 'tokens')
 	const hashedPassword = await hash(password);
 	db.prepare('UPDATE user SET name = ?, password = ?, adminMode = ? WHERE name = ?').run(newName, hashedPassword, admin, name)
 }
 
+
+
+/**
+	* @param {string} name - user name
+	* @param {string} password - user password
+	* @returns {Promise<0 | 1 | 2>} error code
+	* `0` - success
+	* `1` - user does not exist
+	* `2` - password is incorrect
+*/
 export async function login(name, password) {
 	const p = user(name);
 	if (!p) {
@@ -84,8 +121,17 @@ export async function login(name, password) {
 	return 2;
 }
 
+
+/**
+	* @typedef {Object} tokenObject
+	* @property {string} token - literal token string
+	* @property {number} expirationDate - unix timestamp in seconds
+	* @property {number} maxAge - length of time the token is valid
+	*
+	* @param {string} name - user name
+	* @returns {tokenObject} {@link tokenObject}
+*/
 export function createToken(name) {
-	assert(name != undefined, 'name not provided');
 	const token = generateToken()
 	let expirationDate = now();
 	const maxAge = 3 * (60);
@@ -93,6 +139,7 @@ export function createToken(name) {
 	db.prepare('INSERT INTO token (userName, token, expirationDate) VALUES (?, ?, ?)').run(name, token, expirationDate);
 	return {token, expirationDate, maxAge}
 }
+
 
 export function verifyToken(token) {
 	assert(token != undefined, 'token not provided');

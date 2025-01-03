@@ -3,7 +3,7 @@ import { encodeHex } from "jsr:@std/encoding/hex";
 
 /**
 	* @param {string} string - string to be hashed
-	* @returns {string} hash
+	* @returns {Promise<string>} hash
 */
 export async function hash(string) {
 	const data = new TextEncoder().encode(string)
