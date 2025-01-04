@@ -2,7 +2,7 @@ import { crypto } from "jsr:@std/crypto/crypto";
 import { encodeHex } from "jsr:@std/encoding/hex";
 
 /**
-	* @param {string} string - string to be hashed
+	* @param {String} string - string to be hashed
 	* @returns {Promise<string>} hash
 */
 export async function hash(string) {
@@ -12,7 +12,7 @@ export async function hash(string) {
 
 
 /**
-	* @returns {string} 128 byte token
+	* @returns {String} 128 byte token
 */
 export function generateToken() {
 	const array = new Uint8Array(128);
@@ -22,10 +22,10 @@ export function generateToken() {
 }
 
 /**
-	* @param {string} string - data to encrypt
+	* @param {String} string - data to encrypt
 	* @param {ArrayBuffer} iv - initial vectors of encryption
 	* @param {CryptoKey} key - encryption key
-	* @returns {string} encrypted string
+	* @returns {String} encrypted string
 */
 export async function encrypt(string, iv, key) {
 	const encoder = new TextEncoder();
@@ -42,10 +42,10 @@ export async function encrypt(string, iv, key) {
 
 
 /**
-	* @param {string} data - string to decrypt
+	* @param {String} data - string to decrypt
 	* @param {ArrayBuffer} iv - initial vectors of encryption
 	* @param {CryptoKey} key - encryption key
-	* @returns {string} decrypted data
+	* @returns {String} decrypted data
 */
 export async function decrypt(data, iv, key) {
 	const dataArray = hexToArray(data)
@@ -62,7 +62,7 @@ export async function decrypt(data, iv, key) {
 
 
 /**
-	* @param {string} hashString - hash
+	* @param {String} hashString - hash
 	* @returns {CryptoKey} key used in encryption
 */
 export async function hashToKey(hashString) {
@@ -74,7 +74,7 @@ export async function hashToKey(hashString) {
 
 
 /**
-	* @param {string} name - user name
+	* @param {String} name - user name
 	* @returns {ArrayBuffer} initial vectors used in encryption
 */
 export function nameToIV(name) {
@@ -96,7 +96,7 @@ export function nameToIV(name) {
 
 
 /**
-	* @param {string} string - two digit hex numbers
+	* @param {String} string - two digit hex numbers
 	* @returns {ArrayBuffer} converted string of hex numbers
 */
 function hexToArray(string) {
@@ -111,8 +111,8 @@ function hexToArray(string) {
 
 
 /**
-	* @param {ArrayBuffer} array
-	* @returns {string} bytes converted to hex
+	* @param {ArrayBuffer} array - array filled with 8-bit integers
+	* @returns {String} bytes converted to hex
 */
 function arrayToHex(array) {
 	let string = '';

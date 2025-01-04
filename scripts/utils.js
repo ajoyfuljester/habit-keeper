@@ -1,5 +1,5 @@
 /**
-	* @returns {number} unix timestamp in seconds
+	* @returns {Number} unix timestamp in seconds
 */
 export function now() {
 	return Math.floor(Date.now() / 1000)
@@ -7,7 +7,7 @@ export function now() {
 
 /**
 	* @param {Date} dateToConvert - date object to convert
-	* @returns {string} date in ISO format (YYYY-MM-DD)
+	* @returns {String} date in ISO format (YYYY-MM-DD)
 */
 export function dateToISO(dateToConvert) {
 	const date = dateToConvert ?? new Date()
