@@ -4,6 +4,11 @@ import { encrypt, decrypt, nameToIV, hashToKey } from "./encryption.js"
 import { assert } from "jsr:@std/assert/assert";
 import { validateData, validateDataResponse } from "./validation.js";
 
+
+/**
+	* @param {String} name - user name
+	* @returns {Promise<String>} decrypted contents of the file or "null" if file does not exist
+*/
 export async function getDataFile(name) {
 	const hash = user(name).password
 	const iv = nameToIV(name);
@@ -24,6 +29,12 @@ export async function getDataFile(name) {
 	return decrypted
 }
 
+
+/**
+	* @param {String} name - user name
+	* @param {String} string - decrypted contents to be written to user's data file
+	* @returns {void} nothing
+*/
 export async function setDataFile(name, string) {
 	const hash = user(name).password
 	const iv = nameToIV(name);
@@ -37,6 +48,26 @@ export async function setDataFile(name, string) {
 
 }
 
+
+/**
+	* @callback RouteAsync
+	* @param {Request} req - request from client
+	* @param {*} _info - i don't know what this is
+	* @param {*} params - i don't know what this is, but it has `pathname.groups` stuff
+	* @returns {Promise<Response>} response back to the client as a promise
+*/
+/**
+	* @callback Route
+	* @param {Request} req - request from client
+	* @param {*} _info - i don't know what this is
+	* @param {*} params - i don't know what this is, but it has `pathname.groups` stuff
+	* @returns {Response} response back to the client
+*/
+
+
+/**
+	* @type {RouteAsync}
+*/
 export async function handleDataGet(req, _info, params) {
 	const res = tokenResponse(req, {params, permissions: 1})
 	if (res[0]) {
@@ -49,7 +80,9 @@ export async function handleDataGet(req, _info, params) {
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
 
-
+/**
+	* @type {Route}
+*/
 export function handleDataSet(req, _info, params) { // TODO: write this
 	const res = tokenResponse(req, {params, permissions: 2})
 	if (res[0]) {
@@ -69,6 +102,13 @@ export function handleDataSet(req, _info, params) { // TODO: write this
 }
 
 
+
+/**
+	* @param {Request} req - request from the client
+	* @param {Boolean} force - whether to forcefully overwrite data file with a template
+	* @param {*} params - i don't know what this is, but it has `pathname.groups` stuff
+	* @returns {Response} response for the client
+*/
 export function handleDataInit(req, force, params) {
 	const res = tokenResponse(req, {params, permissions: 2})
 	if (res[0]) {
@@ -84,6 +124,10 @@ export function handleDataInit(req, force, params) {
 }
 
 
+
+/**
+	* @type {Route}
+*/
 export function handleWho(req) {
 	const token = extractToken(req);
 
@@ -99,10 +143,24 @@ export function handleWho(req) {
 	return new Response(JSON.stringify({ name }), {status: 200, headers: {'Content-Type': 'application/json'}});
 }
 
+
+/**
+	* @param {Request} req - request from the client
+	* @returns {String | undefined} token string that is included in the request or `undefined` if it does not exist
+*/
 function extractToken(req) {
 	return getCookies(req.headers).token
 }
 
+
+/**
+	* @param {Request} req - request from the client
+	* @param {Object} options - optional parameters
+	* @param {*?} options.params - params from a request handler ({@link Route}), used if you want to retrieve a name of the user in the url
+	* @param {Number?} options.permissions - permission that the owner of the token needs to perform an operation NEEDS `params`, XOR `adminPermissions`
+	* @param {Number?} options.adminPermissions - admin permission that the owner of the token needs to perform an operation, XOR `permissions`
+	* @returns {[Response, null] | [null, String]} returns an two element array, if the first element is a `Response`, then token is invalid, else the second element is the name of the owner of the token
+*/
 export function tokenResponse(req, {params, permissions, adminPermissions}) { // TODO: clean up this function
 	assert(!!permissions === !!adminPermissions, 'both permissions and adminPermissions is set, does not make sense')
 	if ((permissions || adminPermissions) && !params) {

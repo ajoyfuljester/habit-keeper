@@ -25,7 +25,7 @@ export function generateToken() {
 	* @param {String} string - data to encrypt
 	* @param {ArrayBuffer} iv - initial vectors of encryption
 	* @param {CryptoKey} key - encryption key
-	* @returns {String} encrypted string
+	* @returns {Promise<String>} encrypted string
 */
 export async function encrypt(string, iv, key) {
 	const encoder = new TextEncoder();
@@ -45,7 +45,7 @@ export async function encrypt(string, iv, key) {
 	* @param {String} data - string to decrypt
 	* @param {ArrayBuffer} iv - initial vectors of encryption
 	* @param {CryptoKey} key - encryption key
-	* @returns {String} decrypted data
+	* @returns {Promise<String>} decrypted data
 */
 export async function decrypt(data, iv, key) {
 	const dataArray = hexToArray(data)
@@ -63,7 +63,7 @@ export async function decrypt(data, iv, key) {
 
 /**
 	* @param {String} hashString - hash
-	* @returns {CryptoKey} key used in encryption
+	* @returns {Promise<CryptoKey>} key used in encryption
 */
 export async function hashToKey(hashString) {
 	const array = hexToArray(hashString)

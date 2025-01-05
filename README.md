@@ -5,7 +5,7 @@ first time using deno
 i wish you a good life and succesful new habits or something
 
 # TODO
-- JSDOC OVERHAUL
+- JSDOC OVERHAUL (currently in progress)
 - replace all console.warn with just assert()
 - add clean up for expired tokens
 - add admin control panel
