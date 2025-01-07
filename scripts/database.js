@@ -213,14 +213,16 @@ export function verifyAdminPermission(name, neededMode) {
 
 
 /**
-	* @param {Object} TokenOptions - object with parameters of the database query
-	* @param {Number} TokenOptions.beforeOpen - `expirationDate` less than
-	* @param {Number} TokenOptions.afterOpen - `expirationDate` more than
-	* @param {Number} TokenOptions.beforeClosed - `expirationDate` less than or equal
-	* @param {Number} TokenOptions.afterClosed - `expirationDate` more than or equal
-	* @param {String} TokenOptions.name - user name of the owner 
+	* @typedef {Object} TokenOptions - object with parameters of the database query
+	* @property {Number} TokenOptions.beforeOpen - `expirationDate` less than
+	* @property {Number} TokenOptions.afterOpen - `expirationDate` more than
+	* @property {Number} TokenOptions.beforeClosed - `expirationDate` less than or equal
+	* @property {Number} TokenOptions.afterClosed - `expirationDate` more than or equal
+	* @property {String} TokenOptions.name - user name of the owner 
+	* @param {TokenOptions} tokenOptions - object containing query parameters
 	* @returns {Token[]} array of {@link Token} objects retrieved from database that fulfill ALL parameters (`AND` operation)
 	*
+	* @see {@link TokenOptions}
 	* @see {@link Token}
 */
 export function tokens({beforeOpen, afterOpen, beforeClosed, afterClosed, name}) {
