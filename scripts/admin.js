@@ -34,10 +34,10 @@ export function handleAdminStats(req) {
 
 /**
 	* @typedef {Object} StatsObject
-	* @property {import("./database.js").User[]} StatsObject.userData - array of user information
-	* @property {import("./database.js").Token[]} StatsObject.tokenData - array of token information
-	* @property {number} StatsObject.countUsers - number of users in database
-	* @property {number} StatsObject.countTokens - number of tokens narrowed with the `tokenQueryParams`
+	* @property {import("./database.js").User[]} StatsObject.userData array of user information
+	* @property {import("./database.js").Token[]} StatsObject.tokenData array of token information
+	* @property {number} StatsObject.countUsers number of users in database
+	* @property {number} StatsObject.countTokens number of tokens narrowed with the `tokenQueryParams`
 	*
 	* @param {import("./database.js").TokenOptions} tokenQueryParams 
 	* @returns {StatsObject} object with statistics

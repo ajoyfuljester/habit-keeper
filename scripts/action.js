@@ -2,6 +2,16 @@ import { tokenResponse, dataTemplate, validateData, getDataFile } from "./data.j
 import { dateToISO } from "./utils.js";
 import { validateBoard, validateStringResponse } from "./validation.js";
 
+
+
+
+/**
+	* @param {Request} req - request from the client
+	* @param {*} _info - i have no idea what this is
+	* @param {*} params - i don't know what this is, but it has `pathname.groups` stuff
+	*
+	* @returns {Promise<Response>} response back to the client
+*/
 export async function handleDataAction(req, _info, params) {
 	let res = tokenResponse(req, {params, permissions: 2})
 	if (res[0]) {
@@ -33,9 +43,29 @@ export async function handleDataAction(req, _info, params) {
 	return res
 }
 
+
+/**
+	* @typedef {Object} Action object with types of objects, which have functions with actions that user can perform using requests
+	* @property {Object} Action.boards object with functions with actions that user can perform using requests
+	* @property {actionBoardsCreate} Action.boards.create creates a board with data (see {@link actionBoardsCreate})
+*/
+
+
+/**
+	* @type {Action}
+	* @see {@link Action}
+*/
 const Action = {
 	boards: {},
 }
+
+
+/**
+	* @callback actionBoardsCreate creates a board with data `rawBoard` in data file of `userName`
+	* @param {String} userName - user name
+	* @param {String} rawBoard - raw json board
+	* @returns {Number} exitCode - execution exit code
+*/
 
 Action.boards.create = async (userName, rawBoard) => {
 	const data = await Data.fromFile(userName)
@@ -47,7 +77,14 @@ Action.boards.create = async (userName, rawBoard) => {
 	return exitCode
 }
 
+
 class Data {
+
+	/**
+		* @param {String} json - raw json string to validate and parse into a `Data` instance
+		* @todo i don't know how to properly document every property
+		* @todo also what exactly to do with `@returns` here
+	*/
 	constructor(json) {
 		this.valid = true
 		const validationResult = validateData(json)
@@ -66,6 +103,12 @@ class Data {
 		}
 	}
 
+	/**
+		* @param {Board} boardObj - a `Board` that will be added to this `Data` instance
+		* @returns {0 | 1} exitCode - execution exit status
+		* 0 - successfuly added the board to this instance of `Data`
+		* 1 - parameter `boardObj` is not an instance of `Board` class
+	*/
 	addBoard(boardObj) {
 		if (!(boardObj instanceof Board)) {
 			return 1
@@ -75,11 +118,20 @@ class Data {
 		return 0
 	}
 
+	/**
+		* @param {String} json - string with board information, the same as {@link addBoard}
+		* @returns {0 | 1} exitCode - see {@link addBoard}
+	*/
 	jsonAddBoard(json) {
 		const obj = JSON.parse(json)
-		this.data.boards.push(new Board(obj))
-		return 0
+		const board = new Board(obj)
+		return this.addBoard(board)
 	}
+
+	/**
+		* @param {String} userName - user name of the owner of the data file to be loaded and parsed into `Data` instance
+		* @returns {Data} dataObject - instance of `Data`
+	*/
 	static async fromFile(userName) {
 		const json = await getDataFile(userName)
 		return new Data(json)
@@ -88,16 +140,60 @@ class Data {
 
 }
 
+
 class Board {
-	constructor({name, startingDate, offsets}) {
+	/**
+		* @param {Object} boardObj - an object to be parsed into an instance of `Board`
+		* @param {String} boardObj.name - name of the board
+		* @param {String} [boardObj.startingDate=dateToISO()] - date from which the boar- WHERE DID I GO FROM BOARD TO HABIT, THERE WAS SUPPOSED TO BE MANY BOARDS!
+		* @todo rewrite the line above after some consideration
+		* @param {Offset[]} [boardObj.offsets=[]] - array of Offsets (offset, value pairs) defaults to empty array
+	*/
+	constructor({name, startingDate = dateToISO(), offsets = []}) {
 		this.valid = true
 		if (validateBoard({name, startingDate, offsets}) !== 0) {
 			this.valid = false
 			return
 		}
 		this.name = name
-		this.startingDate = startingDate ?? dateToISO()
-		this.offsets = offsets ?? []
+		this.startingDate = startingDate
+		this.offsets = offsets
 	
 	}
+}
+
+
+class Offset {
+	/**
+		* @param {Object} offsetObj - an object to be parsed into an instance of `Offset`
+		* @param {Number} offsetObj.offset - offset from `startingDate` (see {@link Board})
+		* @param {Number} offsetObj.value - value of the day
+	*/
+	constructor({offset, value}) {
+		this.offset = offset;
+		this._value = value;
+	}
+
+	
+	/**
+		* @param {Number} x - number to be set as `value`
+	*/
+	set value(x) {
+		this._value = x;
+	}
+	
+	/**
+		* @returns {Number} value - value of this `Offset`
+	*/
+	get value() {
+		return this._value;
+	}
+
+	/**
+		* @param {number} [n=1] - number to increment `value` by, can be negative, can be a fraction too, and Infinity too i suppose, hmmmm
+	*/
+	changeValue(n = 1) {
+		this._value += n;
+	}
+
 }

@@ -15,9 +15,9 @@ db.prepare('DROP TABLE IF EXISTS permission;').run(); // WARNING!!! REMEMBER TO 
 
 /**
 	* @typedef {Object} User
-	* @property {String} name - user name
-	* @property {String} password - user password
-	* @property {Number} adminMode - admin permission mode
+	* @property {String} name user name
+	* @property {String} password user password
+	* @property {Number} adminMode admin permission mode
 */
 db.prepare(`CREATE TABLE IF NOT EXISTS user (
 	name TEXT PRIMARY KEY,
@@ -25,11 +25,17 @@ db.prepare(`CREATE TABLE IF NOT EXISTS user (
 	adminMode INT NOT NULL DEFAULT 0
 );`).run();
 
+
+/**
+	* @type {User}
+*/
+
+
 /**
 	* @typedef {Object} Token
-	* @property {String} token - randomly generated string of 128 bytes of hex numbers
-	* @property {String} userName - user name ({@link User})
-	* @property {Number} expirationDate - date of expiration of the token in unix timestamp in seconds
+	* @property {String} token randomly generated string of 128 bytes of hex numbers
+	* @property {String} userName user name ({@link User})
+	* @property {Number} expirationDate date of expiration of the token in unix timestamp in seconds
 */
 db.prepare(`CREATE TABLE IF NOT EXISTS token (
 	token TEXT PRIMARY KEY,
@@ -41,9 +47,9 @@ db.prepare(`CREATE TABLE IF NOT EXISTS token (
 
 /**
 	* @typedef {Object} Permission
-	* @property {String} owner - owner of the data, has all permissions over its data ({@link User})
-	* @property {String} guest - receiver of the permission, has no permissions over the data of `owner`, unless explicitly set ({@link User})
-	* @property {Number} accessMode - permission mode given by `owner` to `guest`
+	* @property {String} owner owner of the data, has all permissions over its data ({@link User})
+	* @property {String} guest receiver of the permission, has no permissions over the data of `owner`, unless explicitly set ({@link User})
+	* @property {Number} accessMode permission mode given by `owner` to `guest`
 */
 db.prepare(`CREATE TABLE IF NOT EXISTS permission (
 	owner TEXT NOT NULL,
@@ -143,9 +149,9 @@ export async function login(name, password) {
 
 /**
 	* @typedef {Object} TokenObject
-	* @property {String} token - literal token string
-	* @property {Number} expirationDate - unix timestamp in seconds
-	* @property {Number} maxAge - length of time the token is valid
+	* @property {String} token literal token string
+	* @property {Number} expirationDate unix timestamp in seconds
+	* @property {Number} maxAge length of time the token is valid
 	*
 	* @param {String} name - user name
 	* @returns {TokenObject} {@link TokenObject}
@@ -213,13 +219,13 @@ export function verifyAdminPermission(name, neededMode) {
 
 
 /**
-	* @typedef {Object} TokenOptions - object with parameters of the database query
-	* @property {Number} TokenOptions.beforeOpen - `expirationDate` less than
-	* @property {Number} TokenOptions.afterOpen - `expirationDate` more than
-	* @property {Number} TokenOptions.beforeClosed - `expirationDate` less than or equal
-	* @property {Number} TokenOptions.afterClosed - `expirationDate` more than or equal
-	* @property {String} TokenOptions.name - user name of the owner 
-	* @param {TokenOptions} tokenOptions - object containing query parameters
+	* @typedef {Object} TokenOptions object with parameters of the database query
+	* @property {Number} TokenOptions.beforeOpen `expirationDate` less than
+	* @property {Number} TokenOptions.afterOpen `expirationDate` more than
+	* @property {Number} TokenOptions.beforeClosed `expirationDate` less than or equal
+	* @property {Number} TokenOptions.afterClosed `expirationDate` more than or equal
+	* @property {String} TokenOptions.name user name of the owner 
+	* @param {TokenOptions} tokenOptions object containing query parameters
 	* @returns {Token[]} array of {@link Token} objects retrieved from database that fulfill ALL parameters (`AND` operation)
 	*
 	* @see {@link TokenOptions}

@@ -50,14 +50,14 @@ export async function setDataFile(name, string) {
 
 
 /**
-	* @callback RouteAsync
+	* @callback RouteAsync gets a Request from a client and replies with an appropriate Response as a Promise
 	* @param {Request} req - request from client
 	* @param {*} _info - i don't know what this is
 	* @param {*} params - i don't know what this is, but it has `pathname.groups` stuff
 	* @returns {Promise<Response>} response back to the client as a promise
 */
 /**
-	* @callback Route
+	* @callback Route gets a Request from a client and replies with an appropriate Response
 	* @param {Request} req - request from client
 	* @param {*} _info - i don't know what this is
 	* @param {*} params - i don't know what this is, but it has `pathname.groups` stuff
