@@ -190,10 +190,12 @@ class Offset {
 	}
 
 	/**
-		* @param {number} [n=1] - number to increment `value` by, can be negative, can be a fraction too, and Infinity too i suppose, hmmmm
+		* @param {Number} [n=1] - number to increment `value` by, can be negative, can be a fraction too, and Infinity too i suppose, hmmmm
+		* @returns {Number} new `value`
 	*/
 	changeValue(n = 1) {
 		this._value += n;
+		return this._value
 	}
 
 }
