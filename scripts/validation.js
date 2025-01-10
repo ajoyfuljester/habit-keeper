@@ -3,6 +3,17 @@ export const dataTemplate = {
 	lists: [],
 }
 
+
+/**
+	* @param {String} dataString - json string that would be converted to `Data` object
+	* @returns {[Number, String]} exit status - `[exitCode, info]`, used to give user feedback about the `Request` body
+	* `[0, null]` - `dataString` is valid, no errors
+	* `[1, message]` - `JSON.parse` failed because of `SyntaxError`, `message` is the message of the error
+	* `[2, null]` - parsed `dataString` is not of type `object`
+	* `[3, key]` - parsed `dataString` has an unknown key with the name `key`
+	*
+	* @see {@link dataTemplate}
+*/
 export function validateData(dataString) {
 	try {
 		JSON.parse(dataString)
@@ -29,6 +40,14 @@ export function validateData(dataString) {
 	return [0, null]
 }
 
+
+/**
+	* @param {[status: Number, info: String]} validationStatus - array returned from `validateData`
+	* @returns {Response} response based on the validation status of the given dataString
+	*
+	*
+	* @see {@link validateData}
+*/
 export function validateDataResponse([status, info]) {
 	if (status == 0) {
 		return new Response('success', {status: 200})
@@ -42,6 +61,18 @@ export function validateDataResponse([status, info]) {
 	return new Response(`not found: reason for this error`, {status: 400})
 }
 
+
+/**
+	* @param {String} string - text to validate
+	* @param {RegExp} regex - regular expression to match `string` against
+	* @returns {0 | 1 | 2 | 3} exitCode of the validation
+	* `0` - success, string is valid
+	* `1` - `string` is not of type `string`, naming is hard...
+	* `2` - `regex` was not matched exactly one time
+	* `3` - `regex` match was not the whole `string`
+	* these codes are probably useless and also this probably could have been done easier, but i think i had trouble understanding which function to use (`string.match()` or `regex.test()` or maybe something else)
+	*
+*/
 export function validateString(string, regex) {
 	if (typeof string !== "string") {
 		return 1
@@ -59,21 +90,52 @@ export function validateString(string, regex) {
 
 const nameRegEx = /\w{1,64}/g
 
+
+/**
+	* @param {String} name - a name, maybe a user maybe a board
+	* @returns {Number} exitCode, `0` is success
+	*
+	* @see {@link validateString}
+*/
 export function validateName(name) {
 	return validateString(name, nameRegEx)
 }
 
 const passwordRegEx = /.{1,128}/g
 
+/**
+	* @param {String} password - a password, probably from the user
+	* @returns {Number} exitCode, `0` is success
+	*
+	* @see {@link validateString}
+*/
 export function validatePassword(password) {
 	return validateString(password, passwordRegEx)
 }
 
 const ISODateRegEx = /\d{4}-\d{2}-\d{2}/g
+/**
+	* @param {String} date - a date string
+	* @returns {Number} exitCode, `0` is success, `YYYY-MM-DD`
+	*
+	* @see {@link validateString}
+*/
 export function validateISODate(date) {
 	return validateString(date, ISODateRegEx)
 }
 
+
+/**
+	* @param {Array} offset - an array to check if it can be converted to an `Offset`
+	* @returns {Number} exitCode
+	* `0` - success
+	* `1` - `offset` is not an array
+	* `2` - `offset` length is not `2`
+	* `3` - first element of `offset` is not of type `number`
+	* `4` - second element of `offset` is not of type `number`
+	* `5` - first element of `offset` is negative
+	* `6` - first element of `offset` is not an integer
+*/
 export function validateOffset(offset) {
 	if (!Array.isArray(offset)) {
 		return 1
@@ -91,7 +153,7 @@ export function validateOffset(offset) {
 		return 4
 	}
 
-	if (offset[0] < 1) {
+	if (offset[0] < 0) {
 		return 5
 	}
 
@@ -102,6 +164,15 @@ export function validateOffset(offset) {
 	return 0
 }
 
+
+// TODO HERE 7
+/**
+	*
+	* @param {Object} param0 
+	* @param {*} param0.name 
+	* @param {*} param0.startingDate 
+	* @param {*} param0.offsets 
+*/
 export function validateBoard({name, startingDate, offsets}) {
 	if (validateName(name) !== 0) {
 		return 1
