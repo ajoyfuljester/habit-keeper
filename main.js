@@ -13,6 +13,9 @@ console.log(db.users())
 
 
 
+/**
+	* @type {{pattern: URLPattern, handler: (req: Request, _info: *, params: *) => Response, method: String[]?}[]}
+*/
 const routes = [
   {
 	pattern: new URLPattern({ pathname: "/" }),
@@ -74,6 +77,11 @@ const routes = [
   },
 ];
 
+
+/**
+	* @param {Request} _req - request from the client, does not change the outcome of the function
+	* @returns {Response} defaultResponse - `status: 404, body: not found`
+*/
 function defaultHandler(_req) {
   return new Response("not found", { status: 404 });
 }

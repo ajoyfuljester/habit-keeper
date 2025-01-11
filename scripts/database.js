@@ -14,7 +14,7 @@ db.prepare('DROP TABLE IF EXISTS permission;').run(); // WARNING!!! REMEMBER TO 
 
 
 /**
-	* @typedef {Object} User
+	* @typedef {Object} User user object from database
 	* @property {String} name user name
 	* @property {String} password user password
 	* @property {Number} adminMode admin permission mode
@@ -32,7 +32,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS user (
 
 
 /**
-	* @typedef {Object} Token
+	* @typedef {Object} Token token object from database
 	* @property {String} token randomly generated string of 128 bytes of hex numbers
 	* @property {String} userName user name ({@link User})
 	* @property {Number} expirationDate date of expiration of the token in unix timestamp in seconds
@@ -46,7 +46,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS token (
 
 
 /**
-	* @typedef {Object} Permission
+	* @typedef {Object} Permission permission object from database
 	* @property {String} owner owner of the data, has all permissions over its data ({@link User})
 	* @property {String} guest receiver of the permission, has no permissions over the data of `owner`, unless explicitly set ({@link User})
 	* @property {Number} accessMode permission mode given by `owner` to `guest`

@@ -1,6 +1,6 @@
 import { tokenResponse, dataTemplate, validateData, getDataFile } from "./data.js";
 import { dateToISO } from "./utils.js";
-import { validateBoard, validateStringResponse } from "./validation.js";
+import { validateHabit, validateStringResponse } from "./validation.js";
 
 
 
@@ -130,7 +130,7 @@ class Data {
 
 	/**
 		* @param {String} userName - user name of the owner of the data file to be loaded and parsed into `Data` instance
-		* @returns {Data} dataObject - instance of `Data`
+		* @returns {Promise<Data>} dataObject - instance of `Data`
 	*/
 	static async fromFile(userName) {
 		const json = await getDataFile(userName)
@@ -141,17 +141,20 @@ class Data {
 }
 
 
-class Board {
+/**
+	* @typedef {Object} habitObj - an object to be parsed into an instance of `Habit`
+	* @property {String} habitObj.name - name of the habit
+	* @property {String} [habitObj.startingDate=dateToISO()] - date from which the habit
+	* @property {Offset[]} [habitObj.offsets=[]] - array of Offsets (offset, value pairs) defaults to empty array
+*/
+class Habit {
 	/**
-		* @param {Object} boardObj - an object to be parsed into an instance of `Board`
-		* @param {String} boardObj.name - name of the board
-		* @param {String} [boardObj.startingDate=dateToISO()] - date from which the boar- WHERE DID I GO FROM BOARD TO HABIT, THERE WAS SUPPOSED TO BE MANY BOARDS!
-		* @todo rewrite the line above after some consideration
-		* @param {Offset[]} [boardObj.offsets=[]] - array of Offsets (offset, value pairs) defaults to empty array
+		* @param {habitObj} habitObj - `{name, startingDate, offsets}`
+		* @see {@link habitObj}
 	*/
 	constructor({name, startingDate = dateToISO(), offsets = []}) {
 		this.valid = true
-		if (validateBoard({name, startingDate, offsets}) !== 0) {
+		if (validateHabit({name, startingDate, offsets}) !== 0) {
 			this.valid = false
 			return
 		}
@@ -166,7 +169,7 @@ class Board {
 class Offset {
 	/**
 		* @param {Object} offsetObj - an object to be parsed into an instance of `Offset`
-		* @param {Number} offsetObj.offset - offset from `startingDate` (see {@link Board})
+		* @param {Number} offsetObj.offset - offset from `startingDate` (see {@link Habit})
 		* @param {Number} offsetObj.value - value of the day
 	*/
 	constructor({offset, value}) {

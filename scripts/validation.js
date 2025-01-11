@@ -165,15 +165,19 @@ export function validateOffset(offset) {
 }
 
 
-// TODO HERE 7
 /**
+	* @param {import("./action.js").habitObj} habitObj - `{name, startingDate, offsets}`
+	* @returns {0 | 1 | 2 | 3 | 4} exitCode
+	* `0` - success, valid
+	* `1` - `name` not valid
+	* `2` - `startingDate` not valid
+	* `3` - `offsets` is not an array
+	* `4` - `offsets` contains an invalid offset
 	*
-	* @param {Object} param0 
-	* @param {*} param0.name 
-	* @param {*} param0.startingDate 
-	* @param {*} param0.offsets 
+	* @see {@link validateOffset}
+	* @see file `./actions.js`
 */
-export function validateBoard({name, startingDate, offsets}) {
+export function validateHabit({name, startingDate, offsets}) {
 	if (validateName(name) !== 0) {
 		return 1
 	}
@@ -197,6 +201,11 @@ export function validateBoard({name, startingDate, offsets}) {
 
 }
 
+
+/**
+	* @param {Array} offsets - array of offsets that will be filtered if invalid
+	* @returns {[Number, Number][]} filteredOffsets array of offsets that passed validation
+*/
 function filterOffsets(offsets) {
 	const filtered = []
 	for (const offset of offsets) {
@@ -205,8 +214,14 @@ function filterOffsets(offsets) {
 		}
 		filtered.push(offset)
 	} 
+	return filtered
 }
 
+
+/**
+	* @param {Number} exitCode - an exit code attained from `validateString`
+	* @returns {Response} response based on `exitCode`
+*/
 export function validateStringResponse(exitCode) {
 	if (exitCode === 0) {
 		return new Response('success', {status: 200})
