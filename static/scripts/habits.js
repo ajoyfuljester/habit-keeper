@@ -19,10 +19,18 @@ function main() {
 	}
 }
 
-function createBoard(boardInfo) { // TODO: this
+
+
+/**
+	* @typedef {Object} boardObj object with information about a board
+	* @property {String} boardObj.name name of the board
+	*
+	* @param {boardObj} boardObj 
+*/
+function createBoard(boardObj) { // TODO: this
 	const board = document.createElement('div');
 	board.classList.add('board')
-	for (const habitInfo of boardInfo) {
+	for (const habitInfo of boardObj) {
 
 
 
@@ -30,16 +38,25 @@ function createBoard(boardInfo) { // TODO: this
 	}
 }
 
-function createHabit(habitInfo) { // TODO: HERE!!!
+
+/**
+	* @typedef {Object} habitObj object with information about a habit
+	* @property {String} habitObj.name name of the habit
+	* @property {String} habitObj.startingDate starting date of the habit (ISO format: YYYY-MM-DD)
+	* @property {[Number, Number][]} habitObj.offsets array of two elemt arrays `[offset, value]`
+	*
+	* @param {habitObj} habitObj object with information about a habit
+*/
+function createHabit(habitObj) { // TODO: HERE!!!
 	const elHabit = document.createElement('div');
 	elHabit.classList.add('habit')
 
 	const elName = document.createElement('div');
-	elName.innerText(habitInfo.name)
+	elName.innerText(habitObj.name)
 
 	elHabit.appendChild(elName)
 
-	const offsets = habitInfo.offsets
+	const offsets = habitObj.offsets
 	offsets.sort()
 
 	for (let i = 0; i < offsets.at(-1); i++) { // TODO: handle more than one success in a day
@@ -79,6 +96,10 @@ function createStat(key, value) {
 
 }
 
+
+/**
+	* @returns {HTMLDivElement} html element with content to be displayed when no boards are found
+*/
 function handleNoBoards() {
 	const name = extractName()
 	const el = document.createElement('div');

@@ -1,12 +1,23 @@
 import { redirect } from './utils.js';
 
 
+/**
+	* @returns {{name: String, password: String}} object with name and password from the inputs
+*/
 function inputData() {
 	const name = document.querySelector('input#name').value
 	const password = document.querySelector('input#password').value
 	return { name, password }
 }
 
+
+/**
+	* @param {{name: String, password: String}} data - object with user name and password
+	* @returns {Promise<{code: Number}>} objec with `code` property which indicates status of the log in attempt
+	* `0` - sucess
+	* `1` - user not found
+	* `2` - password is incorrect
+*/
 async function login(data) {
 	const req = new Request('/api/login', {
 		method: 'POST',
@@ -17,6 +28,11 @@ async function login(data) {
 	const result = await res.json()
 	return result
 }
+
+
+/**
+	* get data from inputs, attempt to log in, display result, if successful then redirect to user page
+*/
 async function handleLogin() {
 	const data = inputData()
 	const result = await login(data)
@@ -36,6 +52,10 @@ async function handleLogin() {
 		
 }
 
+
+/**
+	* check if logged in, dispkay rasult, if logged then redirect to user page
+*/
 async function handleAlreadyLoggedIn() {
 	const nameRes = await fetch('/api/who')
 	const name = await nameRes.json()

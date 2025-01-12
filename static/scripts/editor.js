@@ -12,7 +12,12 @@ function main() {
 	editor.appendChild(boardManager)
 }
 
-function createBoardManager(boardsInfo) {
+
+/**
+	* @param {import("./habits.js").boardObj} boardsObj - object with information about a board
+	* @returns {HTMLDivElement} element with board manager stuff
+*/
+function createBoardManager(boardsObj) {
 	const elManager = document.createElement('div')
 	elManager.classList.add('board-manager')
 	
@@ -23,8 +28,8 @@ function createBoardManager(boardsInfo) {
 	const elBoards = document.createElement('div')
 	elBoards.classList.add('grid-boards')
 
-	for (let i in boardsInfo) {
-		const board = boardsInfo[i]
+	for (let i in boardsObj) {
+		const board = boardsObj[i]
 		const elBoard = document.createElement('div')
 		const elRename = document.createElement('input')
 		elRename.value = board.name
@@ -69,6 +74,13 @@ function createBoardManager(boardsInfo) {
 	return elManager
 }
 
+
+/**
+	* @param {String} currentName - current name of the board
+	* @param {String} newName - new name of the board
+	* @returns {Promise<Number>} exitCode
+	* @todo something is wrong here with the returning
+*/
 async function renameBoard(currentName, newName) {
 	const name = extractName();
 	if (!name) {
@@ -109,6 +121,12 @@ async function handleRename(event) {
 	console.log(event.target)
 }
 
+
+
+/**
+	* @param {HTMLInputElement} elBoardName - element with an `value` property, that will be the name of the new board
+	* @returns {Promise<Response>?} response if creation failed, else the page is reloaded (refreshed)
+*/
 async function handleCreate(elBoardName) {
 	const boardName = elBoardName.value
 

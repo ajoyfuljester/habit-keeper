@@ -1,3 +1,6 @@
+/**
+	* @param {String} path - destination path (inside the server) that the client will be redirected to
+*/
 export function redirect(path) {
 	if (path[0] == '/') {
 		path = path.substring(1)
@@ -7,6 +10,10 @@ export function redirect(path) {
 	location.assign(host + path)
 }
 
+
+/**
+	* @returns user name extracted from the url
+*/
 export function extractName() {
 	const path = location.pathname
 
@@ -18,6 +25,7 @@ export function extractName() {
 
 	return name;
 }
+
 
 export async function getData() {
 	const name = extractName()
