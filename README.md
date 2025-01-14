@@ -5,7 +5,6 @@ first time using deno
 i wish you a good life and succesful new habits or something
 
 # TODO
-- JSDOC OVERHAUL (currently in progress)
 - replace all console.warn with just assert()
 - add clean up for expired tokens
 - add admin control panel
@@ -20,6 +19,7 @@ i wish you a good life and succesful new habits or something
     - actions
 - should i add a log (history) on the client side to display the status of changes?
 - should i create some sort of teams/groups?
+- IS THERE GOING TO BE A RACE CONDITION???????????????????? (if yes, maybe with each getData thing also response with datafile hash or something and when an action is performed check if hashes are equal, if yes then proceed, else disregard action and refresh data)
 
 # IMPORTANT (for me):
 ## PERMISSIONS:

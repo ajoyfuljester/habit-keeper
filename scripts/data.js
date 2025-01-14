@@ -10,6 +10,7 @@ import { validateData, validateDataResponse } from "./validation.js";
 	* @returns {Promise<String>} decrypted contents of the file or "null" if file does not exist
 */
 export async function getDataFile(name) {
+	console.log(name)
 	const hash = user(name).password
 	const iv = nameToIV(name);
 	const key = await hashToKey(hash);
@@ -162,7 +163,7 @@ function extractToken(req) {
 	* @returns {[Response, null] | [null, String]} returns an two element array, if the first element is a `Response`, then token is invalid, else the second element is the name of the owner of the token
 */
 export function tokenResponse(req, {params, permissions, adminPermissions}) { // TODO: clean up this function
-	assert(!!permissions === !!adminPermissions, 'both permissions and adminPermissions is set, does not make sense')
+	assert(!!permissions !== !!adminPermissions, 'both permissions and adminPermissions is set, does not make sense')
 	if ((permissions || adminPermissions) && !params) {
 		console.warn('permissions provided, but no params')
 		console.trace()
@@ -191,7 +192,5 @@ export function tokenResponse(req, {params, permissions, adminPermissions}) { //
 		return [new Response(`not found: permission for ${tokenOwner}`, {status: 403}), null]
 	}
 
-	console.log('i do not know if this code should be reachable')
-	console.trace()
 	return [null, name]
 }

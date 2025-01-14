@@ -125,6 +125,28 @@ export function validateISODate(date) {
 }
 
 
+export function validateBoard({name, habits, lists}) {
+	if (validateName(name) !== 0) {
+		return 1
+	}
+
+	for (const habit of habits) {
+		if (validateHabit(habit) !== 0) {
+			return 2
+		}
+	}
+
+	for (const list of lists) {
+		if (validateList(list) !== 0) {
+			return 3
+		}
+	}
+
+	return 0
+}
+
+
+
 /**
 	* @param {Array} offset - an array to check if it can be converted to an `Offset`
 	* @returns {Number} exitCode
@@ -166,7 +188,7 @@ export function validateOffset(offset) {
 
 
 /**
-	* @param {import("./action.js").habitObj} habitObj - `{name, startingDate, offsets}`
+	* @param {import("./action.js").habitObject} habitObject - `{name, startingDate, offsets}`
 	* @returns {0 | 1 | 2 | 3 | 4} exitCode
 	* `0` - success, valid
 	* `1` - `name` not valid

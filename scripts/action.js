@@ -1,6 +1,6 @@
-import { tokenResponse, dataTemplate, validateData, getDataFile } from "./data.js";
+import { tokenResponse, getDataFile } from "./data.js";
 import { dateToISO } from "./utils.js";
-import { validateHabit, validateStringResponse } from "./validation.js";
+import { validateHabit, validateOffset, validateStringResponse, validateBoard, validateData } from "./validation.js";
 
 
 
@@ -26,7 +26,7 @@ export async function handleDataAction(req, _info, params) {
 
 	if (body.action === "create") {
 		if (body.type === "board") { // the second `what` shall be `toWhat`
-			const exitCode = Action.boards.create(name, body.what)
+			const exitCode = await Action.boards.create(name, body.what)
 			console.log("exitCode (action)", exitCode)
 			if (exitCode === 0) {
 				res = new Response("success", {status: 201})
@@ -64,7 +64,7 @@ const Action = {
 	* @callback actionBoardsCreate creates a board with data `rawBoard` in data file of `userName`
 	* @param {String} userName - user name
 	* @param {String} rawBoard - raw json board
-	* @returns {Number} exitCode - execution exit code
+	* @returns {Promise<Number>} exitCode - execution exit code
 */
 
 Action.boards.create = async (userName, rawBoard) => {
@@ -81,17 +81,18 @@ Action.boards.create = async (userName, rawBoard) => {
 class Data {
 
 	/**
-		* @param {String} json - raw json string to validate and parse into a `Data` instance
-		* @todo i don't know how to properly document every property
-		* @todo also what exactly to do with `@returns` here
+		* @param {Object} param0 - object to be parsed to `Data` - `{user, boards}`
+		* @param {String} param0.user - user name of the owner of the data
+		* @param {boardObject[]} param0.boards - array of board-like objects
 	*/
-	constructor(json) {
-		this.valid = true
-		const validationResult = validateData(json)
-		if (validationResult[0] !== 0) {
-			this.valid = false;
-			return
+	constructor({user, boards}) {
+		this.valid = false
+		this.validation = validateData(json)
+		if (this.validation[0] !== 0) {
+			return this
 		}
+		this.valid = true
+		// TODO MORE IMPORTANTER: think about this and probably rewrite
 		this.raw = JSON.parse(json)
 		// TODO: parse boards and lists
 		this.data = {
@@ -131,74 +132,170 @@ class Data {
 	/**
 		* @param {String} userName - user name of the owner of the data file to be loaded and parsed into `Data` instance
 		* @returns {Promise<Data>} dataObject - instance of `Data`
+		* @todo think about this - redundant?
 	*/
 	static async fromFile(userName) {
 		const json = await getDataFile(userName)
-		return new Data(json)
+		const data = new Data(json)
+		data.user = userName
+		return data
+	}
+
+	/**
+		* @param {String} [userName] - user name of the user to write data file to, if empty then it will try to use `this.user`
+	*/
+	writeFile(userName) {
+		
 	}
 
 
 }
+
 
 
 /**
-	* @typedef {Object} habitObj - an object to be parsed into an instance of `Habit`
-	* @property {String} habitObj.name - name of the habit
-	* @property {String} [habitObj.startingDate=dateToISO()] - date from which the habit
-	* @property {Offset[]} [habitObj.offsets=[]] - array of Offsets (offset, value pairs) defaults to empty array
+	* @typedef {Object} boardObject an object to be parsed into an instance of `Board`
+	* @property {String} boardObject.name name of the board
+	* @property {habitObject[]} [boardObject.habits=[]] array of habit-like objects
+	* @property {listObject[]} [boardObject.lists=[]] array of list-like objects
+	* @see {@link habitObject}
+	* @see {@link listObject}
+	*
+*/
+class Board {
+	/**
+		* @param {boardObject} boardObject - object to be parsed into `Board` - `{name, habits, lists}`
+		* @returns {Board} instance of `Board`, possibly invalid, see `Board.valid`
+	*/
+	constructor({name, habits = [], lists = []}) {
+		/** @type {Boolean} whether the instance valid */
+		this.valid = false
+
+		/** @type {Number} validation state (0 is valid) */
+		this.validation = validateBoard({name, habits, lists})
+		if (this.validation !== 0) {
+			return this
+		}
+		this.valid = true
+
+		/** @type {String} name of the board */
+		this.name = name
+		/** @type {Habit[]} array of `Habit` */
+		this.habits = habits.map(Habit)
+		/** @type {List[]} array of `List` */
+		this.lists = lists.map(List)
+	}
+
+	/** @returns {boardObject} */
+	toObject() {
+		return {
+			name: this.name,
+			habits: this.habits.map(h => h.toObject()),
+			lists: this.lists.map(l => l.toObject())
+		}
+	}
+
+}
+
+
+
+
+// TODO: write this, but maybe later
+class List {
+	constructor() {
+
+	}
+
+	toObject() {
+
+	}
+}
+
+
+
+
+
+
+/**
+	* @typedef {Object} habitObject an object to be parsed into an instance of `Habit`
+	* @property {String} habitObject.name name of the habit
+	* @property {String} [habitObject.startingDate=dateToISO()] date from which the habit
+	* @property {offsetArray[]} [habitObject.offsets=[]] array of offset-like arrays - `[offset, value]` defaults to empty array
+	* @see {@link offsetArray}
 */
 class Habit {
 	/**
-		* @param {habitObj} habitObj - `{name, startingDate, offsets}`
-		* @see {@link habitObj}
+		* @param {habitObject} habitObject - `{name, startingDate, offsets}`
+		* @returns {Habit} instance of `Habit`, possibly invalid, see `Habit.valid`
+		* @see {@link habitObject}
 	*/
 	constructor({name, startingDate = dateToISO(), offsets = []}) {
-		this.valid = true
-		if (validateHabit({name, startingDate, offsets}) !== 0) {
-			this.valid = false
-			return
+		/** @type {Boolean} whether the instance valid */
+		this.valid = false
+
+		/** @type {Number} validation state (0 is valid) */
+		this.validation = validateHabit({name, startingDate, offsets})
+		if (this.validation !== 0) {
+			return this
 		}
+		this.valid = true
+
+		/** @type {String} name of the habit */
 		this.name = name
+		/** @type {String} date of the start of the habit in ISO format (YYYY-MM-DD) */
 		this.startingDate = startingDate
-		this.offsets = offsets
-	
+
+
+		/** @type {Offset[]} array of `Offsets` */
+		this.offsets = offsets.map(Offset)
 	}
+
+	/** @returns {habitObject} a simple object that is jsonifable */
+	toObject() {
+		return {
+			name: this.name,
+			startingDate: this.startingDate,
+			offsets: this.offsets.map(o => o.toObject())
+		}
+	}
+	
 }
+
 
 
 class Offset {
 	/**
-		* @param {Object} offsetObj - an object to be parsed into an instance of `Offset`
-		* @param {Number} offsetObj.offset - offset from `startingDate` (see {@link Habit})
-		* @param {Number} offsetObj.value - value of the day
+		* @typedef {[offset: Number, value: Number]} offsetArray - an object to be parsed into an instance of `Offset`
+		* @param {offsetArray} offsetArray `[offset, value]` 
+		* @returns {Offset} instance of `Offset`, possibly invalid, check `Offset.valid`
 	*/
-	constructor({offset, value}) {
+	
+	constructor([offset, value]) {
+		/** @type {Boolean} whether the instance valid */
+		this.valid = false
+
+		/** @type {Number} validation state (0 is valid) */
+		this.validation = validateOffset([offset, value])
+		if(this.validation !== 0) {
+			return this
+		}
+		this.valid = true
+
+		/** @type {Number} offset in days from `startingDate` */
 		this.offset = offset;
-		this._value = value;
+		/** @type {Number} value of the day */
+		this.value = value;
+
 	}
 
-	
-	/**
-		* @param {Number} x - number to be set as `value`
-	*/
-	set value(x) {
-		this._value = x;
-	}
-	
-	/**
-		* @returns {Number} value - value of this `Offset`
-	*/
-	get value() {
-		return this._value;
-	}
+
 
 	/**
-		* @param {Number} [n=1] - number to increment `value` by, can be negative, can be a fraction too, and Infinity too i suppose, hmmmm
-		* @returns {Number} new `value`
+		* @returns {[offset: Number, value: Number]} a simple object that is jsonifable
 	*/
-	changeValue(n = 1) {
-		this._value += n;
-		return this._value
+	toObject() {
+		return [this.offset, this.value]
 	}
 
 }
+
