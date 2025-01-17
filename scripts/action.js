@@ -1,4 +1,4 @@
-import { tokenResponse, getDataFile } from "./data.js";
+import { tokenResponse, getDataFile, setDataFile } from "./data.js";
 import { dateToISO } from "./utils.js";
 import { validateHabit, validateOffset, validateStringResponse, validateBoard, validateData } from "./validation.js";
 
@@ -26,12 +26,12 @@ export async function handleDataAction(req, _info, params) {
 
 	if (body.action === "create") {
 		if (body.type === "board") { // the second `what` shall be `toWhat`
-			const exitCode = await Action.boards.create(name, body.what)
-			console.log("exitCode (action)", exitCode)
-			if (exitCode === 0) {
+			const exitData = await Action.boards.create(name, body.what)
+			console.log("exitData (action)", exitData)
+			if (exitData[0] === 0) {
 				res = new Response("success", {status: 201})
 			} else {
-				res = validateStringResponse(exitCode)
+				res = new Response(`action failed, exitData: ${exitData}`, {status: 400})
 			}
 		}
 	} else {
@@ -69,53 +69,86 @@ const Action = {
 
 Action.boards.create = async (userName, rawBoard) => {
 	const data = await Data.fromFile(userName)
-	console.log(data)
-	console.log(rawBoard)
-	const exitCode = data.addBoard(new Board(rawBoard))
+	/** @type {[code: Number, step: Numver]} WRITE EXPLAINATION FOR THIS SOMEWHERE TODO*/
+	const exitData = [0, 0]
+	const board = new Board(rawBoard)
+	const validationCode = validateBoard(board)
+	if (validationCode !== 0) {
+		exitData[0] = validationCode
+		exitData[1] += 1
+		return exitData
+	}
+	const addingCode = data.addBoard(board)
 	// TODO: handle exit codes...
-	
-	return exitCode
+
+	if (addingCode === 0) {
+		data.writeFile()
+	} else {
+		exitData[0] = addingCode
+		exitData[1] += 1
+		return exitData
+	}
+	return exitData
 }
 
 
 class Data {
 
 	/**
-		* @param {Object} param0 - object to be parsed to `Data` - `{user, boards}`
-		* @param {String} param0.user - user name of the owner of the data
-		* @param {boardObject[]} param0.boards - array of board-like objects
+		* @typedef {Object} dataObject - object to be parsed to `Data` - `{user, boards}`
+		* @property {String} dataObject.user - user name of the owner of the data
+		* @property {boardObject[]} [dataObject.boards=[]] - array of board-like objects
+		*
+		* @param {dataObject} dataObject - object to be parsed into `Data` - `{user, boards}`
+		* @returns {Data} instance of `Data`, may be invalid, see `Data.valid`
 	*/
-	constructor({user, boards}) {
+	constructor({user, boards = []}) {
 		this.valid = false
-		this.validation = validateData(json)
+		// TODO: think about rewriting this validation
+		this.validation = validateData(JSON.stringify({user, boards}))
 		if (this.validation[0] !== 0) {
 			return this
 		}
 		this.valid = true
-		// TODO MORE IMPORTANTER: think about this and probably rewrite
-		this.raw = JSON.parse(json)
-		// TODO: parse boards and lists
-		this.data = {
-			boards: [],
-		}
 
-		for (const rawBoard of this.raw.boards) {
-			this.data.boards.push(new Board(rawBoard))
+		/** @type {String} user name of the owner of the data file */
+		this.user = user
+		/** @type {Board[]} array of `Board` */
+		this.boards = boards.map(b => Board(b))
+	}
+
+	/** @returns {dataObject} data-like object */
+	toObject() {
+		return {
+			user: this.user,
+			boards: this.boards.map(b => b.toObject()),
 		}
+	}
+
+	/**
+		* @param {String} name - name of the board
+		* @returns {Board | undefined} `Board` instance if found or `undefined` if board was not found
+	*/
+	findBoard(name) {
+		return this.boards.find(b => b.name === name)
 	}
 
 	/**
 		* @param {Board} boardObj - a `Board` that will be added to this `Data` instance
 		* @returns {0 | 1} exitCode - execution exit status
-		* 0 - successfuly added the board to this instance of `Data`
-		* 1 - parameter `boardObj` is not an instance of `Board` class
+		* `0` - successfuly added the board to this instance of `Data`
+		* `1` - parameter `boardObj` is not an instance of `Board` class
+		* `2` - board with the name of the given `boardObj` already exists
 	*/
 	addBoard(boardObj) {
 		if (!(boardObj instanceof Board)) {
 			return 1
 		}
+		if (this.findBoard(boardObj.name)) {
+			return 2
+		}
 
-		this.data.boards.push(boardObj)
+		this.boards.push(boardObj)
 		return 0
 	}
 
@@ -138,14 +171,16 @@ class Data {
 		const json = await getDataFile(userName)
 		const data = new Data(json)
 		data.user = userName
+		console.log("fromFile", data)
 		return data
 	}
 
 	/**
-		* @param {String} [userName] - user name of the user to write data file to, if empty then it will try to use `this.user`
+		* writes the data file to the user specified by `this.user`
 	*/
-	writeFile(userName) {
-		
+	writeFile() {
+		const json = JSON.stringify(this.toObject())
+		setDataFile(this.user, json)
 	}
 
 

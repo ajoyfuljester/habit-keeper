@@ -2,7 +2,7 @@ import { user, verifyToken, verifyPermission, verifyAdminPermission } from "./da
 import { getCookies } from "jsr:@std/http/cookie"
 import { encrypt, decrypt, nameToIV, hashToKey } from "./encryption.js"
 import { assert } from "jsr:@std/assert/assert";
-import { validateData, validateDataResponse } from "./validation.js";
+import { dataTemplate, validateData, validateDataResponse } from "./validation.js";
 
 
 /**
@@ -10,7 +10,6 @@ import { validateData, validateDataResponse } from "./validation.js";
 	* @returns {Promise<String>} decrypted contents of the file or "null" if file does not exist
 */
 export async function getDataFile(name) {
-	console.log(name)
 	const hash = user(name).password
 	const iv = nameToIV(name);
 	const key = await hashToKey(hash);

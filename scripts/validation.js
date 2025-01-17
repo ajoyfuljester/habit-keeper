@@ -1,6 +1,5 @@
 export const dataTemplate = {
 	boards: [],
-	lists: [],
 }
 
 
@@ -14,7 +13,7 @@ export const dataTemplate = {
 	*
 	* @see {@link dataTemplate}
 */
-export function validateData(dataString) {
+export function validateData(dataString, isJSON = true) {
 	try {
 		JSON.parse(dataString)
 	} catch (error) {

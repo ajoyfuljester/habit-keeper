@@ -1,13 +1,13 @@
 import { extractName, getData } from './utils.js'
 
-function main() {
-	const data = getData()
+async function main() {
+	const data = await getData()
 	if (!data) {
 		return 1
 	}
 
 	// TODO: HERE 3
-	const boardManager = createBoardManager()
+	const boardManager = createBoardManager(data.boards)
 	const editor = document.querySelector('#editor')
 	editor.appendChild(boardManager)
 }
@@ -18,6 +18,7 @@ function main() {
 	* @returns {HTMLDivElement} element with board manager stuff
 */
 function createBoardManager(boardsObj) {
+	console.log(boardsObj)
 	const elManager = document.createElement('div')
 	elManager.classList.add('board-manager')
 	
@@ -151,6 +152,6 @@ async function handleCreate(elBoardName) {
 	location.reload()
 }
 
-const exitCode = main()
+const exitCode = await main()
 
 console.log("exitCode:", exitCode)

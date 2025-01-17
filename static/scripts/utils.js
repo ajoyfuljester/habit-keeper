@@ -27,6 +27,9 @@ export function extractName() {
 }
 
 
+/**
+	* @returns {Promise<false | Object>} data or false
+*/
 export async function getData() {
 	const name = extractName()
 
@@ -46,5 +49,6 @@ export async function getData() {
 		return false
 	}
 	const result = await res.json();
-	console.log("data:", result)
+
+	return result
 }

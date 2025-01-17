@@ -9,7 +9,6 @@ import { handleAdmin, handleAdminStats } from "./scripts/admin.js";
 
 await db.addUser('test', '0', 0)
 
-console.log(db.users())
 
 
 
@@ -89,4 +88,3 @@ function defaultHandler(_req) {
 Deno.serve({
 	port: 80,
 }, route(routes, defaultHandler));
-console.log(await db.login('test', '0'));
