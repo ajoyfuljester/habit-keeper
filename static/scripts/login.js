@@ -58,15 +58,33 @@ async function handleLogin() {
 */
 async function handleAlreadyLoggedIn() {
 	const nameRes = await fetch('/api/who')
-	const name = await nameRes.json()
+	const json = await nameRes.json()
 
-	if (!name) {
+	if (!json) {
 		document.querySelector('#result').innerText = 'Not logged in';
 		return false
 	}
 
-	redirect(`/u/${name}/habits`)
+	redirect(`/u/${json.name}/habits`)
+}
+
+async function handleDefaultLogin() {
+	const res = await fetch('/api/login/default')
+	if (res.status !== 200) {
+		document.querySelector('#result').innerText = 'Default login failed';
+	}
+
+	const whoRes = await fetch('/api/who')
+	const json = await whoRes.json()
+
+
+	if (!json) {
+		document.querySelector('#result').innerText = 'Failed to find name';
+	}
+
+	redirect(`/u/${json.name}/habits`)
 }
 
 document.querySelector('input#login').addEventListener('click', handleLogin)
 document.querySelector('input#alreadyLoggedIn').addEventListener('click', handleAlreadyLoggedIn)
+document.querySelector('input#defaultLogin').addEventListener('click', handleDefaultLogin)

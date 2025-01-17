@@ -179,7 +179,10 @@ class Data {
 		* writes the data file to the user specified by `this.user`
 	*/
 	writeFile() {
-		const json = JSON.stringify(this.toObject())
+		const obj = this.toObject()
+		delete obj.user
+
+		const json = JSON.stringify(obj)
 		setDataFile(this.user, json)
 	}
 

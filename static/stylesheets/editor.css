@@ -1,0 +1,16 @@
+.grid-boards {
+	display: grid;
+	grid-template-columns: repeat(3, auto);
+}
+
+.grid-boards > * {
+	border-radius: 0;
+}
+
+input.cell {
+	border: none;
+}
+
+button.cell {
+	background-color: transparent;
+}

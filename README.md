@@ -5,11 +5,9 @@ first time using deno
 i wish you a good life and succesful new habits or something
 
 # TODO
-- fix the thing when if you restart the server and user is in editor and refreshes, the server crashes
 - replace all console.warn with just assert()
 - add clean up for expired tokens
 - add admin control panel
-- add option to not require logging in, choose default account (i really should do this)
 - add the option to register a new user on the client
 - add well basically the whole client
 - add well almost the whole server (handling '.../action' requests)

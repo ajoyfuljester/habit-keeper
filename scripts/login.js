@@ -1,4 +1,5 @@
 import * as db from "./database.js";
+import { CONFIG } from "../main.js"
 
 
 /**
@@ -25,3 +26,21 @@ export async function handleLogin(req) {
 	}});
 }
 
+
+export async function handleDefaultLogin() {
+	const credentials = CONFIG.defaultAccount
+	if (!credentials) {
+		return new Response("default account is not set", {status: 503})
+	}
+
+	const loginResult = await db.login(credentials.name, credentials.password)
+	if (loginResult !== 0) {
+		return new Response(`default account login failed, code: ${loginResult}`)
+	}
+
+	const token = db.createToken(credentials.name);
+
+	return new Response("success", { status: 200, headers: {
+		'Set-Cookie': `token=${token.token}; Max-Age=${token.maxAge}; SameSite=Strict; Secure; Path=/; HttpOnly`,
+	}});
+}

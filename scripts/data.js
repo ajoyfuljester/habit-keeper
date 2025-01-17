@@ -10,7 +10,14 @@ import { dataTemplate, validateData, validateDataResponse } from "./validation.j
 	* @returns {Promise<String>} decrypted contents of the file or "null" if file does not exist
 */
 export async function getDataFile(name) {
-	const hash = user(name).password
+	if (typeof name !== "string") {
+		return "null"
+	}
+	const u = user(name)
+	if (!u) {
+		return "null"
+	}
+	const hash = u.password
 	const iv = nameToIV(name);
 	const key = await hashToKey(hash);
 
@@ -75,7 +82,6 @@ export async function handleDataGet(req, _info, params) {
 	}
 
 	const name = res[1]
-
 	const data = await getDataFile(name)
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
@@ -185,9 +191,8 @@ export function tokenResponse(req, {params, permissions, adminPermissions}) { //
 		return [null, tokenOwner]
 	}
 
-	assert(!!permissions, 'params provided, but no permissions')
 	const name = params.pathname.groups.name
-	if (tokenOwner !== name && verifyPermission(name, tokenOwner, permissions)) {
+	if (tokenOwner !== name && !verifyPermission(name, tokenOwner, permissions)) {
 		return [new Response(`not found: permission for ${tokenOwner}`, {status: 403}), null]
 	}
 

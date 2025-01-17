@@ -31,46 +31,44 @@ function createBoardManager(boardsObj) {
 
 	for (let i in boardsObj) {
 		const board = boardsObj[i]
-		const elBoard = document.createElement('div')
 		const elRename = document.createElement('input')
 		elRename.value = board.name
 		elRename.placeholder = board.name
 		elRename.classList.add('cell')
-		elRename.dataset.rowID = i
-		elBoard.appendChild(elRename)
+		elRename.dataset.row = i
+		elBoards.appendChild(elRename)
 
-		const elRenameConfirm = document.createElement('button')
+		const elRenameConfirm = document.createElement('input')
+		elRenameConfirm.type = "button"
 		elRenameConfirm.classList.add('cell')
-		elRenameConfirm.innerText = "Rename"
+		elRenameConfirm.value = "Rename"
 		elRenameConfirm.title = "Change the name of the board"
 		elRenameConfirm.dataset.rowID = i
 		elRenameConfirm.addEventListener('click', handleRename)
-		elBoard.appendChild(elRenameConfirm)
+		elBoards.appendChild(elRenameConfirm)
 
-		const elDelete = document.createElement('button')
+		const elDelete = document.createElement('input')
+		elDelete.type = "button"
 		elDelete.classList.add('cell')
-		elDelete.innerText = "Delete"
+		elDelete.value = "Delete"
 		elDelete.title = "Remove the board"
-		elBoard.appendChild(elDelete)
-
-		elBoards.appendChild(elBoard)
+		elBoards.appendChild(elDelete)
 	}
 
-	elManager.appendChild(elBoards)
-
-	// TODO: row - create board
-	const elCreateRow = document.createElement('div')
 	const elCreate = document.createElement('input')
+	elCreate.classList.add('cell')
 	elCreate.placeholder = "Board name"
-	elCreateRow.appendChild(elCreate)
+	elBoards.appendChild(elCreate)
 
-	const elCreateConfirm = document.createElement('button')
-	elCreateConfirm.innerText = "Create"
+	const elCreateConfirm = document.createElement('input')
+	elCreateConfirm.classList.add('cell')
+	elCreateConfirm.type = "button"
+	elCreateConfirm.value = "Create"
 	elCreateConfirm.title = "Add a new board"
 	elCreateConfirm.addEventListener('click', () => handleCreate(elCreate))
-	elCreateRow.appendChild(elCreateConfirm)
+	elBoards.appendChild(elCreateConfirm)
 
-	elManager.appendChild(elCreateRow)
+	elManager.appendChild(elBoards)
 
 	return elManager
 }
