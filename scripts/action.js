@@ -26,14 +26,16 @@ export async function handleDataAction(req, _info, params) {
 
 	if (body.action === "create") {
 		if (body.type === "board") { // the second `what` shall be `toWhat`
-			const exitData = await Action.boards.create(name, body.what)
+			const exitData = await Action.boards.create(name, body)
 			console.log("exitData (action)", exitData)
 			if (exitData[0] === 0) {
 				res = new Response("success", {status: 201})
 			} else {
 				res = new Response(`action failed, exitData: ${exitData}`, {status: 400})
 			}
-		}
+		} else if (body.type === "habit") {
+				const exitData = Action.habits.create(name, body)
+			}
 	} else {
 		res = new Response("not found: schema for this action", {status: 400})
 	}
@@ -48,6 +50,8 @@ export async function handleDataAction(req, _info, params) {
 	* @typedef {Object} Action object with types of objects, which have functions with actions that user can perform using requests
 	* @property {Object} Action.boards object with functions with actions that user can perform using requests
 	* @property {actionBoardsCreate} Action.boards.create creates a board with data (see {@link actionBoardsCreate})
+	* @property {Object} Action.habits object with functions with actions that user can perform using requests
+	* @property {actionHabitsCreate} Action.habits.create creates a habit with data (see {@link actionHabitsCreate})
 */
 
 
@@ -57,38 +61,74 @@ export async function handleDataAction(req, _info, params) {
 */
 const Action = {
 	boards: {},
+	habits: {},
 }
 
 
 /**
-	* @callback actionBoardsCreate creates a board with data `rawBoard` in data file of `userName`
+	* @callback actionBoardsCreate creates a board with data `what` in data file of `userName`
 	* @param {String} userName - user name
-	* @param {String} rawBoard - raw json board
+	* @param {Object} requestBody - body of the request, which contains info about the action
+	* @param {String} what - board-like object
 	* @returns {Promise<Number>} exitCode - execution exit code
 */
 
-Action.boards.create = async (userName, rawBoard) => {
+Action.boards.create = async (userName, {what}) => {
 	const data = await Data.fromFile(userName)
-	/** @type {[code: Number, step: Numver]} WRITE EXPLAINATION FOR THIS SOMEWHERE TODO*/
+	/** @type {[code: Number, step: Number]} WRITE EXPLAINATION FOR THIS SOMEWHERE TODO*/
 	const exitData = [0, 0]
-	const board = new Board(rawBoard)
-	const validationCode = validateBoard(board)
-	if (validationCode !== 0) {
-		exitData[0] = validationCode
+	const board = new Board(what)
+	if (!board.valid) {
+		exitData[0] = board.validation
 		exitData[1] += 1
 		return exitData
 	}
 	const addingCode = data.addBoard(board)
 	// TODO: handle exit codes...
 
-	if (addingCode === 0) {
-		data.writeFile()
-	} else {
+	if (addingCode !== 0) {
 		exitData[0] = addingCode
 		exitData[1] += 1
 		return exitData
 	}
+
+	data.writeFile()
 	return exitData
+}
+
+/**
+	* @callback actionHabitsCreate creates a habit with data ``
+	* @param {String} userName - user name
+	* @param {Object} requestBody - body of the request with info about the action
+	* @param {String} requestBody.what - habit-like object
+	* @param {String} requestBody.where - name of the board that will be the parent of the habit
+*/
+Action.habits.create = async (userName, {what, where}) => {
+	const data = await Data.fromFile(userName)
+	const board = data.findBoard(where)
+	const exitStatus = [0, 0]
+	if (!board) {
+		exitStatus[0] = 1
+		exitStatus[1] += 1
+		return exitStatus
+	}
+
+	const habit = new Habit(what)
+	if (!habit.valid) {
+		exitStatus[0] = habit.validation
+		exitStatus[1] += 1
+		return exitStatus
+	}
+
+	const addingCode = board.addHabit(habit)
+	if (addingCode !== 0) {
+		exitStatus[0] = addingCode
+		exitStatus[1] += 1
+		return exitStatus
+	}
+
+	data.writeFile()
+	return exitStatus
 }
 
 
@@ -231,6 +271,33 @@ class Board {
 			habits: this.habits.map(h => h.toObject()),
 			lists: this.lists.map(l => l.toObject())
 		}
+	}
+
+	/**
+		* @param {String} name - name of the habit
+		* @returns {Board | undefined} `Habit` instance if found or `undefined` if habit was not found
+	*/
+	findHabit(name) {
+		return this.habits.find(b => b.name === name)
+	}
+
+	/**
+		* @param {Habit} habitObject - a `Habit` that will be added to this `Board` instance
+		* @returns {0 | 1} exitCode - execution exit status
+		* `0` - successfuly added the habit to this instance of `Board`
+		* `1` - parameter `habitObject` is not an instance of `Habit` class
+		* `2` - board with the name of the given `habitObject` already exists
+	*/
+	addHabit(habitObject) {
+		if (!(habitObject instanceof Habit)) {
+			return 1
+		}
+		if (this.findHabit(habitObject.name)) {
+			return 2
+		}
+
+		this.boards.push(habitObject)
+		return 0
 	}
 
 }
