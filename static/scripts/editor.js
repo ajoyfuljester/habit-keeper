@@ -14,11 +14,11 @@ async function main() {
 
 
 /**
-	* @param {import("./habits.js").boardObj} boardsObj - object with information about a board
+	* @param {import("./habits.js").boardObject} boardsObject - object with information about a board
 	* @returns {HTMLDivElement} element with board manager stuff
 */
-function createBoardManager(boardsObj) {
-	console.log(boardsObj)
+function createBoardManager(boardsObject) {
+	console.log(boardsObject)
 	const elManager = document.createElement('div')
 	elManager.classList.add('board-manager')
 	
@@ -29,8 +29,8 @@ function createBoardManager(boardsObj) {
 	const elBoards = document.createElement('div')
 	elBoards.classList.add('grid-boards')
 
-	for (let i in boardsObj) {
-		const board = boardsObj[i]
+	for (let i in boardsObject) {
+		const board = boardsObject[i]
 		const elRename = document.createElement('input')
 		elRename.value = board.name
 		elRename.placeholder = board.name
@@ -72,6 +72,75 @@ function createBoardManager(boardsObj) {
 
 	return elManager
 }
+
+// TODO HEREEEEEE!!!!!!!! 9
+function createBoardEditor(boardObject) {
+	const elEditor = document.createElement('div')
+	elEditor.classList.add('board-editor')
+	
+	const elHeader = document.createElement('h1')
+	elHeader.innerText = `Habit manager for board ${boardObject}`
+	elEditor.appendChild(elHeader)
+
+	const elBoards = document.createElement('div')
+	elBoards.classList.add('grid-boards')
+
+	for (let i in boardsObject) {
+		const board = boardsObject[i]
+		const elRename = document.createElement('input')
+		elRename.value = board.name
+		elRename.placeholder = board.name
+		elRename.classList.add('cell')
+		elRename.dataset.row = i
+		elBoards.appendChild(elRename)
+
+		const elRenameConfirm = document.createElement('input')
+		elRenameConfirm.type = "button"
+		elRenameConfirm.classList.add('cell')
+		elRenameConfirm.value = "Rename"
+		elRenameConfirm.title = "Change the name of the board"
+		elRenameConfirm.dataset.rowID = i
+		elRenameConfirm.addEventListener('click', handleRename)
+		elBoards.appendChild(elRenameConfirm)
+
+		const elDelete = document.createElement('input')
+		elDelete.type = "button"
+		elDelete.classList.add('cell')
+		elDelete.value = "Delete"
+		elDelete.title = "Remove the board"
+		elBoards.appendChild(elDelete)
+	}
+
+	const elCreate = document.createElement('input')
+	elCreate.classList.add('cell')
+	elCreate.placeholder = "Board name"
+	elBoards.appendChild(elCreate)
+
+	const elCreateConfirm = document.createElement('input')
+	elCreateConfirm.classList.add('cell')
+	elCreateConfirm.type = "button"
+	elCreateConfirm.value = "Create"
+	elCreateConfirm.title = "Add a new board"
+	elCreateConfirm.addEventListener('click', () => handleCreate(elCreate))
+	elBoards.appendChild(elCreateConfirm)
+
+	elEditor.appendChild(elBoards)
+
+	return elEditor
+		
+}
+
+
+/**
+	* @param {[String, String]} strings - text between the boardName
+	* @param {String} boardName - name of the board, highlight target
+	* @returns {String} combined text with `boardName` wrapped in <span>
+*/
+function highlight(strings, boardName) {
+	const wrapped = `<span class="highlight">${boardName}</span>`
+	return strings[0] + wrapped + strings[1]
+}
+
 
 
 /**
