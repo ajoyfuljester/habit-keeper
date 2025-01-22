@@ -43,8 +43,8 @@ function createBoardManager(boardsObject) {
 		elRenameConfirm.classList.add('cell')
 		elRenameConfirm.value = "Rename"
 		elRenameConfirm.title = "Change the name of the board"
-		elRenameConfirm.dataset.rowID = i
-		elRenameConfirm.addEventListener('click', handleRename)
+		elRenameConfirm.dataset.row = i
+		elRenameConfirm.addEventListener('click', handleRenameBoard)
 		elBoards.appendChild(elRenameConfirm)
 
 		const elDelete = document.createElement('input')
@@ -65,7 +65,7 @@ function createBoardManager(boardsObject) {
 	elCreateConfirm.type = "button"
 	elCreateConfirm.value = "Create"
 	elCreateConfirm.title = "Add a new board"
-	elCreateConfirm.addEventListener('click', () => handleCreate(elCreate))
+	elCreateConfirm.addEventListener('click', () => handleCreateBoard(elCreate))
 	elBoards.appendChild(elCreateConfirm)
 
 	elManager.appendChild(elBoards)
@@ -79,17 +79,17 @@ function createBoardEditor(boardObject) {
 	elEditor.classList.add('board-editor')
 	
 	const elHeader = document.createElement('h1')
-	elHeader.innerText = `Habit manager for board ${boardObject}`
+	elHeader.innerText = highlight`Habit manager for board ${boardObject}`
 	elEditor.appendChild(elHeader)
 
 	const elBoards = document.createElement('div')
-	elBoards.classList.add('grid-boards')
+	elBoards.classList.add('grid-habits')
 
-	for (let i in boardsObject) {
-		const board = boardsObject[i]
+	for (let i in boardObject) {
+		const habit = boardObject[i]
 		const elRename = document.createElement('input')
-		elRename.value = board.name
-		elRename.placeholder = board.name
+		elRename.value = habit.name
+		elRename.placeholder = habit.name
 		elRename.classList.add('cell')
 		elRename.dataset.row = i
 		elBoards.appendChild(elRename)
@@ -98,36 +98,35 @@ function createBoardEditor(boardObject) {
 		elRenameConfirm.type = "button"
 		elRenameConfirm.classList.add('cell')
 		elRenameConfirm.value = "Rename"
-		elRenameConfirm.title = "Change the name of the board"
-		elRenameConfirm.dataset.rowID = i
-		elRenameConfirm.addEventListener('click', handleRename)
+		elRenameConfirm.title = "Change the name of the habit"
+		elRenameConfirm.dataset.row = i
+		elRenameConfirm.addEventListener('click', handleRenameHabit)
 		elBoards.appendChild(elRenameConfirm)
 
 		const elDelete = document.createElement('input')
 		elDelete.type = "button"
 		elDelete.classList.add('cell')
 		elDelete.value = "Delete"
-		elDelete.title = "Remove the board"
+		elDelete.title = "Remove the habit"
 		elBoards.appendChild(elDelete)
 	}
 
 	const elCreate = document.createElement('input')
 	elCreate.classList.add('cell')
-	elCreate.placeholder = "Board name"
+	elCreate.placeholder = "Habit name"
 	elBoards.appendChild(elCreate)
 
 	const elCreateConfirm = document.createElement('input')
 	elCreateConfirm.classList.add('cell')
 	elCreateConfirm.type = "button"
 	elCreateConfirm.value = "Create"
-	elCreateConfirm.title = "Add a new board"
-	elCreateConfirm.addEventListener('click', () => handleCreate(elCreate))
+	elCreateConfirm.title = "Add a new habit to this board"
+	elCreateConfirm.addEventListener('click', () => handleCreateHabit(elCreate))
 	elBoards.appendChild(elCreateConfirm)
 
 	elEditor.appendChild(elBoards)
 
 	return elEditor
-		
 }
 
 
@@ -184,7 +183,7 @@ async function renameBoard(currentName, newName) {
 	return 0
 }
 
-async function handleRename(event) {
+async function handleRenameBoard(event) {
 	// TODO: HERE 4, handle click event, get rowID and rename
 	console.log(event.target)
 }
@@ -195,7 +194,7 @@ async function handleRename(event) {
 	* @param {HTMLInputElement} elBoardName - element with an `value` property, that will be the name of the new board
 	* @returns {Promise<Response>?} response if creation failed, else the page is reloaded (refreshed)
 */
-async function handleCreate(elBoardName) {
+async function handleCreateBoard(elBoardName) {
 	const boardName = elBoardName.value
 
 	const name = extractName()
