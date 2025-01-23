@@ -12,8 +12,9 @@ export const dataTemplate = {
 	* `[3, key]` - parsed `dataString` has an unknown key with the name `key`
 	*
 	* @see {@link dataTemplate}
+	* @todo THIS FUNCTION IS SO DEEP IT SHOULD ONLY BE CALLED FOR .../set, BECAUSE SERVER OPERATIONS "CANNOT" BE WRONG, BUT RIGHT NOW I'M TOO LAZY TO WRITE A MORE SHALLOW ONE
 */
-export function validateData(dataString, isJSON = true) {
+export function validateData(dataString) {
 	try {
 		JSON.parse(dataString)
 	} catch (error) {
@@ -34,7 +35,14 @@ export function validateData(dataString, isJSON = true) {
 		}
 	}
 
-	// TODO: check nested things
+	if (dataKeys.includes('boards')) {
+		for (const board in data.boards) {
+			const info = validateBoard(board)
+			if (info !== 0) {
+				return [4, JSON.stringify(board)]
+			}
+		}
+	}
 	
 	return [0, null]
 }
@@ -56,6 +64,8 @@ export function validateDataResponse([status, info]) {
 		return new Response(`validation failed: schema failed: type of request is not 'object'`, {status: 400})
 	} else if (status == 3) {
 		return new Response(`validation failed: schema failed: unsupported key '${info}'`, {status: 400})
+	} else if (status == 4) {
+		return new Response(`validation failed: schema failed: board validation failed at board: '${info}'`, {status: 400})
 	}
 	return new Response(`not found: reason for this error`, {status: 400})
 }
