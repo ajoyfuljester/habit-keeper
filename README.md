@@ -5,6 +5,7 @@ first time using deno
 i wish you a good life and succesful new habits or something
 
 # TODO
+- FOCUS ON MAKING IT USABLE and then improve
 - replace all console.warn with just assert()
 - add clean up for expired tokens
 - add admin control panel

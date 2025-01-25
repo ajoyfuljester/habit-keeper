@@ -16,6 +16,7 @@ async function main() {
 /**
 	* @param {import("./habits.js").boardObject} boardsObject - object with information about a board
 	* @returns {HTMLDivElement} element with board manager stuff
+	* @todo i think the param type is wrong
 */
 function createBoardManager(boardsObject) {
 	console.log(boardsObject)
