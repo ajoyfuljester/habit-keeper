@@ -6,15 +6,19 @@ async function main() {
 		return 1
 	}
 
-	// TODO: HERE 3
-	const boardManager = createBoardManager(data.boards)
 	const editor = document.querySelector('#editor')
+	const boardManager = createBoardManager(data.boards)
 	editor.appendChild(boardManager)
+
+	for (const board of data.boards) {
+		const boardEditor = createBoardEditor(board)
+		editor.appendChild(boardEditor)
+	}
 }
 
 
 /**
-	* @param {import("./habits.js").boardObject} boardsObject - object with information about a board
+	* @param {import("./habits.js").boardObject[]} boardsObject - object with information about a board
 	* @returns {HTMLDivElement} element with board manager stuff
 	* @todo i think the param type is wrong
 */
@@ -45,7 +49,7 @@ function createBoardManager(boardsObject) {
 		elRenameConfirm.value = "Rename"
 		elRenameConfirm.title = "Change the name of the board"
 		elRenameConfirm.dataset.row = i
-		elRenameConfirm.addEventListener('click', handleRenameBoard)
+		elRenameConfirm.addEventListener('click', () => handleRenameBoard(elRename))
 		elBoards.appendChild(elRenameConfirm)
 
 		const elDelete = document.createElement('input')
@@ -75,18 +79,21 @@ function createBoardManager(boardsObject) {
 }
 
 // TODO HEREEEEEE!!!!!!!! 9
+/**
+	* @param {import("./habits.js").boardObject} boardObject - object with information about a board
+*/
 function createBoardEditor(boardObject) {
 	const elEditor = document.createElement('div')
 	elEditor.classList.add('board-editor')
 	
 	const elHeader = document.createElement('h1')
-	elHeader.innerText = highlight`Habit manager for board ${boardObject}`
+	elHeader.innerHTML = highlight`Habit manager for board ${boardObject.name}`
 	elEditor.appendChild(elHeader)
 
 	const elBoards = document.createElement('div')
 	elBoards.classList.add('grid-habits')
 
-	for (let i in boardObject) {
+	for (let i in boardObject.habits) {
 		const habit = boardObject[i]
 		const elRename = document.createElement('input')
 		elRename.value = habit.name
@@ -101,7 +108,7 @@ function createBoardEditor(boardObject) {
 		elRenameConfirm.value = "Rename"
 		elRenameConfirm.title = "Change the name of the habit"
 		elRenameConfirm.dataset.row = i
-		elRenameConfirm.addEventListener('click', handleRenameHabit)
+		elRenameConfirm.addEventListener('click', () => handleRenameHabit(elRename))
 		elBoards.appendChild(elRenameConfirm)
 
 		const elDelete = document.createElement('input')
@@ -144,15 +151,19 @@ function highlight(strings, boardName) {
 
 
 /**
-	* @param {String} currentName - current name of the board
-	* @param {String} newName - new name of the board
+	* @param {HTMLInputElement} elBoardName element with a `placeholder` (current name) and `value` property, that will be the new name of the board
 	* @returns {Promise<Number>} exitCode
+	*
 	* @todo something is wrong here with the returning
 */
-async function renameBoard(currentName, newName) {
+async function handleRenameBoard(elBoardName) {
+	const currentName = elBoardName.placeholder
+	const newName = elBoardName.value
+
 	const name = extractName();
 	if (!name) {
 		console.error(location.pathname)
+		return 4
 	}
 
 	const req = new Request(`/api/data/${name}/action`, {
@@ -182,11 +193,6 @@ async function renameBoard(currentName, newName) {
 	}
 
 	return 0
-}
-
-async function handleRenameBoard(event) {
-	// TODO: HERE 4, handle click event, get rowID and rename
-	console.log(event.target)
 }
 
 

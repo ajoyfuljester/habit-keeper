@@ -159,7 +159,7 @@ export async function login(name, password) {
 export function createToken(name) {
 	const token = generateToken()
 	let expirationDate = now();
-	const maxAge = 3 * (60);
+	const maxAge = 60 * (60);
 	expirationDate += maxAge;
 	db.prepare('INSERT INTO token (userName, token, expirationDate) VALUES (?, ?, ?)').run(name, token, expirationDate);
 	return {token, expirationDate, maxAge}
@@ -192,7 +192,7 @@ export function verifyToken(token) {
 */
 export function verifyPermission(owner, guest, neededMode) {
 	const rows = db.prepare('SELECT accessMode FROM permission WHERE owner = ? AND guest = ?').all(owner, guest)
-	if (rows.length == 0) {
+	if (rows.length === 0) {
 		return false;
 	}
 	const accessMode = rows[0].accessMode
