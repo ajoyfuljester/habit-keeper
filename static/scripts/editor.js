@@ -1,4 +1,4 @@
-import { extractName, getData } from './utils.js'
+import { extractName, getData, highlight } from './utils.js'
 
 async function main() {
 	const data = await getData()
@@ -135,17 +135,6 @@ function createBoardEditor(boardObject) {
 	elEditor.appendChild(elBoards)
 
 	return elEditor
-}
-
-
-/**
-	* @param {[String, String]} strings - text between the boardName
-	* @param {String} boardName - name of the board, highlight target
-	* @returns {String} combined text with `boardName` wrapped in <span>
-*/
-function highlight(strings, boardName) {
-	const wrapped = `<span class="highlight">${boardName}</span>`
-	return strings[0] + wrapped + strings[1]
 }
 
 

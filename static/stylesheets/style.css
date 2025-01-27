@@ -64,3 +64,7 @@ input:is([type='button'], [type='submit']):hover {
 	cursor: pointer;
 	color: var(--clr-2);
 }
+
+.highlight {
+	color: var(--clr-2);
+}

@@ -24,6 +24,7 @@ export async function handleDataAction(req, _info, params) {
 	
 	const body = await req.json()
 
+	// TODO: i hate the way this is done, but i'm afraid that if i do it tge other way, returning errors will be hard
 	if (body.action === "create") {
 		if (body.type === "board") { // the second `what` shall be `toWhat`
 			const exitData = await Action.boards.create(name, body)

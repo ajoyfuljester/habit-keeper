@@ -48,3 +48,14 @@ export async function getData() {
 
 	return result
 }
+
+
+/**
+	* @param {[String, String]} strings - text between the boardName
+	* @param {String} boardName - name of the board, highlight target
+	* @returns {String} combined text with `boardName` wrapped in <span>
+*/
+export function highlight(strings, boardName) {
+	const wrapped = `<span class="highlight">${boardName}</span>`
+	return strings[0] + wrapped + strings[1]
+}
