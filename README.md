@@ -5,6 +5,7 @@ first time using deno
 i wish you a good life and succesful new habits or something
 
 # TODO
+- BOARDS SHOULD BE IMAGINARY AND UP TO REPRESENTATION INSTEAD OF THE THE THE THE THE THE THE STRUCTORE I DON'T KNOW WHAT I'M TALKING ABOUT, BUT IT SHOULD BE JUST HABITS AND MAYBE LISTS BUT NOT BOARDS NO NO NO NO NO NO
 - FOCUS ON MAKING IT USABLE and then improve
 - stop with the ROUNDED CORNERS
 - replace all console.warn with just assert()

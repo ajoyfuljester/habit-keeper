@@ -59,3 +59,28 @@ export function highlight(strings, boardName) {
 	const wrapped = `<span class="highlight">${boardName}</span>`
 	return strings[0] + wrapped + strings[1]
 }
+
+
+/**
+	* @param {String} startingDate date in the format `YYYY-MM-DD`
+	* @param {Date} date date object to convert to a relative offset
+	* @returns {Number} number of days since `startingDate` to `date`
+*/
+export function dateToOffset(startingDate, date) {
+	const startDate = new Date(startingDate)
+	const difference = date.getTime() - startDate.getTime()
+	const offset = Math.floor(difference / (1000 * 60 * 60 * 24))
+
+	return offset
+}
+
+/**
+	* @param {Date} date anchor date, base, idk
+	* @param {Number} [n=1] number of days to add to `date`, can be negative, 1 by default
+	* @returns {Date} new `Date` object pointing to a new date (the next day by default)
+*/
+export function addDays(date, n = 1) {
+	const miliseconds = date.getTime()
+	const newMiliseconds = miliseconds + (n * 1000 * 60 * 60 * 24)
+	return new Date(newMiliseconds)
+}

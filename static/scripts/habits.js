@@ -1,9 +1,10 @@
-import { extractName, getData } from './utils.js'
+import { extractName, getData, dateToOffset, addDays } from './utils.js'
 
 function loadHabits(data) {
 	const elData = document.querySelector("#data")
 	for (const board of data.boards) {
-		const elBoard = createBoard(board)
+		const today = new Date()
+		const elBoard = createBoard(board, {days: [addDays(today, -1), today, addDays(today, 1)]})
 
 		elData.appendChild(elBoard)
 	}
@@ -38,9 +39,13 @@ async function main() {
 	* @property {String} boardObject.name name of the board
 	* @property {habitObject[]} boardObject.habits array of habit objects
 	*
+	* @typedef {Object} boardOptionsObject object additional options
+	* @property {Date[]} [boardOptionsObject.days=[]] array of the days to be displayed
+	*
 	* @param {boardObject} boardObject 
 */
-function createBoard(boardObject) { // TODO: this
+function createBoard(boardObject, {days = []}) { // TODO: this
+	console.log({boardObject})
 	const elBoard = document.createElement('div');
 	elBoard.classList.add('board')
 	
@@ -53,7 +58,7 @@ function createBoard(boardObject) { // TODO: this
 	elBoard.appendChild(elHeader)
 
 	for (const habitInfo of boardObject.habits) {
-		const elHabit = createHabit(habitInfo)
+		const elHabit = createHabit(habitInfo, {days: days.map(d => dateToOffset(habitInfo.startingDate, d))})
 
 
 		elBoard.appendChild(elHabit)
@@ -65,15 +70,21 @@ function createBoard(boardObject) { // TODO: this
 
 
 /**
+	* @typedef {[Number, Number]} offsetObject two element array `[offset, value]`
+	*
 	* @typedef {Object} habitObject object with information about a habit
 	* @property {String} habitObject.name name of the habit
 	* @property {String} habitObject.startingDate starting date of the habit (ISO format: YYYY-MM-DD)
-	* @property {[Number, Number][]} habitObject.offsets array of two elemt arrays `[offset, value]`
+	* @property {offsetObject[]} habitObject.offsets array of two element arrays `[offset, value]`
+	*
+	* @typedef {Object} habitOptionsObject object additional options
+	* @property {Number[]} [habitOptionsObject.days=[]] array of the days to be displayed represented as offset - relative to `habitObject.startingDate`
 	*
 	* @param {habitObject} habitObject object with information about a habit
+	* @param {habitOptionsObject} habitOptionsObject object with additional options
 	* @returns {HTMLDivElement} habit element
 */
-function createHabit(habitObject) { // TODO: HERE!!!
+function createHabit(habitObject, {days = []}) { // TODO: HERE!!!
 	const elHabit = document.createElement('div');
 	elHabit.classList.add('habit')
 
@@ -85,10 +96,10 @@ function createHabit(habitObject) { // TODO: HERE!!!
 	const offsets = habitObject.offsets
 	offsets.sort()
 
-	for (let i = 0; i < offsets.at(-1); i++) { // TODO: handle more than one success in a day
+	for (let day of days) {
 		const elOffset = document.createElement('div');
 		elHabit.appendChild(elOffset)
-		if (!offsets.includes(i)) {
+		if (!hasOffset(habitObject.offsets, day)) {
 			continue;
 		}
 		elOffset.classList.add('offset')
@@ -140,6 +151,15 @@ function handleNoBoards() {
 	el.appendChild(elButton)
 
 	return el
+}
+
+/**
+	* @param {offsetObject[]} array array containing offsets (haystack)
+	* @param {Number} day day number (needle) I HATE NAMING THINGS
+	* @returns {Boolean} wherther the `array` has the `day`
+*/
+function hasOffset(array, day) {
+	return !!array.find(o => o[0] === day)
 }
 
 const exitCode = await main()
