@@ -67,37 +67,6 @@ const Action = {
 
 
 /**
-	* @callback actionBoardsCreate creates a board with data `what` in data file of `userName`
-	* @param {String} userName - user name
-	* @param {Object} requestBody - body of the request, which contains info about the action
-	* @param {String} what - board-like object
-	* @returns {Promise<Number>} exitCode - execution exit code
-*/
-
-Action.boards.create = async (userName, {what}) => {
-	const data = await Data.fromFile(userName)
-	/** @type {[code: Number, step: Number]} WRITE EXPLAINATION FOR THIS SOMEWHERE TODO*/
-	const exitData = [0, 0]
-	const board = new Board(what)
-	if (!board.valid) {
-		exitData[0] = board.validation
-		exitData[1] += 1
-		return exitData
-	}
-	const addingCode = data.addBoard(board)
-	// TODO: handle exit codes...
-
-	if (addingCode !== 0) {
-		exitData[0] = addingCode
-		exitData[1] += 1
-		return exitData
-	}
-
-	data.writeFile()
-	return exitData
-}
-
-/**
 	* @callback actionHabitsCreate creates a habit with data ``
 	* @param {String} userName - user name
 	* @param {Object} requestBody - body of the request with info about the action
@@ -229,80 +198,6 @@ class Data {
 
 
 }
-
-
-
-/**
-	* @typedef {Object} boardObject an object to be parsed into an instance of `Board`
-	* @property {String} boardObject.name name of the board
-	* @property {habitObject[]} [boardObject.habits=[]] array of habit-like objects
-	* @property {listObject[]} [boardObject.lists=[]] array of list-like objects
-	* @see {@link habitObject}
-	* @see {@link listObject}
-	*
-*/
-class Board {
-	/**
-		* @param {boardObject} boardObject - object to be parsed into `Board` - `{name, habits, lists}`
-		* @returns {Board} instance of `Board`, possibly invalid, see `Board.valid`
-	*/
-	constructor({name, habits = [], lists = []}) {
-		/** @type {Boolean} whether the instance valid */
-		this.valid = false
-
-		/** @type {Number} validation state (0 is valid) */
-		this.validation = validateBoard({name, habits, lists})
-		if (this.validation !== 0) {
-			return this
-		}
-		this.valid = true
-
-		/** @type {String} name of the board */
-		this.name = name
-		/** @type {Habit[]} array of `Habit` */
-		this.habits = habits.map(Habit)
-		/** @type {List[]} array of `List` */
-		this.lists = lists.map(List)
-	}
-
-	/** @returns {boardObject} */
-	toObject() {
-		return {
-			name: this.name,
-			habits: this.habits.map(h => h.toObject()),
-			lists: this.lists.map(l => l.toObject())
-		}
-	}
-
-	/**
-		* @param {String} name - name of the habit
-		* @returns {Board | undefined} `Habit` instance if found or `undefined` if habit was not found
-	*/
-	findHabit(name) {
-		return this.habits.find(b => b.name === name)
-	}
-
-	/**
-		* @param {Habit} habitObject - a `Habit` that will be added to this `Board` instance
-		* @returns {0 | 1} exitCode - execution exit status
-		* `0` - successfuly added the habit to this instance of `Board`
-		* `1` - parameter `habitObject` is not an instance of `Habit` class
-		* `2` - board with the name of the given `habitObject` already exists
-	*/
-	addHabit(habitObject) {
-		if (!(habitObject instanceof Habit)) {
-			return 1
-		}
-		if (this.findHabit(habitObject.name)) {
-			return 2
-		}
-
-		this.boards.push(habitObject)
-		return 0
-	}
-
-}
-
 
 
 
