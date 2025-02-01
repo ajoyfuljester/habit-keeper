@@ -1,5 +1,6 @@
 export const dataTemplate = {
-	boards: [],
+	habits: [],
+	lists: [],
 }
 
 

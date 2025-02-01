@@ -75,7 +75,7 @@ const Action = {
 */
 Action.habits.create = async (userName, {what, where}) => {
 	const data = await Data.fromFile(userName)
-	const board = data.findBoard(where)
+	const board = data.findHabit(where)
 	const exitStatus = [0, 0]
 	if (!board) {
 		exitStatus[0] = 1
@@ -105,17 +105,18 @@ Action.habits.create = async (userName, {what, where}) => {
 class Data {
 
 	/**
-		* @typedef {Object} dataObject - object to be parsed to `Data` - `{user, boards}`
+		* @typedef {Object} dataObject - object to be parsed to `Data` - `{user, habits}`
 		* @property {String} dataObject.user - user name of the owner of the data
-		* @property {boardObject[]} [dataObject.boards=[]] - array of board-like objects
+		* @property {habitObject[]} [dataObject.habits=[]] - array of habit-like objects
+		* @property {listObject[]} [dataObject.lists=[]] - array of list-like objects
 		*
-		* @param {dataObject} dataObject - object to be parsed into `Data` - `{user, boards}`
+		* @param {dataObject} dataObject - object to be parsed into `Data` - `{user, habits}`
 		* @returns {Data} instance of `Data`, may be invalid, see `Data.valid`
 	*/
-	constructor({user, boards = []}) {
+	constructor({user, habits = [], lists = []}) {
 		this.valid = false
 		// TODO: think about rewriting this validation
-		this.validation = validateData(JSON.stringify({user, boards}))
+		this.validation = validateData(JSON.stringify({user, habits}))
 		if (this.validation[0] !== 0) {
 			return this
 		}
@@ -123,54 +124,45 @@ class Data {
 
 		/** @type {String} user name of the owner of the data file */
 		this.user = user
-		/** @type {Board[]} array of `Board` */
-		this.boards = boards.map(b => Board(b))
+		/** @type {Habit[]} array of `Habit` */
+		this.habits = habits.map(h => Habit(h))
 	}
 
 	/** @returns {dataObject} data-like object */
-	toObject() {
+	toJSON() {
 		return {
 			user: this.user,
-			boards: this.boards.map(b => b.toObject()),
+			habits: this.habits.map(h => h.toJSON()),
 		}
 	}
 
 	/**
-		* @param {String} name - name of the board
-		* @returns {Board | undefined} `Board` instance if found or `undefined` if board was not found
+		* @param {String} name - name of the habit
+		* @returns {Board | undefined} `Board` instance if found or `undefined` if habit was not found
 	*/
-	findBoard(name) {
-		return this.boards.find(b => b.name === name)
+	findHabit(name) {
+		return this.habits.find(b => b.name === name)
 	}
 
 	/**
-		* @param {Board} boardObj - a `Board` that will be added to this `Data` instance
-		* @returns {0 | 1} exitCode - execution exit status
-		* `0` - successfuly added the board to this instance of `Data`
-		* `1` - parameter `boardObj` is not an instance of `Board` class
-		* `2` - board with the name of the given `boardObj` already exists
+		* @param {Habit} habitObj - a `Habit` that will be added to this `Data` instance
+		* @returns {0 | 1 | 2} exitCode - execution exit status
+		* `0` - successfuly added the habit to this instance of `Data`
+		* `1` - parameter `habitObj` is not an instance of `Board` class
+		* `2` - habit with the name of the given `habitObj` already exists
 	*/
-	addBoard(boardObj) {
-		if (!(boardObj instanceof Board)) {
+	addHabit(habitObj) {
+		if (!(habitObj instanceof Habit)) {
 			return 1
 		}
-		if (this.findBoard(boardObj.name)) {
+		if (this.findHabit(habitObj.name)) {
 			return 2
 		}
 
-		this.boards.push(boardObj)
+		this.habits.push(habitObj)
 		return 0
 	}
 
-	/**
-		* @param {String} json - string with board information, the same as {@link addBoard}
-		* @returns {0 | 1} exitCode - see {@link addBoard}
-	*/
-	jsonAddBoard(json) {
-		const obj = JSON.parse(json)
-		const board = new Board(obj)
-		return this.addBoard(board)
-	}
 
 	/**
 		* @param {String} userName - user name of the owner of the data file to be loaded and parsed into `Data` instance
@@ -189,7 +181,7 @@ class Data {
 		* writes the data file to the user specified by `this.user`
 	*/
 	writeFile() {
-		const obj = this.toObject()
+		const obj = this.toJSON()
 		delete obj.user
 
 		const json = JSON.stringify(obj)
@@ -252,7 +244,7 @@ class Habit {
 	}
 
 	/** @returns {habitObject} a simple object that is jsonifable */
-	toObject() {
+	toJSON() {
 		return {
 			name: this.name,
 			startingDate: this.startingDate,
