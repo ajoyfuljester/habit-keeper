@@ -1,12 +1,14 @@
 import { extractName, getData, dateToOffset, addDays } from './utils.js'
 
+/**
+	* @param {import('./utils.js').dataObject} data - data-like object I DON'T KNOW HOW TO WRITE DOCUMENTATION!!!!!!!!!!!!
+*/
 function loadHabits(data) {
 	const elData = document.querySelector("#data")
-	for (const board of data.boards) {
-		const today = new Date()
-		const elBoard = createBoard(board, {days: [addDays(today, -1), today, addDays(today, 1)]})
 
-		elData.appendChild(elBoard)
+	for (const habit of data.habits) {
+		const elHabit = createHabit(habit, {days: [addDays(today, -1), today, addDays(today, 1)]})
+		elData.appendChild(elHabit)
 	}
 
 	return elData
@@ -20,53 +22,11 @@ async function main() {
 
 	console.log(data)
 
-	if (!data.boards || data.boards.length == 0) {
-		const el = handleNoBoards()
-		document.querySelector('#boards').appendChild(el)
-		return 2
-	}
-
-
 	loadHabits(data)
 
 	return 0
 }
 
-
-
-/**
-	* @typedef {Object} boardObject object with information about a board
-	* @property {String} boardObject.name name of the board
-	* @property {habitObject[]} boardObject.habits array of habit objects
-	*
-	* @typedef {Object} boardOptionsObject object additional options
-	* @property {Date[]} [boardOptionsObject.days=[]] array of the days to be displayed
-	*
-	* @param {boardObject} boardObject 
-*/
-function createBoard(boardObject, {days = []}) { // TODO: this
-	console.log({boardObject})
-	const elBoard = document.createElement('div');
-	elBoard.classList.add('board')
-	
-	const elHeader = document.createElement('header')
-
-	const elH3 = document.createElement('h3')
-	elH3.innerText = boardObject.name
-	elHeader.appendChild(elH3)
-
-	elBoard.appendChild(elHeader)
-
-	for (const habitInfo of boardObject.habits) {
-		const elHabit = createHabit(habitInfo, {days: days.map(d => dateToOffset(habitInfo.startingDate, d))})
-
-
-		elBoard.appendChild(elHabit)
-	}
-
-
-	return elBoard
-}
 
 
 /**
@@ -105,6 +65,8 @@ function createHabit(habitObject, {days = []}) { // TODO: HERE!!!
 		elOffset.classList.add('offset')
 	}
 
+
+
 	return elHabit
 
 
@@ -135,23 +97,6 @@ function createStat(key, value) {
 
 }
 
-
-/**
-	* @returns {HTMLDivElement} html element with content to be displayed when no boards are found
-*/
-function handleNoBoards() {
-	const name = extractName()
-	const el = document.createElement('div');
-	const elSpan = document.createElement('span')
-	elSpan.innerText = `Seems there are no boards here `
-	el.appendChild(elSpan)
-	const elButton = document.createElement('a')
-	elButton.href = `/u/${name}/editor`
-	elButton.innerText = 'Click here to create one'
-	el.appendChild(elButton)
-
-	return el
-}
 
 /**
 	* @param {offsetObject[]} array array containing offsets (haystack)

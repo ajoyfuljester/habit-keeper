@@ -1,9 +1,9 @@
-.grid-boards {
+.grid-habits {
 	display: grid;
 	grid-template-columns: repeat(3, auto);
 }
 
-.grid-boards > * {
+.grid-habits > * {
 	border-radius: 0;
 }
 

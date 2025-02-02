@@ -28,7 +28,10 @@ export function extractName() {
 
 
 /**
-	* @returns {Promise<false | Object>} data or false
+	* @typedef {Object} dataObject - raw data object from the server
+	* @property {import("./habits").habitObject[]} habits - array of habit-like objects
+	*
+	* @returns {Promise<false | dataObject>} data or false
 */
 export async function getData() {
 	const name = extractName()
@@ -49,16 +52,6 @@ export async function getData() {
 	return result
 }
 
-
-/**
-	* @param {[String, String]} strings - text between the boardName
-	* @param {String} boardName - name of the board, highlight target
-	* @returns {String} combined text with `boardName` wrapped in <span>
-*/
-export function highlight(strings, boardName) {
-	const wrapped = `<span class="highlight">${boardName}</span>`
-	return strings[0] + wrapped + strings[1]
-}
 
 
 /**

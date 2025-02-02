@@ -11,6 +11,7 @@ export const dataTemplate = {
 	* `[1, message]` - `JSON.parse` failed because of `SyntaxError`, `message` is the message of the error
 	* `[2, null]` - parsed `dataString` is not of type `object`
 	* `[3, key]` - parsed `dataString` has an unknown key with the name `key`
+	* `[4, jsonHabit]` - parsed `dataString` has an invalid habit with data `jsonHabit`
 	*
 	* @see {@link dataTemplate}
 	* @todo THIS FUNCTION IS SO DEEP IT SHOULD ONLY BE CALLED FOR .../set, BECAUSE SERVER OPERATIONS "CANNOT" BE WRONG, BUT RIGHT NOW I'M TOO LAZY TO WRITE A MORE SHALLOW ONE
@@ -25,7 +26,7 @@ export function validateData(dataString) {
 		throw error
 	} // idk how to write this properly, i don't really want to use `let`
 	const data = JSON.parse(dataString)
-	if (typeof data != 'object') {
+	if (typeof data !== 'object') {
 		return [2, null]
 	}
 	const dataKeys = Object.keys(data)
@@ -36,11 +37,11 @@ export function validateData(dataString) {
 		}
 	}
 
-	if (dataKeys.includes('boards')) {
-		for (const board in data.boards) {
-			const info = validateBoard(board)
+	if (dataKeys.includes('habits')) {
+		for (const habit of data.habits) {
+			const info = validateHabit(habit)
 			if (info !== 0) {
-				return [4, JSON.stringify(board)]
+				return [4, JSON.stringify(habit)]
 			}
 		}
 	}
@@ -66,7 +67,7 @@ export function validateDataResponse([status, info]) {
 	} else if (status == 3) {
 		return new Response(`validation failed: schema failed: unsupported key '${info}'`, {status: 400})
 	} else if (status == 4) {
-		return new Response(`validation failed: schema failed: board validation failed at board: '${info}'`, {status: 400})
+		return new Response(`validation failed: schema failed: habit validation failed at habit: '${info}'`, {status: 400})
 	}
 	return new Response(`not found: reason for this error`, {status: 400})
 }
@@ -102,7 +103,7 @@ const nameRegEx = /\w{1,64}/g
 
 
 /**
-	* @param {String} name - a name, maybe a user maybe a board
+	* @param {String} name - a name, maybe a user maybe a habit
 	* @returns {Number} exitCode, `0` is success
 	*
 	* @see {@link validateString}
@@ -132,27 +133,6 @@ const ISODateRegEx = /\d{4}-\d{2}-\d{2}/g
 */
 export function validateISODate(date) {
 	return validateString(date, ISODateRegEx)
-}
-
-
-export function validateBoard({name, habits, lists}) {
-	if (validateName(name) !== 0) {
-		return 1
-	}
-
-	for (const habit of habits) {
-		if (validateHabit(habit) !== 0) {
-			return 2
-		}
-	}
-
-	for (const list of lists) {
-		if (validateList(list) !== 0) {
-			return 3
-		}
-	}
-
-	return 0
 }
 
 

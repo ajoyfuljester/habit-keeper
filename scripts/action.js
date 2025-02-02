@@ -1,6 +1,6 @@
 import { tokenResponse, getDataFile, setDataFile } from "./data.js";
 import { dateToISO } from "./utils.js";
-import { validateHabit, validateOffset, validateStringResponse, validateBoard, validateData } from "./validation.js";
+import { validateHabit, validateOffset, validateData } from "./validation.js";
 
 
 
@@ -26,17 +26,9 @@ export async function handleDataAction(req, _info, params) {
 
 	// TODO: i hate the way this is done, but i'm afraid that if i do it tge other way, returning errors will be hard
 	if (body.action === "create") {
-		if (body.type === "board") { // the second `what` shall be `toWhat`
-			const exitData = await Action.boards.create(name, body)
-			console.log("exitData (action)", exitData)
-			if (exitData[0] === 0) {
-				res = new Response("success", {status: 201})
-			} else {
-				res = new Response(`action failed, exitData: ${exitData}`, {status: 400})
-			}
-		} else if (body.type === "habit") {
-				const exitData = Action.habits.create(name, body)
-			}
+		if (body.type === "habit") {
+			const exitData = Action.habits.create(name, body)
+		}
 	} else {
 		res = new Response("not found: schema for this action", {status: 400})
 	}
@@ -49,8 +41,6 @@ export async function handleDataAction(req, _info, params) {
 
 /**
 	* @typedef {Object} Action object with types of objects, which have functions with actions that user can perform using requests
-	* @property {Object} Action.boards object with functions with actions that user can perform using requests
-	* @property {actionBoardsCreate} Action.boards.create creates a board with data (see {@link actionBoardsCreate})
 	* @property {Object} Action.habits object with functions with actions that user can perform using requests
 	* @property {actionHabitsCreate} Action.habits.create creates a habit with data (see {@link actionHabitsCreate})
 */
@@ -61,44 +51,7 @@ export async function handleDataAction(req, _info, params) {
 	* @see {@link Action}
 */
 const Action = {
-	boards: {},
 	habits: {},
-}
-
-
-/**
-	* @callback actionHabitsCreate creates a habit with data ``
-	* @param {String} userName - user name
-	* @param {Object} requestBody - body of the request with info about the action
-	* @param {String} requestBody.what - habit-like object
-	* @param {String} requestBody.where - name of the board that will be the parent of the habit
-*/
-Action.habits.create = async (userName, {what, where}) => {
-	const data = await Data.fromFile(userName)
-	const board = data.findHabit(where)
-	const exitStatus = [0, 0]
-	if (!board) {
-		exitStatus[0] = 1
-		exitStatus[1] += 1
-		return exitStatus
-	}
-
-	const habit = new Habit(what)
-	if (!habit.valid) {
-		exitStatus[0] = habit.validation
-		exitStatus[1] += 1
-		return exitStatus
-	}
-
-	const addingCode = board.addHabit(habit)
-	if (addingCode !== 0) {
-		exitStatus[0] = addingCode
-		exitStatus[1] += 1
-		return exitStatus
-	}
-
-	data.writeFile()
-	return exitStatus
 }
 
 
@@ -132,13 +85,13 @@ class Data {
 	toJSON() {
 		return {
 			user: this.user,
-			habits: this.habits.map(h => h.toJSON()),
+			habits: this.habits,
 		}
 	}
 
 	/**
 		* @param {String} name - name of the habit
-		* @returns {Board | undefined} `Board` instance if found or `undefined` if habit was not found
+		* @returns {Habit | undefined} `Habit` instance if found or `undefined` if habit was not found
 	*/
 	findHabit(name) {
 		return this.habits.find(b => b.name === name)
@@ -148,7 +101,7 @@ class Data {
 		* @param {Habit} habitObj - a `Habit` that will be added to this `Data` instance
 		* @returns {0 | 1 | 2} exitCode - execution exit status
 		* `0` - successfuly added the habit to this instance of `Data`
-		* `1` - parameter `habitObj` is not an instance of `Board` class
+		* `1` - parameter `habitObj` is not an instance of `Habit` class
 		* `2` - habit with the name of the given `habitObj` already exists
 	*/
 	addHabit(habitObj) {
@@ -205,10 +158,6 @@ class List {
 }
 
 
-
-
-
-
 /**
 	* @typedef {Object} habitObject an object to be parsed into an instance of `Habit`
 	* @property {String} habitObject.name name of the habit
@@ -248,7 +197,7 @@ class Habit {
 		return {
 			name: this.name,
 			startingDate: this.startingDate,
-			offsets: this.offsets.map(o => o.toObject())
+			offsets: this.offsets,
 		}
 	}
 	
@@ -286,7 +235,7 @@ class Offset {
 	/**
 		* @returns {[offset: Number, value: Number]} a simple object that is jsonifable
 	*/
-	toObject() {
+	toJSON() {
 		return [this.offset, this.value]
 	}
 
