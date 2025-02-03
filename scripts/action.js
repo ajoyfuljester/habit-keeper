@@ -6,6 +6,12 @@ import { validateHabit, validateOffset, validateData } from "./validation.js";
 
 
 /**
+	* @typedef {Object} actionBody - `body` of a `Request` object with information about the action
+	* @property {"create"} actionBody.action - action to be done
+	* @property {"habit" | "list"} actionBody.type - type of the object to be modified
+	* @property {habitObject} actionBody.what - thing that will be actioned
+	*
+	*
 	* @param {Request} req - request from the client
 	* @param {*} _info - i have no idea what this is
 	* @param {*} params - i don't know what this is, but it has `pathname.groups` stuff
@@ -13,29 +19,33 @@ import { validateHabit, validateOffset, validateData } from "./validation.js";
 	* @returns {Promise<Response>} response back to the client
 */
 export async function handleDataAction(req, _info, params) {
-	let res = tokenResponse(req, {params, permissions: 2})
+	const res = tokenResponse(req, {params, permissions: 2})
 	if (res[0]) {
 		return res[0]
 	}
 
 	const name = res[1]
-
-
 	
+	if (await getDataFile(name) === "null") {
+		return new Response("not found: data file, please initialize", {status: 400})
+	}
+	
+
+	/** @type {actionBody} */
 	const body = await req.json()
 
 	// TODO: i hate the way this is done, but i'm afraid that if i do it tge other way, returning errors will be hard
 	if (body.action === "create") {
 		if (body.type === "habit") {
-			const exitData = Action.habits.create(name, body)
+			const exitData = await Action.habits.create(name, body.what)
+			if (exitData[0] === 0) {
+				return new Response("success", {status: 201})
+			}
+			return new Response(`failure: could not create a habit, exited with data: ${exitData}`, {status: 400})
 		}
-	} else {
-		res = new Response("not found: schema for this action", {status: 400})
 	}
-
 	console.log(res, body)
-
-	return res
+	return new Response("not found: schema for this action", {status: 400})
 }
 
 
@@ -54,6 +64,38 @@ const Action = {
 	habits: {},
 }
 
+/**
+	* @callback actionHabitsCreate - adds a habit to a datafile
+	* @param {String} userName - owner of the file 
+	* @param {habitObject} habitObject - habit-like object with information about the habit
+	* @returns {Promise<[step: Number, code: Number]>} exitData
+*/
+Action.habits.create = async (userName, habitObject) => {
+	const data = await Data.fromFile(userName)
+	// should data file be validated???? it's only accessed by server so it shouldn't be invalid
+
+	const habit = new Habit(habitObject)
+	if (!habit.valid) {
+		return [1, habit.validation]
+	}
+
+	const addingCode = data.addHabit(habit)
+
+	if (addingCode !== 0) {
+		return [2, addingCode]
+	}
+
+	data.writeFile()
+	return [0, 0]
+}
+
+
+
+
+
+
+
+
 
 class Data {
 
@@ -69,7 +111,7 @@ class Data {
 	constructor({user, habits = [], lists = []}) {
 		this.valid = false
 		// TODO: think about rewriting this validation
-		this.validation = validateData(JSON.stringify({user, habits}))
+		this.validation = validateData(JSON.stringify(this))
 		if (this.validation[0] !== 0) {
 			return this
 		}
@@ -79,6 +121,8 @@ class Data {
 		this.user = user
 		/** @type {Habit[]} array of `Habit` */
 		this.habits = habits.map(h => Habit(h))
+		/** @type {List[]} array of `List` */
+		this.lists = lists.map(l => List(l))
 	}
 
 	/** @returns {dataObject} data-like object */

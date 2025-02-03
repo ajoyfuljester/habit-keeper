@@ -1,6 +1,9 @@
 import { extractName, getData } from './utils.js'
 
 async function main() {
+	document.querySelector('#init').addEventListener('click', handleInit)
+
+
 	const data = await getData()
 	if (!data) {
 		return 1
@@ -10,6 +13,12 @@ async function main() {
 	const editor = document.querySelector('#editor')
 	const habitManager = createHabitManager(data.habits)
 	editor.appendChild(habitManager)
+
+
+
+
+
+	return 0
 }
 
 
@@ -58,7 +67,7 @@ function createHabitManager(habitsObject) {
 	const elCreate = document.createElement('input')
 	elCreate.classList.add('cell')
 	elCreate.placeholder = "Habit name"
-	elCreateConfirm.title = "Name of the habit to be created"
+	elCreate.title = "Name of the habit to be created"
 	elHabits.appendChild(elCreate)
 
 	const elCreateConfirm = document.createElement('input')
@@ -101,6 +110,16 @@ async function handleCreateHabit(elHabitName) {
 	}
 
 	location.reload()
+}
+
+/**
+	* @returns {Boolean} whether `init` request was successful
+*/
+async function handleInit() {
+	const name = extractName()
+	const res = await fetch(`/api/data/${name}/init`)
+	console.log("init", res.ok)
+	return res.ok
 }
 
 const exitCode = await main()

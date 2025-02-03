@@ -115,16 +115,17 @@ export function handleDataSet(req, _info, params) { // TODO: write this
 	* @param {*} params - i don't know what this is, but it has `pathname.groups` stuff
 	* @returns {Response} response for the client
 */
-export function handleDataInit(req, force, params) {
+export async function handleDataInit(req, force, params) {
 	const res = tokenResponse(req, {params, permissions: 2})
 	if (res[0]) {
 		return res[0]
 	}
 	const name = res[1]
 
-	if (!force && getDataFile(name) !== "null") { // i am getting dizzy with these conditions today
+	if (!force && await getDataFile(name) !== "null") { // i am getting dizzy with these conditions today
 		return new Response(`not found: force to overwrite existing file, use /api/.../init/force`, {status: 403})
 	}
+	console.log('init', name)
 	setDataFile(name, JSON.stringify(dataTemplate))
 	return new Response('success', {status: 201})
 }
@@ -173,7 +174,6 @@ export function tokenResponse(req, {params, permissions, adminPermissions}) { //
 		console.warn('permissions provided, but no params')
 		console.trace()
 	}
-
 	const token = extractToken(req);
 	if (!token) {
 		return [new Response('not found: token', {status: 401}), null]
@@ -181,7 +181,7 @@ export function tokenResponse(req, {params, permissions, adminPermissions}) { //
 
 	const tokenOwner = verifyToken(token);
 	if (!tokenOwner) {
-		return new Response("not found: user associated with token", {status: 403})
+		return [new Response("not found: user associated with token", {status: 403}), null]
 	}
 	if (adminPermissions !== undefined && !verifyAdminPermission(tokenOwner, adminPermissions)) {
 		return [new Response(`not found: admin permission for ${tokenOwner}`, {status: 403}), null]
@@ -195,6 +195,7 @@ export function tokenResponse(req, {params, permissions, adminPermissions}) { //
 	if (tokenOwner !== name && !verifyPermission(name, tokenOwner, permissions)) {
 		return [new Response(`not found: permission for ${tokenOwner}`, {status: 403}), null]
 	}
+
 
 	return [null, name]
 }
