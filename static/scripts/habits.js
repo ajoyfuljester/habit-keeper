@@ -53,10 +53,12 @@ function createHabit(habitObject, {days = []}) { // TODO: HERE!!!
 
 	elHabit.appendChild(elName)
 
+
 	const offsets = habitObject.offsets
 	offsets.sort()
 
-	for (let day of days) {
+	const relativeDays = days.map(d => dateToOffset(habitObject.startingDate, d))
+	for (let day of relativeDays) {
 		const elOffset = document.createElement('div');
 		elHabit.appendChild(elOffset)
 		if (!hasOffset(habitObject.offsets, day)) {
