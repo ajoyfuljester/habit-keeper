@@ -1,5 +1,6 @@
 :root {
 	font-family: 'Helvetica';
+	--golden-ratio: calc((1 + sqrt(5)) / 2);
 }
 
 body {
@@ -7,6 +8,7 @@ body {
 	min-height: 100vh;
 
 	--clr-1: #eee;
+	--clr-1-accent: #bbb;
 	--clr-2: #38e;
 	--clr-3: #7c4;
 

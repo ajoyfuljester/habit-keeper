@@ -1,0 +1,14 @@
+.grid-habits {
+	display: grid;
+	grid-template-columns: repeat(calc(2 + var(--number-of-days)), auto);
+}
+
+.grid-habits > div {
+	aspect-ratio: var(--golden-ratio);
+	background-color: var(--clr-1-accent);
+}
+
+.grid-habits > h3 {
+	text-align: center;
+	align-content: center;
+}

@@ -3,10 +3,6 @@
 	grid-template-columns: repeat(3, auto);
 }
 
-.grid-habits > * {
-	border-radius: 0;
-}
-
 input.cell {
 	border: none;
 }

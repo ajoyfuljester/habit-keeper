@@ -4,10 +4,17 @@ import { extractName, getData, dateToOffset, addDays } from './utils.js'
 	* @param {import('./utils.js').dataObject} data - data-like object I DON'T KNOW HOW TO WRITE DOCUMENTATION!!!!!!!!!!!!
 */
 function loadHabits(data) {
+	/** @type {HTMLDivElement} */
 	const elData = document.querySelector("#data")
 
+	const today = new Date();
+	const days = [addDays(today, -1), today, addDays(today, 1)]
+
+	elData.style.setProperty('--number-of-days', days.length)
+
+
 	for (const habit of data.habits) {
-		const elHabit = createHabit(habit, {days: [addDays(today, -1), today, addDays(today, 1)]})
+		const elHabit = createHabit(habit, {days})
 		elData.appendChild(elHabit)
 	}
 
@@ -46,11 +53,10 @@ async function main() {
 */
 function createHabit(habitObject, {days = []}) { // TODO: HERE!!!
 	const elHabit = document.createElement('div');
-	elHabit.classList.add('habit')
+	elHabit.classList.add('grid-habits')
 
-	const elName = document.createElement('div');
-	elName.innerText(habitObject.name)
-
+	const elName = document.createElement('h3');
+	elName.innerText = habitObject.name
 	elHabit.appendChild(elName)
 
 
