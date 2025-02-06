@@ -37,12 +37,12 @@ async function main() {
 
 
 /**
-	* @typedef {[Number, Number]} offsetObject two element array `[offset, value]`
+	* @typedef {[Number, Number]} offsetArray two element array `[offset, value]`
 	*
 	* @typedef {Object} habitObject object with information about a habit
 	* @property {String} habitObject.name name of the habit
 	* @property {String} habitObject.startingDate starting date of the habit (ISO format: YYYY-MM-DD)
-	* @property {offsetObject[]} habitObject.offsets array of two element arrays `[offset, value]`
+	* @property {offsetArray[]} habitObject.offsets array of two element arrays `[offset, value]`
 	*
 	* @typedef {Object} habitOptionsObject object additional options
 	* @property {Number[]} [habitOptionsObject.days=[]] array of the days to be displayed represented as offset - relative to `habitObject.startingDate`
@@ -51,7 +51,7 @@ async function main() {
 	* @param {habitOptionsObject} habitOptionsObject object with additional options
 	* @returns {HTMLDivElement} habit element
 */
-function createHabit(habitObject, {days = []}) { // TODO: HERE!!!
+function createHabit(habitObject, {days = []}) {
 	const elHabit = document.createElement('div');
 	elHabit.classList.add('grid-habits')
 
@@ -66,6 +66,7 @@ function createHabit(habitObject, {days = []}) { // TODO: HERE!!!
 	const relativeDays = days.map(d => dateToOffset(habitObject.startingDate, d))
 	for (let day of relativeDays) {
 		const elOffset = document.createElement('div');
+		elOffset.addEventListener('click', () => createOffset(habitObject.name, day))
 		elHabit.appendChild(elOffset)
 		if (!hasOffset(habitObject.offsets, day)) {
 			continue;
@@ -107,12 +108,41 @@ function createStat(key, value) {
 
 
 /**
-	* @param {offsetObject[]} array array containing offsets (haystack)
+	* @param {offsetArray[]} array array containing offsets (haystack)
 	* @param {Number} day day number (needle) I HATE NAMING THINGS
 	* @returns {Boolean} wherther the `array` has the `day`
 */
 function hasOffset(array, day) {
 	return !!array.find(o => o[0] === day)
+}
+
+
+/**
+	* @param {String} habitName name of the habit that the offset is in
+	* @param {Number} day offset offset/day thingy, days since `startingDate`
+	* @returns {Number} exitCode
+*/
+async function createOffset(habitName, day) {
+	const name = extractName()
+	const req = new Request(`/api/data/${name}/action`, {
+		method: "POST",
+		body: JSON.stringify({
+			action: "create",
+			type: "offset",
+			where: habitName,
+			what: [day, 1],
+		}), // i am so sorry for how i name these things
+	})
+
+	const res = await fetch(req)
+	
+	if (res.status !== 201) {
+		console.error("create offset failed", res)
+		return 1
+	}
+
+	return 0
+
 }
 
 const exitCode = await main()

@@ -169,7 +169,7 @@ export function validateOffset(offset) {
 		return 5
 	}
 
-	if (!offset[0].isInteger()) {
+	if (!Number.isInteger(offset[0])) {
 		return 6
 	}
 

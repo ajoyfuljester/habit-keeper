@@ -9,7 +9,8 @@ import { validateHabit, validateOffset, validateData } from "./validation.js";
 	* @typedef {Object} actionBody - `body` of a `Request` object with information about the action
 	* @property {"create"} actionBody.action - action to be done
 	* @property {"habit" | "list"} actionBody.type - type of the object to be modified
-	* @property {habitObject} actionBody.what - thing that will be actioned
+	* @property {habitObject | offsetArray} actionBody.what - thing that will be actioned
+	* @property {habitObject?} actionBody.where - where thing that will be actioned
 	*
 	*
 	* @param {Request} req - request from the client
@@ -35,14 +36,23 @@ export async function handleDataAction(req, _info, params) {
 	const body = await req.json()
 
 	// TODO: i hate the way this is done, but i'm afraid that if i do it tge other way, returning errors will be hard
-	if (body.action === "create") {
-		if (body.type === "habit") {
-			const exitData = await Action.habits.create(name, body.what)
+	if (body.type === "habit") {
+		if (body.action === "create") {
+			const exitData = await Action.habit.create(name, body.what)
 			if (exitData[0] === 0) {
 				return new Response("success", {status: 201})
 			}
 			return new Response(`failure: could not create a habit, exited with data: ${exitData}`, {status: 400})
 		}
+	} else if (body.type === "offset") {
+		if (body.action === "create") {
+			const exitData = await Action.offset.create(name, body.where, body.what)
+			if (exitData[0] === 0) {
+				return new Response("success", {status: 201})
+			}
+			return new Response(`failure: could not create an offset, exited with data: ${exitData}`, {status: 400})
+		}
+
 	}
 	console.log(res, body)
 	return new Response("not found: schema for this action", {status: 400})
@@ -51,8 +61,10 @@ export async function handleDataAction(req, _info, params) {
 
 /**
 	* @typedef {Object} Action object with types of objects, which have functions with actions that user can perform using requests
-	* @property {Object} Action.habits object with functions with actions that user can perform using requests
-	* @property {actionHabitsCreate} Action.habits.create creates a habit with data (see {@link actionHabitsCreate})
+	* @property {Object} Action.habit object with functions with actions that user can perform using requests on habits
+	* @property {actionHabitCreate} Action.habits.create creates a habit with data (see {@link actionHabitCreate})
+	* @property {Object} Action.offset object with functions with actions that user can perform using requests on offsets
+	* @property {actionOffsetCreate} Action.offset.create creates an offset with data
 */
 
 
@@ -61,18 +73,18 @@ export async function handleDataAction(req, _info, params) {
 	* @see {@link Action}
 */
 const Action = {
-	habits: {},
+	habit: {},
+	offset: {},
 }
 
 /**
-	* @callback actionHabitsCreate - adds a habit to a datafile
+	* @callback actionHabitCreate - adds a habit to a datafile
 	* @param {String} userName - owner of the file 
 	* @param {habitObject} habitObject - habit-like object with information about the habit
 	* @returns {Promise<[step: Number, code: Number]>} exitData
 */
-Action.habits.create = async (userName, habitObject) => {
+Action.habit.create = async (userName, habitObject) => {
 	const data = await Data.fromFile(userName)
-	// should data file be validated???? it's only accessed by server so it shouldn't be invalid
 
 	const habit = new Habit(habitObject)
 	if (!habit.valid) {
@@ -90,6 +102,34 @@ Action.habits.create = async (userName, habitObject) => {
 }
 
 
+/**
+	* @callback actionOffsetCreate - adds an offset to a habit
+	* @param {String} userName - owner of the file 
+	* @param {String} habitName - name of the habit to put the offset in
+	* @param {offsetArray} offsetArray - offset-like array with data
+	* @returns {Promise<[step: Number, code: Number]>} exitData
+*/
+Action.offset.create = async (userName, habitName, offsetArray) => {
+	const data = await Data.fromFile(userName)
+
+	const offset = new Offset(offsetArray)
+	if (!offset.valid) {
+		return [1, offset.validation]
+	}
+
+	const habit = data.findHabit(habitName)
+	if (!habit) {
+		return [3, habitName]
+	}
+
+	const addingCode = habit.addOffset(offset)
+	if (addingCode !== 0) {
+		return [2, addingCode]
+	}
+
+	data.writeFile()
+	return [0, 0]
+}
 
 
 
@@ -102,8 +142,8 @@ class Data {
 	/**
 		* @typedef {Object} dataObject - object to be parsed to `Data` - `{user, habits}`
 		* @property {String} dataObject.user - user name of the owner of the data
-		* @property {habitObject[]} [dataObject.habits=[]] - array of habit-like objects
-		* @property {listObject[]} [dataObject.lists=[]] - array of list-like objects
+		* @property {Habit[]} [dataObject.habits=[]] - array of habits objects
+		* @property {List[]} [dataObject.lists=[]] - array of lists objects
 		*
 		* @param {dataObject} dataObject - object to be parsed into `Data` - `{user, habits}`
 		* @returns {Data} instance of `Data`, may be invalid, see `Data.valid`
@@ -120,9 +160,9 @@ class Data {
 		/** @type {String} user name of the owner of the data file */
 		this.user = user
 		/** @type {Habit[]} array of `Habit` */
-		this.habits = habits.map(h => Habit(h))
+		this.habits = habits
 		/** @type {List[]} array of `List` */
-		this.lists = lists.map(l => List(l))
+		this.lists = lists
 	}
 
 	/** @returns {dataObject} data-like object */
@@ -160,6 +200,44 @@ class Data {
 		return 0
 	}
 
+	/**
+		* @typedef {Object} rawDataObject - plain `Object` that has plain components
+		* @property {String} rawDataObject.user owner of the data file
+		* @property {habitObject[]?} rawDataObject.habits array of habit-like objects
+		* @property {listObject[]?} rawDataObject.lists array of list-like objects
+		*
+		* @param {rawDataObject} rawDataObject plain `Object` with data file stuff
+		* @see {@link rawDataObject}
+		* @returns {Data | undefined} instance of `Data` if conversion was successful or undefined
+	*/
+	static autoConvert(rawDataObject) {
+		/** @type {Habit[]} */
+		const habits = []
+		for (const habitObject of (rawDataObject.habits ?? [])) {
+			const habit = Habit.autoConvert(habitObject)
+			if (!habit.valid) {
+				return undefined
+			}
+			habits.push(habit)
+		}
+		/** @type {Habit[]} */
+		const lists = []
+		for (const listObject of (rawDataObject.lists ?? [])) {
+			const list = new List(listObject)
+			if (!list.valid) {
+				return undefined
+			}
+			habits.push(list)
+		}
+		
+		return new Data({
+			user: rawDataObject.user,
+			habits: habits,
+			lists: lists,
+		})
+
+	}
+
 
 	/**
 		* @param {String} userName - user name of the owner of the data file to be loaded and parsed into `Data` instance
@@ -168,8 +246,9 @@ class Data {
 	*/
 	static async fromFile(userName) {
 		const json = await getDataFile(userName)
-		const data = new Data(json)
-		data.user = userName
+		const dataObject = JSON.parse(json)
+		dataObject.user = userName
+		const data = Data.autoConvert(dataObject)
 		console.log("fromFile", data)
 		return data
 	}
@@ -196,7 +275,7 @@ class List {
 
 	}
 
-	toObject() {
+	toJSON() {
 
 	}
 }
@@ -206,8 +285,8 @@ class List {
 	* @typedef {Object} habitObject an object to be parsed into an instance of `Habit`
 	* @property {String} habitObject.name name of the habit
 	* @property {String} [habitObject.startingDate=dateToISO()] date from which the habit
-	* @property {offsetArray[]} [habitObject.offsets=[]] array of offset-like arrays - `[offset, value]` defaults to empty array
-	* @see {@link offsetArray}
+	* @property {Offset[]} [habitObject.offsets=[]] array of `Offset`
+	* @see {@link Offset}
 */
 class Habit {
 	/**
@@ -233,7 +312,7 @@ class Habit {
 
 
 		/** @type {Offset[]} array of `Offsets` */
-		this.offsets = offsets.map(Offset)
+		this.offsets = offsets
 	}
 
 	/** @returns {habitObject} a simple object that is jsonifable */
@@ -243,6 +322,64 @@ class Habit {
 			startingDate: this.startingDate,
 			offsets: this.offsets,
 		}
+	}
+
+
+
+	/**
+		* @param {Number} offset - offset offset/day WHY WHY WHY WHY WHY DO I NAME THESE THINGS LIKE THAT WHY CANT I CHANGE
+		* @returns {Offset | undefined} `Offset` instance if found or `undefined` if offset was not found
+	*/
+	findOffset(offset) {
+		return this.offsets.find(o => o.offset === offset)
+	}
+
+	/**
+		* @param {Offset} offset - a `Offset` that will be added to this `Habit` instance
+		* @returns {0 | 1 | 2} exitCode - execution exit status
+		* `0` - successfuly added the offset to this instance of `Habit`
+		* `1` - parameter `offset` is not an instance of `Offset` class
+		* `2` - offset with the offset of the given `offset` already exists :sob:
+	*/
+	addOffset(offset) {
+		if (!(offset instanceof Offset)) {
+			return 1
+		}
+		if (this.findOffset(offset.offset)) {
+			return 2
+		}
+
+		this.offsets.push(offset)
+		return 0
+	}
+
+	/**
+		* @typedef {Object} rawHabitObject - plain `Object` that has plain components
+		* @property {String} rawHabitObject.name name of the habit
+		* @property {String?} rawHabitObject.startingDate date from which the habit
+		* @property {offsetArray[]?} rawHabitObject.offsets array of offset-like arrays - `[offset, value]` defaults to empty array
+		* @see {@link offsetArray}
+		*
+		* @param {rawHabitObject} rawHabitObject plain `Object` with habit stuff
+		* @see {@link rawHabitObject}
+		* @returns {Habit | undefined} `Habit` if conversion was successful or undefined
+	*/
+	static autoConvert(rawHabitObject) {
+		/** @type {Offset[]} */
+		const offsets = []
+		for (const offsetArray of (rawHabitObject.offsets ?? [])) {
+			const offset = new Offset(offsetArray)
+			if (!offset.valid) {
+				return undefined
+			}
+			offsets.push(offset)
+		}
+		return new Habit({
+			name: rawHabitObject.name,
+			startingDate: rawHabitObject.startingDate,
+			offsets: offsets,
+		})
+
 	}
 	
 }

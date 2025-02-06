@@ -12,3 +12,8 @@
 	text-align: center;
 	align-content: center;
 }
+
+/* .grid-habits needed because specificity */
+.grid-habits > .offset {
+	background-color: var(--clr-2);
+}
