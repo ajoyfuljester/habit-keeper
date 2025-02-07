@@ -272,6 +272,7 @@ class Data {
 // TODO: write this, but maybe later
 class List {
 	constructor() {
+		this.valid = true
 
 	}
 

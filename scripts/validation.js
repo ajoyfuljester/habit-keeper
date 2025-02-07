@@ -204,7 +204,7 @@ export function validateHabit({name, startingDate, offsets}) {
 
 
 	for (const offset of offsets) {
-		if (validateOffset(offset) !== 0) {
+		if (validateOffset(offset) !== 0 && !offset.valid) {
 			return 4
 		}
 	}

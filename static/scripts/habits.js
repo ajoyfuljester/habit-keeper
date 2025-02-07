@@ -66,7 +66,8 @@ function createHabit(habitObject, {days = []}) {
 	const relativeDays = days.map(d => dateToOffset(habitObject.startingDate, d))
 	for (let day of relativeDays) {
 		const elOffset = document.createElement('div');
-		elOffset.addEventListener('click', () => createOffset(habitObject.name, day))
+		// TODO: actually write a function to toggle an offset and maybe set value, but that's less important i think
+		elOffset.addEventListener('click', () => handleCreateOffset(habitObject.name, day, elOffset))
 		elHabit.appendChild(elOffset)
 		if (!hasOffset(habitObject.offsets, day)) {
 			continue;
@@ -120,7 +121,7 @@ function hasOffset(array, day) {
 /**
 	* @param {String} habitName name of the habit that the offset is in
 	* @param {Number} day offset offset/day thingy, days since `startingDate`
-	* @returns {Number} exitCode
+	* @returns {Promise<0 | 1>} exitCode
 */
 async function createOffset(habitName, day) {
 	const name = extractName()
@@ -140,9 +141,25 @@ async function createOffset(habitName, day) {
 		console.error("create offset failed", res)
 		return 1
 	}
-
 	return 0
 
+}
+
+/**
+	* @param {String} habitName name of the habit that the offset is in
+	* @param {Number} day offset offset/day thingy, days since `startingDate`
+	* @param {HTMLElement} element offset html to be marked with a class if successful fetch
+	* @returns {Promise<0 | 1>} exitCode
+*/
+async function handleCreateOffset(habitName, day, element) {
+	const exitCode = await createOffset(habitName, day)
+
+	if (exitCode !== 0) {
+		return exitCode
+	}
+
+	element.classList.add('offset')
+	return 0
 }
 
 const exitCode = await main()
