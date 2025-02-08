@@ -8,7 +8,7 @@ function loadHabits(data) {
 	const elData = document.querySelector("#data")
 
 	const today = new Date();
-	const days = [addDays(today, -1), today, addDays(today, 1)]
+	const days = [addDays(today, -6), addDays(today, -5), addDays(today, -4), addDays(today, -3), addDays(today, -2), addDays(today, -1), today]
 
 	elData.style.setProperty('--number-of-days', days.length)
 
@@ -67,7 +67,7 @@ function createHabit(habitObject, {days = []}) {
 	for (let day of relativeDays) {
 		const elOffset = document.createElement('div');
 		// TODO: actually write a function to toggle an offset and maybe set value, but that's less important i think
-		elOffset.addEventListener('click', () => handleCreateOffset(habitObject.name, day, elOffset))
+		elOffset.addEventListener('click', () => handleToggleOffset(habitObject.name, day, elOffset))
 		elHabit.appendChild(elOffset)
 		if (!hasOffset(habitObject.offsets, day)) {
 			continue;
@@ -121,6 +121,29 @@ function hasOffset(array, day) {
 /**
 	* @param {String} habitName name of the habit that the offset is in
 	* @param {Number} day offset offset/day thingy, days since `startingDate`
+	* @param {HTMLElement} element offset html to be marked with a class if successful fetch
+	* @returns {Promise<0 | 1>} exitCode
+*/
+async function handleToggleOffset(habitName, day, element) {
+	let exitCode = undefined;
+	if (element.classList.contains('offset')) {
+		exitCode = await deleteOffset(habitName, day, element)
+	} else {
+		exitCode = await createOffset(habitName, day)
+	}
+	
+	if (exitCode !== 0) {
+		return exitCode
+	}
+
+	element.classList.toggle('offset')
+	return 0
+}
+
+
+/**
+	* @param {String} habitName name of the habit that the offset is in
+	* @param {Number} day offset offset/day thingy, days since `startingDate`
 	* @returns {Promise<0 | 1>} exitCode
 */
 async function createOffset(habitName, day) {
@@ -148,18 +171,28 @@ async function createOffset(habitName, day) {
 /**
 	* @param {String} habitName name of the habit that the offset is in
 	* @param {Number} day offset offset/day thingy, days since `startingDate`
-	* @param {HTMLElement} element offset html to be marked with a class if successful fetch
 	* @returns {Promise<0 | 1>} exitCode
 */
-async function handleCreateOffset(habitName, day, element) {
-	const exitCode = await createOffset(habitName, day)
+async function deleteOffset(habitName, day) {
+	const name = extractName()
+	const req = new Request(`/api/data/${name}/action`, {
+		method: "POST",
+		body: JSON.stringify({
+			action: "delete",
+			type: "offset",
+			where: habitName,
+			what: day,
+		}),
+	})
 
-	if (exitCode !== 0) {
-		return exitCode
+	const res = await fetch(req)
+	
+	if (res.status !== 201) {
+		console.error("create offset failed", res)
+		return 1
 	}
-
-	element.classList.add('offset')
 	return 0
+
 }
 
 const exitCode = await main()

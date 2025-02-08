@@ -6,6 +6,7 @@ i wish you a good life and succesful new habits or something
 
 # TODO
 - FOCUS ON MAKING IT USABLE and then improve
+- ADD LABELS FOR THE DAYS!!!!!!!
 - stop with the ROUNDED CORNERS
 - replace all console.warn with just assert()
 - add clean up for expired tokens

@@ -51,6 +51,12 @@ export async function handleDataAction(req, _info, params) {
 				return new Response("success", {status: 201})
 			}
 			return new Response(`failure: could not create an offset, exited with data: ${exitData}`, {status: 400})
+		} else if (body.action === "delete") {
+			const exitData = await Action.offset.delete(name, body.where, body.what)
+			if (exitData[0] === 0) {
+				return new Response("success", {status: 201})
+			}
+			return new Response(`failure: could not delete an offset, exited with data: ${exitData}`, {status: 400})
 		}
 
 	}
@@ -82,6 +88,8 @@ const Action = {
 	* @param {String} userName - owner of the file 
 	* @param {habitObject} habitObject - habit-like object with information about the habit
 	* @returns {Promise<[step: Number, code: Number]>} exitData
+	*
+	* @type {actionHabitCreate}
 */
 Action.habit.create = async (userName, habitObject) => {
 	const data = await Data.fromFile(userName)
@@ -108,6 +116,8 @@ Action.habit.create = async (userName, habitObject) => {
 	* @param {String} habitName - name of the habit to put the offset in
 	* @param {offsetArray} offsetArray - offset-like array with data
 	* @returns {Promise<[step: Number, code: Number]>} exitData
+	*
+	* @type {actionOffsetCreate}
 */
 Action.offset.create = async (userName, habitName, offsetArray) => {
 	const data = await Data.fromFile(userName)
@@ -125,6 +135,33 @@ Action.offset.create = async (userName, habitName, offsetArray) => {
 	const addingCode = habit.addOffset(offset)
 	if (addingCode !== 0) {
 		return [2, addingCode]
+	}
+
+	data.writeFile()
+	return [0, 0]
+}
+
+
+/**
+	* @callback actionOffsetDelete - deletes an offset to a habit
+	* @param {String} userName - owner of the file 
+	* @param {String} habitName - name of the habit to put the offset in
+	* @param {Number} day - day offset thing to be deleted
+	* @returns {Promise<[step: Number, code: Number]>} exitData
+	*
+	* @type {actionOffsetDelete}
+*/
+Action.offset.delete = async (userName, habitName, day) => {
+	const data = await Data.fromFile(userName)
+
+	const habit = data.findHabit(habitName)
+	if (!habit) {
+		return [3, habitName]
+	}
+
+	const deletingCode = habit.deleteOffset(day)
+	if (deletingCode !== 0) {
+		return [2, deletingCode]
 	}
 
 	data.writeFile()
@@ -332,7 +369,7 @@ class Habit {
 		* @returns {Offset | undefined} `Offset` instance if found or `undefined` if offset was not found
 	*/
 	findOffset(offset) {
-		return this.offsets.find(o => o.offset === offset)
+		return this.offsets.find(o => o.day === offset)
 	}
 
 	/**
@@ -346,11 +383,32 @@ class Habit {
 		if (!(offset instanceof Offset)) {
 			return 1
 		}
-		if (this.findOffset(offset.offset)) {
+		if (this.findOffset(offset.day)) {
 			return 2
 		}
 
 		this.offsets.push(offset)
+		return 0
+	}
+
+	/**
+		* @param {Number} day - day offset to be deleted
+		* @returns {0 | 1 | 2} exitCode - execution exit status
+		* `0` - successfuly deleted the offset
+		* `1` - parameter `day` is not an integer
+		* `2` - `Offset` with this `day` does not exist
+	*/
+	deleteOffset(day) {
+		if (!Number.isInteger(day)) {
+			return 1
+		}
+
+		const index = this.offsets.findIndex(o => o.day === day)
+		if (index === -1) {
+			return 2
+		}
+
+		this.offsets.splice(index, 1)
 		return 0
 	}
 
@@ -406,7 +464,7 @@ class Offset {
 		this.valid = true
 
 		/** @type {Number} offset in days from `startingDate` */
-		this.offset = offset;
+		this.day = offset;
 		/** @type {Number} value of the day */
 		this.value = value;
 
@@ -418,7 +476,7 @@ class Offset {
 		* @returns {[offset: Number, value: Number]} a simple object that is jsonifable
 	*/
 	toJSON() {
-		return [this.offset, this.value]
+		return [this.day, this.value]
 	}
 
 }
