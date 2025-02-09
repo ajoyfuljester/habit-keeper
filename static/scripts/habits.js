@@ -82,6 +82,27 @@ function createHabit(habitObject, {days = []}) {
 
 }
 
+
+/**
+	* @param {Date} date day to be displayed as a header
+	* @returns {HTMLDivElement} element with date information
+*/
+function createDate(date) {
+	const locale = navigator.language
+	const elDate = document.createElement('div')
+	const elMonth = document.createElement('span')
+	elMonth.innerText = Intl.DateTimeFormat(locale, {month: 'long'})
+	elDate.appendChild(elMonth)
+
+	const elDay = document.createElement('span')
+	elDay.innerText = Intl.DateTimeFormat(locale, {day: 'numeric'})
+	elDate.appendChild(elDay)
+
+	return elDate
+}
+
+
+
 function statistics(habitInfo) {
 	const stats = {}
 	stats.successes = habitInfo.offsets?.length
