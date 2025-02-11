@@ -17,3 +17,8 @@
 .grid-habits > .offset {
 	background-color: var(--clr-2);
 }
+
+.date {
+	display: grid;
+	grid-template-areas: "month" "day";
+}

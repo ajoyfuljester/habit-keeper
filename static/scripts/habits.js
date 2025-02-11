@@ -90,6 +90,7 @@ function createHabit(habitObject, {days = []}) {
 function createDate(date) {
 	const locale = navigator.language
 	const elDate = document.createElement('div')
+	elDate.classList.add('date')
 	const elMonth = document.createElement('span')
 	elMonth.innerText = Intl.DateTimeFormat(locale, {month: 'long'})
 	elDate.appendChild(elMonth)

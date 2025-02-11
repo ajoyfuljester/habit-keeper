@@ -5,8 +5,10 @@ first time using deno
 i wish you a good life and succesful new habits or something
 
 # TODO
+- create a release
 - FOCUS ON MAKING IT USABLE and then improve
 - ADD LABELS FOR THE DAYS!!!!!!!
+- variable habit length? in smaller intervals than 1 day if i'm crazy enough
 - stop with the ROUNDED CORNERS
 - replace all console.warn with just assert()
 - add clean up for expired tokens
