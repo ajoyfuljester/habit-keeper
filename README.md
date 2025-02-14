@@ -4,6 +4,8 @@ first time using deno
 
 i wish you a good life and succesful new habits or something
 
+THIS WILL BE PROBABLY BE A CONFLICT BECAUSE GITHUB WILL NOT LET ME LOGIN IN THE GIT CLI!!!!!!!!!!!!!!!!!!!
+
 # TODO
 - create a release
 - FOCUS ON MAKING IT USABLE and then improve
