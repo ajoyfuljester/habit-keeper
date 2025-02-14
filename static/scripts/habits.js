@@ -6,6 +6,7 @@ import { extractName, getData, dateToOffset, addDays } from './utils.js'
 function loadHabits(data) {
 	/** @type {HTMLDivElement} */
 	const elData = document.querySelector("#data")
+	elData.classList.add('grid-habits')
 
 	const today = new Date();
 	const days = [addDays(today, -6), addDays(today, -5), addDays(today, -4), addDays(today, -3), addDays(today, -2), addDays(today, -1), today]
@@ -13,9 +14,16 @@ function loadHabits(data) {
 	elData.style.setProperty('--number-of-days', days.length)
 
 
+	elData.appendChild(_createPlaceholder())
+	for (const day of days) {
+		const elDay = createDate(day)
+		elData.appendChild(elDay)
+	}
+	elData.appendChild(_createPlaceholder())
+
 	for (const habit of data.habits) {
-		const elHabit = createHabit(habit, {days})
-		elData.appendChild(elHabit)
+		createHabit(elData, habit, {days})
+		elData.appendChild(createStatistics(habit))
 	}
 
 	return elData
@@ -47,44 +55,39 @@ async function main() {
 	* @typedef {Object} habitOptionsObject object additional options
 	* @property {Number[]} [habitOptionsObject.days=[]] array of the days to be displayed represented as offset - relative to `habitObject.startingDate`
 	*
+	* @param {HTMLDivElement} elParent parent element - grid
 	* @param {habitObject} habitObject object with information about a habit
 	* @param {habitOptionsObject} habitOptionsObject object with additional options
-	* @returns {HTMLDivElement} habit element
+	* @returns {0} exit code, always `0`?
 */
-function createHabit(habitObject, {days = []}) {
-	const elHabit = document.createElement('div');
-	elHabit.classList.add('grid-habits')
-
+function createHabit(elParent, habitObject, {days = []}) {
 	const elName = document.createElement('h3');
 	elName.innerText = habitObject.name
-	elHabit.appendChild(elName)
+	elParent.appendChild(elName)
 
 
 	const offsets = habitObject.offsets
 	offsets.sort()
 
 	const relativeDays = days.map(d => dateToOffset(habitObject.startingDate, d))
-	for (let day of relativeDays) {
+	for (const day of relativeDays) {
 		const elOffset = document.createElement('div');
 		// TODO: actually write a function to toggle an offset and maybe set value, but that's less important i think
 		elOffset.addEventListener('click', () => handleToggleOffset(habitObject.name, day, elOffset))
-		elHabit.appendChild(elOffset)
+		elParent.appendChild(elOffset)
 		if (!hasOffset(habitObject.offsets, day)) {
 			continue;
 		}
 		elOffset.classList.add('offset')
 	}
 
-
-
-	return elHabit
-
+	return 0
 
 }
 
 
 /**
-	* @param {Date} date day to be displayed as a header
+	* @param {Date} date day to be displayed as a header but `<div>`
 	* @returns {HTMLDivElement} element with date information
 */
 function createDate(date) {
@@ -92,11 +95,11 @@ function createDate(date) {
 	const elDate = document.createElement('div')
 	elDate.classList.add('date')
 	const elMonth = document.createElement('span')
-	elMonth.innerText = Intl.DateTimeFormat(locale, {month: 'long'})
+	elMonth.innerText = Intl.DateTimeFormat(locale, {month: 'long'}).format(date)
 	elDate.appendChild(elMonth)
 
 	const elDay = document.createElement('span')
-	elDay.innerText = Intl.DateTimeFormat(locale, {day: 'numeric'})
+	elDay.innerText = Intl.DateTimeFormat(locale, {day: 'numeric'}).format(date)
 	elDate.appendChild(elDay)
 
 	return elDate
@@ -112,11 +115,15 @@ function statistics(habitInfo) {
 	return stats;
 
 }
-
+/**
+	* @param {habitObject} habitInfo information about the habit
+	* @returns {HTMLDivElement} statistic element
+*/
 function createStatistics(habitInfo) {
 	const elStats = document.createElement('div')
 	elStats.classList.add('stats')
 
+	return elStats
 }
 
 function createStat(key, value) {
@@ -215,6 +222,17 @@ async function deleteOffset(habitName, day) {
 	}
 	return 0
 
+}
+
+/**
+	* @returns {HTMLDivElement} placeholder
+	* @deprecated idk
+	* @todo delete this
+*/
+function _createPlaceholder() {
+	const el = document.createElement('div')
+	el.innerText = 'placeholder'
+	return el
 }
 
 const exitCode = await main()

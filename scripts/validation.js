@@ -99,7 +99,7 @@ export function validateString(string, regex) {
 	return 0
 }
 
-const nameRegEx = /\w{1,64}/g
+const nameRegEx = /[\w ]{1,64}/g
 
 
 /**

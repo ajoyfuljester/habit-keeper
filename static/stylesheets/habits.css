@@ -4,13 +4,13 @@
 }
 
 .grid-habits > div {
-	aspect-ratio: var(--golden-ratio);
 	background-color: var(--clr-1-accent);
 }
 
 .grid-habits > h3 {
 	text-align: center;
 	align-content: center;
+	margin: 0;
 }
 
 /* .grid-habits needed because specificity */
@@ -18,7 +18,14 @@
 	background-color: var(--clr-2);
 }
 
-.date {
+.grid-habits > .date {
 	display: grid;
 	grid-template-areas: "month" "day";
+	text-align: center;
+	aspect-ratio: unset;
+	background-color: var(--clr-2);
+}
+
+.grid-habits > .stats {
+	background-color: transparent;
 }

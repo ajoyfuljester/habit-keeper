@@ -5,6 +5,7 @@ import { handleDefaultLogin, handleLogin } from "./scripts/login.js";
 import { handleDataGet, handleDataSet, handleDataInit, handleWho, tokenResponse } from "./scripts/data.js";
 import { handleDataAction } from "./scripts/action.js";
 import { handleAdmin, handleAdminStats } from "./scripts/admin.js";
+import { init } from "./scripts/init.js";
 import _c from "./config.json" with {type: "json"};
 
 
@@ -19,6 +20,8 @@ import _c from "./config.json" with {type: "json"};
 const CONFIG = _c
 export {CONFIG}
 
+
+init()
 
 
 
@@ -117,7 +120,7 @@ function defaultHandler(_req) {
 }
 
 Deno.serve({
-	port: 80,
+	port: 8000,
 }, (...stuff) => {
 	// console.log(stuff)
 	return route(routes, defaultHandler)(...stuff)
