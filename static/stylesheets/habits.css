@@ -5,6 +5,7 @@
 
 .grid-habits > div {
 	background-color: var(--clr-1-accent);
+	padding: 0.2em 0.4em;
 }
 
 .grid-habits > h3 {
@@ -15,7 +16,8 @@
 
 /* .grid-habits needed because specificity */
 .grid-habits > .offset {
-	background-color: var(--clr-2);
+	--color-offset: var(--clr-3);
+	background-color: var(--color-offset);
 }
 
 .grid-habits > .date {
