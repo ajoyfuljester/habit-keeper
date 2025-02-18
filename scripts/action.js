@@ -286,7 +286,6 @@ class Data {
 		const dataObject = JSON.parse(json)
 		dataObject.user = userName
 		const data = Data.autoConvert(dataObject)
-		console.log("fromFile", data)
 		return data
 	}
 
