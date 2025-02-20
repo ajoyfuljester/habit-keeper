@@ -8,6 +8,7 @@
 	<body>
 
 		<main>
+			<h2><button class="habitsLink inline">Habits</button></h2>
 			<button id="init">Init</button>
 			<div id="editor">
 
@@ -15,5 +16,9 @@
 		</main>
 
 		<script src="/static/scripts/editor.js" type="module"></script>
+		<script type="module">
+			import {redirect, extractName} from '/static/scripts/utils.js';
+			document.querySelectorAll('.habitsLink').forEach(el => el.addEventListener('click', () => redirect(`/u/${extractName()}/habits`)))
+		</script>
 	</body>
 </html>

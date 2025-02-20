@@ -4,7 +4,7 @@
 
 .grid-habits {
 	display: grid;
-	grid-template-columns: repeat(calc(2 + var(--number-of-days)), auto);
+	grid-template-columns: auto repeat(calc(var(--number-of-days)), 1fr) auto;
 }
 
 .grid-habits > div {
@@ -48,3 +48,6 @@
 .grid-habits > :nth-last-child(1 of .date) {
 	border-radius: 0 var(--radius) 0 0;
 }
+
+
+

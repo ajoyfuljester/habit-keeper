@@ -56,13 +56,17 @@ input:is([type='button'], [type='submit']):hover {
 	background-color: var(--clr-3);
 }
 
-.inline-button {
+button.inline {
 	display: inline;
 	border: none;
 	background: none;
 	font: inherit;
 	cursor: pointer;
 	color: var(--clr-2);
+}
+
+button.inline:hover {
+	text-decoration: underline;
 }
 
 .highlight {

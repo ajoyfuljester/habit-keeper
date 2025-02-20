@@ -102,6 +102,10 @@ function createDate(date) {
 	elDay.innerText = Intl.DateTimeFormat(locale, {day: 'numeric'}).format(date)
 	elDate.appendChild(elDay)
 
+	const elWeekday = document.createElement('span')
+	elWeekday.innerText = Intl.DateTimeFormat(locale, {weekday: 'long'}).format(date)
+	elDate.appendChild(elWeekday)
+
 	return elDate
 }
 
@@ -222,6 +226,14 @@ async function deleteOffset(habitName, day) {
 	}
 	return 0
 
+}
+
+/**
+	* @param {HTMLDivElement} elData element with the data stuff
+	* @todo from left to right check neighbours
+	* @todo idea: TWO DIMENSIONAL GRADIENT!!!!!!!
+*/
+function updateColors(elData) {
 }
 
 /**
