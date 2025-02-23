@@ -1,4 +1,5 @@
 import { extractName, getData, dateToOffset, addDays } from './utils.js'
+import * as Colors from "./colors.js"
 
 /**
 	* @param {import('./utils.js').dataObject} data - data-like object I DON'T KNOW HOW TO WRITE DOCUMENTATION!!!!!!!!!!!!
@@ -25,6 +26,8 @@ function loadHabits(data) {
 		createHabit(elData, habit, {days})
 		elData.appendChild(createStatistics(habit))
 	}
+
+	updateColors(elData)
 
 	return elData
 }
@@ -72,8 +75,9 @@ function createHabit(elParent, habitObject, {days = []}) {
 	const relativeDays = days.map(d => dateToOffset(habitObject.startingDate, d))
 	for (const day of relativeDays) {
 		const elOffset = document.createElement('div');
+		elOffset.classList.add('day')
 		// TODO: actually write a function to toggle an offset and maybe set value, but that's less important i think
-		elOffset.addEventListener('click', () => handleToggleOffset(habitObject.name, day, elOffset))
+		elOffset.addEventListener('click', () => handleToggleOffset(habitObject.name, day, elOffset, elParent))
 		elParent.appendChild(elOffset)
 		if (!hasOffset(habitObject.offsets, day)) {
 			continue;
@@ -94,6 +98,7 @@ function createDate(date) {
 	const locale = navigator.language
 	const elDate = document.createElement('div')
 	elDate.classList.add('date')
+
 	const elMonth = document.createElement('span')
 	elMonth.innerText = Intl.DateTimeFormat(locale, {month: 'long'}).format(date)
 	elDate.appendChild(elMonth)
@@ -157,7 +162,7 @@ function hasOffset(array, day) {
 	* @param {HTMLElement} element offset html to be marked with a class if successful fetch
 	* @returns {Promise<0 | 1>} exitCode
 */
-async function handleToggleOffset(habitName, day, element) {
+async function handleToggleOffset(habitName, day, element, elData) {
 	let exitCode = undefined;
 	if (element.classList.contains('offset')) {
 		exitCode = await deleteOffset(habitName, day, element)
@@ -170,6 +175,8 @@ async function handleToggleOffset(habitName, day, element) {
 	}
 
 	element.classList.toggle('offset')
+	updateColors(elData)
+
 	return 0
 }
 
@@ -234,7 +241,47 @@ async function deleteOffset(habitName, day) {
 	* @todo idea: TWO DIMENSIONAL GRADIENT!!!!!!!
 */
 function updateColors(elData) {
+	const elDays = elData.querySelectorAll('.day')
+	const numberOfDays = +elData.style.getPropertyValue('--number-of-days')
+
+	if (elDays.length % numberOfDays !== 0) {
+		console.warn('number of day elements not divisible by provided --number-of-days', elDays.length, numberOfDays)
+	}
+
+	/** @type {Array<Array<HTMLDivElement>>} */
+	const elDaysArrays = [];
+	for (let i = 0; i < elDays.length; i++) {
+		if (i % numberOfDays === 0) {
+			elDaysArrays.push([])
+		}
+		const elDay = elDays[i]
+		elDaysArrays.at(-1).push(elDay)
+	}
+
+	for (const elDaysArray of elDaysArrays) {
+		// TODO: possibly have many functions to compute this
+		let strike = 0
+		for (const elDay of elDaysArray) {
+			elDay.style.setProperty('--color-offset', Colors.gradient(strike, numberOfDays - 1))
+			if (elDay.classList.contains('offset')) {
+				strike += 1
+			} else {
+				strike = 0
+			}
+		}
+	}
 }
+
+/**
+	* @param {Number} n number of the color or something
+	* @returns {String} css color as string
+	* @deprecated idk how to mark this as a temporary function, it will probably evolve into a normal function
+*/
+function _colorsTemp(n) {
+	const colors = ['#ff0', '#0f0', '#0ff', '#00f']
+	return colors[n % colors.length]
+}
+
 
 /**
 	* @returns {HTMLDivElement} placeholder

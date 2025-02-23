@@ -7,7 +7,7 @@
 	grid-template-columns: auto repeat(calc(var(--number-of-days)), 1fr) auto;
 }
 
-.grid-habits > div {
+.grid-habits > .day {
 	background-color: var(--clr-1-accent);
 	padding: 0.2em 0.4em;
 }
