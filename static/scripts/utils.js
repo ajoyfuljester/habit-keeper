@@ -77,3 +77,19 @@ export function addDays(date, n = 1) {
 	const newMiliseconds = miliseconds + (n * 1000 * 60 * 60 * 24)
 	return new Date(newMiliseconds)
 }
+
+/**
+	* @param {Number} min lower bound (closed)
+	* @param {Number} max higher bound (closed)
+	* @returns {Number} random integer from a given set
+*/
+export function randomInteger(min, max) {
+	if (min > max) {
+		[min, max] = [max, min]
+	}
+	const values = max - min
+	const fraction = Math.random()
+	const value = values * fraction
+	const rand = Math.round(value) + min
+	return rand
+}

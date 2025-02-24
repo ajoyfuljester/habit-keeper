@@ -1,4 +1,4 @@
-import { extractName, getData, dateToOffset, addDays } from './utils.js'
+import { extractName, getData, dateToOffset, addDays, randomInteger } from './utils.js'
 import * as Colors from "./colors.js"
 
 /**
@@ -73,10 +73,13 @@ function createHabit(elParent, habitObject, {days = []}) {
 	offsets.sort()
 
 	const relativeDays = days.map(d => dateToOffset(habitObject.startingDate, d))
+	const hue = randomInteger(0, 360)
 	for (const day of relativeDays) {
 		const elOffset = document.createElement('div');
 		elOffset.classList.add('day')
-		// TODO: actually write a function to toggle an offset and maybe set value, but that's less important i think
+		elOffset.style.setProperty('--hue', hue)
+
+		// TODO: write a function to maybe set value, but that's less important i think
 		elOffset.addEventListener('click', () => handleToggleOffset(habitObject.name, day, elOffset, elParent))
 		elParent.appendChild(elOffset)
 		if (!hasOffset(habitObject.offsets, day)) {
@@ -262,7 +265,8 @@ function updateColors(elData) {
 		// TODO: possibly have many functions to compute this
 		let strike = 0
 		for (const elDay of elDaysArray) {
-			elDay.style.setProperty('--color-offset', Colors.gradient(strike, numberOfDays - 1))
+			const hue = +elDay.style.getPropertyValue('--hue')
+			elDay.style.setProperty('--color-offset', Colors.gradient(strike, numberOfDays - 1, hue))
 			if (elDay.classList.contains('offset')) {
 				strike += 1
 			} else {
@@ -290,6 +294,7 @@ function _colorsTemp(n) {
 */
 function _createPlaceholder() {
 	const el = document.createElement('div')
+	el.classList.add('placeholder')
 	el.innerText = 'placeholder'
 	return el
 }

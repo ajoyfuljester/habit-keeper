@@ -1,6 +1,7 @@
 :root {
 	font-family: 'Helvetica';
 	--golden-ratio: calc((1 + sqrt(5)) / 2);
+	--golden-ratio-long: calc(var(--golden-ratio) * 2);
 }
 
 body {

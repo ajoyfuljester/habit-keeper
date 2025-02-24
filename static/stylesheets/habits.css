@@ -1,10 +1,12 @@
 :root {
-	--radius: 0.4rem;
+	--radius: 0;
 }
 
 .grid-habits {
 	display: grid;
 	grid-template-columns: auto repeat(calc(var(--number-of-days)), 1fr) auto;
+
+	--border: 0.2rem solid var(--clr-1-accent);
 }
 
 .grid-habits > .day {
@@ -16,13 +18,16 @@
 	text-align: center;
 	align-content: center;
 	margin: 0;
-	background-color: var(--clr-2);
+	background-color: var(--clr-1);
+
+	border-left: var(--border);
 }
 
 /* .grid-habits needed because specificity */
 .grid-habits > .offset {
 	--color-offset: var(--clr-3);
 	background-color: var(--color-offset);
+	aspect-ratio: var(--golden-ratio-long);
 }
 
 .grid-habits > .date {
@@ -30,7 +35,9 @@
 	grid-template-areas: "month" "day";
 	text-align: center;
 	aspect-ratio: unset;
-	background-color: var(--clr-2);
+	background-color: var(--clr-1);
+
+	border-top: var(--border);
 }
 
 .grid-habits > .stats {
@@ -47,6 +54,10 @@
 
 .grid-habits > :nth-last-child(1 of .date) {
 	border-radius: 0 var(--radius) 0 0;
+}
+
+.placeholder {
+	border: var(--border);
 }
 
 
