@@ -113,6 +113,35 @@ async function handleCreateHabit(elHabitName) {
 }
 
 /**
+	* // TODO: HEREEERERERERERERREERERREREERERERRERERE!!!!!!
+	* @param {HTMLInputElement} elHabitName - element with an `value` property, that will be the name of the new habit
+	* @returns {Promise<Response>?} response if creation failed, else the page is reloaded (refreshed)
+*/
+async function handleRenameHabit(elHabitName) {
+	const habitName = elHabitName.value
+
+	const name = extractName()
+	const req = new Request(`/api/data/${name}/action`, {
+		method: "POST",
+		body: JSON.stringify({
+			action: "rename",
+			type: "habit",
+			what: {name: habitName},
+		})
+	})
+	// TODO: logging here too
+	
+	const res = await fetch(req)
+	
+	if (res.status !== 201) {
+		// TODO: logging here too
+		return res
+	}
+
+	location.reload()
+}
+
+/**
 	* @returns {Boolean} whether `init` request was successful
 */
 async function handleInit() {

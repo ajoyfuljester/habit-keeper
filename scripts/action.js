@@ -10,6 +10,7 @@ import { validateHabit, validateOffset, validateData } from "./validation.js";
 	* @property {"create"} actionBody.action - action to be done
 	* @property {"habit" | "list"} actionBody.type - type of the object to be modified
 	* @property {habitObject | offsetArray} actionBody.what - thing that will be actioned
+	* @property {habitObject} actionBody.toWhat - the expected state after the action or something
 	* @property {habitObject?} actionBody.where - where thing that will be actioned
 	*
 	*
@@ -43,6 +44,12 @@ export async function handleDataAction(req, _info, params) {
 				return new Response("success", {status: 201})
 			}
 			return new Response(`failure: could not create a habit, exited with data: ${exitData}`, {status: 400})
+		} else if (body.type === "rename") {
+			const exitData = await Action.habit.rename(name, body.what, body.toWhat)
+			if (exitData[0] === 0) {
+				return new Response("success", {status: 201})
+			}
+			return new Response(`failure: could not rename a habit, exited with data: ${exitData}`, {status: 400})
 		}
 	} else if (body.type === "offset") {
 		if (body.action === "create") {
