@@ -113,12 +113,12 @@ async function handleCreateHabit(elHabitName) {
 }
 
 /**
-	* // TODO: HEREEERERERERERERREERERREREERERERRERERE!!!!!!
-	* @param {HTMLInputElement} elHabitName - element with an `value` property, that will be the name of the new habit
-	* @returns {Promise<Response>?} response if creation failed, else the page is reloaded (refreshed)
+	* @param {HTMLInputElement} elHabitName - element with an `value` property, that will be the name of this habit
+	* @returns {Promise<Response>?} response if renaming failed, else the page is reloaded (refreshed)
 */
 async function handleRenameHabit(elHabitName) {
-	const habitName = elHabitName.value
+	const oldHabitName = elHabitName.placeholder
+	const newHabitName = elHabitName.value
 
 	const name = extractName()
 	const req = new Request(`/api/data/${name}/action`, {
@@ -126,15 +126,14 @@ async function handleRenameHabit(elHabitName) {
 		body: JSON.stringify({
 			action: "rename",
 			type: "habit",
-			what: {name: habitName},
+			what: oldHabitName,
+			toWhat: newHabitName,
 		})
 	})
-	// TODO: logging here too
 	
 	const res = await fetch(req)
 	
 	if (res.status !== 201) {
-		// TODO: logging here too
 		return res
 	}
 
