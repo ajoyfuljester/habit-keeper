@@ -76,6 +76,7 @@ export async function handleDataAction(req, _info, params) {
 	* @typedef {Object} Action object with types of objects, which have functions with actions that user can perform using requests
 	* @property {Object} Action.habit object with functions with actions that user can perform using requests on habits
 	* @property {actionHabitCreate} Action.habits.create creates a habit with data (see {@link actionHabitCreate})
+	* @property {actionHabitCreate} Action.habits.rename renames a habit with name (see {@link actionHabitRename})
 	* @property {Object} Action.offset object with functions with actions that user can perform using requests on offsets
 	* @property {actionOffsetCreate} Action.offset.create creates an offset with data
 */
@@ -100,6 +101,35 @@ const Action = {
 */
 Action.habit.create = async (userName, habitObject) => {
 	const data = await Data.fromFile(userName)
+
+	const habit = new Habit(habitObject)
+	if (!habit.valid) {
+		return [1, habit.validation]
+	}
+
+	const addingCode = data.addHabit(habit)
+
+	if (addingCode !== 0) {
+		return [2, addingCode]
+	}
+
+	data.writeFile()
+	return [0, 0]
+}
+
+/**
+	* @callback actionHabitRename - adds a habit to a datafile
+	* @param {String} userName - owner of the file 
+	* @param {String} oldHabitName old name of the habit (current)
+	* @param {String} newHabitName new name of the habit (target)
+	* @returns {Promise<[step: Number, code: Number]>} exitData
+	*
+	* @type {actionHabitRename}
+*/
+Action.habit.rename = async (userName, oldHabitName, newHabitName) => {
+	const data = await Data.fromFile(userName)
+
+	const oldHabit = data.findHabit(oldHabitName)
 
 	const habit = new Habit(habitObject)
 	if (!habit.valid) {
