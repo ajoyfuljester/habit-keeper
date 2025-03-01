@@ -108,7 +108,6 @@ Action.habit.create = async (userName, habitObject) => {
 	}
 
 	const addingCode = data.addHabit(habit)
-
 	if (addingCode !== 0) {
 		return [2, addingCode]
 	}
@@ -130,16 +129,18 @@ Action.habit.rename = async (userName, oldHabitName, newHabitName) => {
 	const data = await Data.fromFile(userName)
 
 	const oldHabit = data.findHabit(oldHabitName)
-
-	const habit = new Habit(habitObject)
-	if (!habit.valid) {
+	if (!oldHabit) {
 		return [1, habit.validation]
 	}
 
-	const addingCode = data.addHabit(habit)
+	const habit = new Habit({...oldHabit, name: newHabitName})
+	if (!habit.valid) {
+		return [2, habit.validation]
+	}
 
+	const addingCode = data.addHabit(habit)
 	if (addingCode !== 0) {
-		return [2, addingCode]
+		return [3, addingCode]
 	}
 
 	data.writeFile()
