@@ -6,6 +6,8 @@
 	display: grid;
 	grid-template-columns: auto repeat(calc(var(--number-of-days)), 1fr) auto;
 
+	text-align: center;
+
 	--border: 0.2rem solid var(--clr-1-accent);
 }
 
@@ -15,7 +17,6 @@
 }
 
 .grid-habits > h3 {
-	text-align: center;
 	align-content: center;
 	margin: 0;
 	background-color: var(--clr-1);
@@ -33,7 +34,6 @@
 .grid-habits > .date {
 	display: grid;
 	grid-template-areas: "month" "day";
-	text-align: center;
 	aspect-ratio: unset;
 	background-color: var(--clr-1);
 
@@ -60,5 +60,7 @@
 	border: var(--border);
 }
 
-
-
+.editorLink {
+	border-top: var(--border);
+	border-right: var(--border);
+}

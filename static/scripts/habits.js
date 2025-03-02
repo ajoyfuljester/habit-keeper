@@ -1,4 +1,4 @@
-import { extractName, getData, dateToOffset, addDays, randomInteger } from './utils.js'
+import { extractName, getData, dateToOffset, addDays, randomInteger, redirect } from './utils.js'
 import * as Colors from "./colors.js"
 
 /**
@@ -26,6 +26,9 @@ function loadHabits(data) {
 		createHabit(elData, habit, {days})
 		elData.appendChild(createStatistics(habit))
 	}
+
+	const elEditorLink = createEditorLink()
+	elData.appendChild(elEditorLink)
 
 	updateColors(elData)
 
@@ -115,6 +118,21 @@ function createDate(date) {
 	elDate.appendChild(elWeekday)
 
 	return elDate
+}
+
+
+/**
+	* @returns {HTMLAnchorElement} element that redirects to the editor
+*/
+function createEditorLink() {
+	const elLink = document.createElement('a')
+	elLink.classList.add('cell')
+	elLink.classList.add('editorLink')
+	elLink.innerText = 'Editor'
+	elLink.title = 'Go to editor'
+	elLink.addEventListener('click', () => redirect(`/u/${extractName()}/editor`))
+
+	return elLink
 }
 
 

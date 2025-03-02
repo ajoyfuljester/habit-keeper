@@ -5,8 +5,18 @@
 
 input.cell {
 	border: none;
+	outline: none;
+}
+
+input.cell:focus-visible {
+	background-color: var(--clr-1-accent);
 }
 
 button.cell {
 	background-color: transparent;
+}
+
+a.cell {
+	font-weight: normal;
+	text-align: center;
 }

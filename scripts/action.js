@@ -1,3 +1,4 @@
+import { assert } from "jsr:@std/assert@0.217/assert";
 import { tokenResponse, getDataFile, setDataFile } from "./data.js";
 import { dateToISO } from "./utils.js";
 import { validateHabit, validateOffset, validateData } from "./validation.js";
@@ -37,6 +38,8 @@ export async function handleDataAction(req, _info, params) {
 	const body = await req.json()
 
 	// TODO: i hate the way this is done, but i'm afraid that if i do it tge other way, returning errors will be hard
+	// i don't remember what exactly i was rambling about in the line above
+	// todo maybe change the "success" responses to be more informative?
 	if (body.type === "habit") {
 		if (body.action === "create") {
 			const exitData = await Action.habit.create(name, body.what)
@@ -44,8 +47,14 @@ export async function handleDataAction(req, _info, params) {
 				return new Response("success", {status: 201})
 			}
 			return new Response(`failure: could not create a habit, exited with data: ${exitData}`, {status: 400})
-		} else if (body.type === "rename") {
+		} else if (body.action === "rename") {
 			const exitData = await Action.habit.rename(name, body.what, body.toWhat)
+			if (exitData[0] === 0) {
+				return new Response("success", {status: 201})
+			}
+			return new Response(`failure: could not rename a habit, exited with data: ${exitData}`, {status: 400})
+		} else if (body.action === "delete") {
+			const exitData = await Action.habit.delete(name, body.what)
 			if (exitData[0] === 0) {
 				return new Response("success", {status: 201})
 			}
@@ -75,8 +84,9 @@ export async function handleDataAction(req, _info, params) {
 /**
 	* @typedef {Object} Action object with types of objects, which have functions with actions that user can perform using requests
 	* @property {Object} Action.habit object with functions with actions that user can perform using requests on habits
-	* @property {actionHabitCreate} Action.habits.create creates a habit with data (see {@link actionHabitCreate})
-	* @property {actionHabitCreate} Action.habits.rename renames a habit with name (see {@link actionHabitRename})
+	* @property {actionHabitCreate} Action.habit.create creates a habit with data (see {@link actionHabitCreate})
+	* @property {actionHabitRename} Action.habit.rename renames a habit with name (see {@link actionHabitRename})
+	* @property {actionHabitDelete} Action.habit.delete deletes a habit with name (see {@link actionHabitDelete})
 	* @property {Object} Action.offset object with functions with actions that user can perform using requests on offsets
 	* @property {actionOffsetCreate} Action.offset.create creates an offset with data
 */
@@ -116,6 +126,7 @@ Action.habit.create = async (userName, habitObject) => {
 	return [0, 0]
 }
 
+
 /**
 	* @callback actionHabitRename - adds a habit to a datafile
 	* @param {String} userName - owner of the file 
@@ -130,15 +141,20 @@ Action.habit.rename = async (userName, oldHabitName, newHabitName) => {
 
 	const oldHabit = data.findHabit(oldHabitName)
 	if (!oldHabit) {
-		return [1, habit.validation]
+		return [1,  `habit with name: "${oldHabitName}" does not exist`]
 	}
 
-	const habit = new Habit({...oldHabit, name: newHabitName})
-	if (!habit.valid) {
-		return [2, habit.validation]
+
+	const newHabit = new Habit({...oldHabit, name: newHabitName})
+	if (!newHabit.valid) {
+		return [2, newHabit.validation]
 	}
 
-	const addingCode = data.addHabit(habit)
+	const removingCode = data.removeHabit(oldHabit.name)
+	assert(removingCode === 0, "could not remove habit")
+
+
+	const addingCode = data.addHabit(newHabit)
 	if (addingCode !== 0) {
 		return [3, addingCode]
 	}
@@ -148,6 +164,28 @@ Action.habit.rename = async (userName, oldHabitName, newHabitName) => {
 }
 
 
+/**
+	* @callback actionHabitDelete deletes a habit from a datafile
+	* @param {String} userName owner of the file 
+	* @param {String} habitName name of the habit to be deleted
+	* @returns {Promise<[step: Number, code: Number]>} exitData
+	*
+	* @type {actionHabitDelete}
+*/
+Action.habit.delete = async (userName, habitName) => {
+	const data = await Data.fromFile(userName)
+
+	const habit = data.findHabit(habitName)
+	if (!habit) {
+		return [1, `habit with name: "${habitName}" does not exist`]
+	}
+
+	const removingCode = data.removeHabit(habit.name)
+	assert(removingCode === 0, "could not remove habit")
+
+	data.writeFile()
+	return [0, 0]
+}
 /**
 	* @callback actionOffsetCreate - adds an offset to a habit
 	* @param {String} userName - owner of the file 
@@ -254,6 +292,31 @@ class Data {
 	*/
 	findHabit(name) {
 		return this.habits.find(b => b.name === name)
+	}
+
+	/**
+		* @param {String} name - name of the habit
+		* @returns {-1 | Number} index of the found habit or -1 if not found
+	*/
+	#findHabitIndex(name) {
+		return this.habits.findIndex(b => b.name === name)
+	}
+
+	/**
+		* @param {String} name name of the habit
+		* @returns {0 | 1} exitCode - execution exit status
+		* `0` - successfuly added the habit to this instance of `Data`
+		* `1` - habit with the given name does not exist
+	*/
+	removeHabit(name) {
+		const index = this.#findHabitIndex(name)
+		if (index === -1) {
+			return 1
+		}
+		console.log(this.habits)
+		this.habits.splice(index, 1)
+		console.log(this.habits)
+		return 0
 	}
 
 	/**
@@ -430,19 +493,14 @@ class Habit {
 
 	/**
 		* @param {Number} day - day offset to be deleted
-		* @returns {0 | 1 | 2} exitCode - execution exit status
+		* @returns {0 | 1} exitCode - execution exit status
 		* `0` - successfuly deleted the offset
-		* `1` - parameter `day` is not an integer
-		* `2` - `Offset` with this `day` does not exist
+		* `1` - `Offset` with this `day` does not exist
 	*/
 	deleteOffset(day) {
-		if (!Number.isInteger(day)) {
-			return 1
-		}
-
 		const index = this.offsets.findIndex(o => o.day === day)
 		if (index === -1) {
-			return 2
+			return 1
 		}
 
 		this.offsets.splice(index, 1)

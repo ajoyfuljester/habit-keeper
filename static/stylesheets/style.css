@@ -13,6 +13,7 @@ body {
 	--clr-2: #b2d;
 	--clr-3: #2d4;
 
+	--bigger-font-size: 1.2rem;
 
 	background-color: var(--clr-1);
 }
@@ -37,7 +38,7 @@ h1 {
 
 input {
 	font-family: inherit;
-	font-size: 1.2rem;
+	font-size: var(--bigger-font-size);
 	border: solid 0.2em var(--clr-2);
 	padding: 0.2em 0.4em;
 
@@ -72,4 +73,20 @@ button.inline:hover {
 
 .highlight {
 	color: var(--clr-2);
+}
+
+a {
+	color: var(--clr-2);
+}
+
+a.cell {
+	display: block;
+	font-weight: bold;
+	cursor: pointer;
+	font-size: var(--bigger-font-size);
+	align-content: center;
+}
+
+a.cell:hover {
+	background-color: var(--clr-1-accent);
 }

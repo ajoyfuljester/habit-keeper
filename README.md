@@ -5,12 +5,10 @@ first time using deno
 i wish you a good life and succesful new habits or something
 
 # TODO
-1. add main functionality to habits:
-    - add
-    - remove
-    - rename
 - add borders/alternating colors to days
 - add more colors
+- check if very bad requests crash the server
+- REDIRECTS WHEN TOKEN IS INVALID, BUT ALSO SOMEHOW GIVE INFORMATION HOPEFULLY HTTP WILL ALLOW
 - clean up this list
 - create a release
 - FOCUS ON MAKING IT USABLE and then improve

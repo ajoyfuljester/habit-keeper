@@ -1,4 +1,4 @@
-import { extractName, getData } from './utils.js'
+import { extractName, getData, redirect } from './utils.js'
 
 async function main() {
 	document.querySelector('#init').addEventListener('click', handleInit)
@@ -61,6 +61,7 @@ function createHabitManager(habitsObject) {
 		elDelete.classList.add('cell')
 		elDelete.value = "Delete"
 		elDelete.title = "Remove the habit"
+		elDelete.addEventListener('click', () => handleDeleteHabit(elRename))
 		elHabits.appendChild(elDelete)
 	}
 
@@ -78,8 +79,10 @@ function createHabitManager(habitsObject) {
 	elCreateConfirm.addEventListener('click', () => handleCreateHabit(elCreate))
 	elHabits.appendChild(elCreateConfirm)
 
-	elEditor.appendChild(elHabits)
+	const elHabitsLink = createHabitsLink()
+	elHabits.appendChild(elHabitsLink)
 
+	elEditor.appendChild(elHabits)
 	return elEditor
 }
 
@@ -112,6 +115,22 @@ async function handleCreateHabit(elHabitName) {
 	location.reload()
 }
 
+
+/**
+	* @returns {HTMLAnchorElement} element that redirects to the habits
+*/
+function createHabitsLink() {
+	const elLink = document.createElement('a')
+	elLink.classList.add('cell')
+	elLink.classList.add('habitsLink')
+	elLink.innerText = 'Habits'
+	elLink.title = 'Go to habits'
+	elLink.addEventListener('click', () => redirect(`/u/${extractName()}/habits`))
+
+	return elLink
+}
+
+
 /**
 	* @param {HTMLInputElement} elHabitName - element with an `value` property, that will be the name of this habit
 	* @returns {Promise<Response>?} response if renaming failed, else the page is reloaded (refreshed)
@@ -139,6 +158,34 @@ async function handleRenameHabit(elHabitName) {
 
 	location.reload()
 }
+
+
+/**
+	* @param {HTMLInputElement} elHabitName - element with an `value` property, that will be the name of the new habit
+	* @returns {Promise<Response>?} response if deletion failed, else the page is reloaded (refreshed)
+*/
+async function handleDeleteHabit(elHabitName) {
+	const habitName = elHabitName.value
+
+	const name = extractName()
+	const req = new Request(`/api/data/${name}/action`, {
+		method: "POST",
+		body: JSON.stringify({
+			action: "delete",
+			type: "habit",
+			what: habitName,
+		})
+	})
+	
+	const res = await fetch(req)
+	
+	if (res.status !== 201) {
+		return res
+	}
+
+	location.reload()
+}
+
 
 /**
 	* @returns {Boolean} whether `init` request was successful
