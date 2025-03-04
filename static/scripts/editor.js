@@ -1,26 +1,28 @@
 import { extractName, getData, redirect } from './utils.js'
 
 async function main() {
-	document.querySelector('#init').addEventListener('click', handleInit)
-
 
 	const data = await getData()
 	if (!data) {
 		return 1
 	}
 
+	const elMain = document.querySelector('main')
 
-	const editor = document.querySelector('#editor')
+	const elEditor = document.createElement('div')
 	const habitManager = createHabitManager(data.habits)
-	editor.appendChild(habitManager)
+	elEditor.appendChild(habitManager)
+	elMain.appendChild(elEditor)
 
+	const elInitButton = createInitButton()
+	elMain.appendChild(elInitButton)
 
-
+	const elDangerZone = createDangerZone()
+	elMain.appendChild(elDangerZone)
 
 
 	return 0
 }
-
 
 
 // TODO HEREEEEEE!!!!!!!! 9
@@ -188,11 +190,70 @@ async function handleDeleteHabit(elHabitName) {
 
 
 /**
+	* @returns {HTMLDivElement} element with dangerous elements
+*/
+function createDangerZone() {
+	const elDangerZone = document.createElement('div')
+	elDangerZone.classList.add('danger')
+	
+	const elH1 = document.createElement('h1')
+	elH1.innerText = 'DANGER ZONE'
+	elDangerZone.appendChild(elH1)
+
+	const elFlex = document.createElement('div')
+	elFlex.classList.add('flex')
+	elDangerZone.appendChild(elFlex)
+
+	const elInitForce = createInitForceButton()
+	elFlex.appendChild(elInitForce)
+
+	return elDangerZone
+}
+
+
+/**
+	* @returns {HTMLDivElement} element with a heading and a button to init the datafile
+*/
+function createInitWrapper() {
+	// TODO HERERERERERERRERERRREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+}
+
+
+/**
+	@returns {HTMLInputElement} button element with stuff to initialize a datafile
+*/
+function createInitButton() {
+	const el = document.createElement('input')
+	el.type = 'button'
+	el.value = 'Initialize or something'
+	el.addEventListener('click', () => handleInit())
+
+	return el
+}
+
+
+/**
+	@returns {HTMLInputElement} button element with stuff to forcefully initialize a datafile - DESTROY DATA
+*/
+function createInitForceButton() {
+	const el = document.createElement('input')
+	el.type = 'button'
+	el.classList.add('danger')
+	el.value = 'DESTROY YOUR DATA'
+	el.addEventListener('click', () => handleInit(true))
+
+	return el
+}
+
+
+/**
+	* @param {Boolean} [force=false] whether to force init - overwrite data
 	* @returns {Boolean} whether `init` request was successful
 */
-async function handleInit() {
+async function handleInit(force = false) {
 	const name = extractName()
-	const res = await fetch(`/api/data/${name}/init`)
+	const res = await fetch(`/api/data/${name}/init${force ? '/force' : ''}`)
 	console.log("init", res.ok)
 	return res.ok
 }

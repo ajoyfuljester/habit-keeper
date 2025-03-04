@@ -1,3 +1,9 @@
+main {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
 .grid-habits {
 	display: grid;
 	grid-template-columns: repeat(3, auto);
@@ -19,4 +25,9 @@ button.cell {
 a.cell {
 	font-weight: normal;
 	text-align: center;
+}
+
+h1 {
+	text-align: center;
+	margin-block: 0.2em;
 }

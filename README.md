@@ -5,8 +5,12 @@ first time using deno
 i wish you a good life and succesful new habits or something
 
 # TODO
-- add borders/alternating colors to days
+- add port to the config file
+- add a screenshot to this file
+- add user registration
+- add borders to days
 - add more colors
+- maybe require some kind of additional confirmation in requests to perform more dangerous actions
 - check if very bad requests crash the server
 - REDIRECTS WHEN TOKEN IS INVALID, BUT ALSO SOMEHOW GIVE INFORMATION HOPEFULLY HTTP WILL ALLOW
 - clean up this list

@@ -90,3 +90,9 @@ a.cell {
 a.cell:hover {
 	background-color: var(--clr-1-accent);
 }
+
+.flex {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
