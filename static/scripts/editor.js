@@ -14,8 +14,8 @@ async function main() {
 	elEditor.appendChild(habitManager)
 	elMain.appendChild(elEditor)
 
-	const elInitButton = createInitButton()
-	elMain.appendChild(elInitButton)
+	const elInitWrapper = createInitWrapper()
+	elMain.appendChild(elInitWrapper)
 
 	const elDangerZone = createDangerZone()
 	elMain.appendChild(elDangerZone)
@@ -215,8 +215,17 @@ function createDangerZone() {
 	* @returns {HTMLDivElement} element with a heading and a button to init the datafile
 */
 function createInitWrapper() {
-	// TODO HERERERERERERRERERRREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+	const el = document.createElement('div')
+	el.classList.add('flex-column')
 
+	const elH1 = document.createElement('h1')
+	elH1.innerText = "If you don't see anything useful here, you might want to click this button"
+	el.appendChild(elH1)
+
+	const elInitButton = createInitButton()
+	el.appendChild(elInitButton)
+
+	return el
 }
 
 

@@ -64,3 +64,12 @@
 	border-top: var(--border);
 	border-right: var(--border);
 }
+
+
+.bottomSum {
+	border-bottom: var(--border);
+}
+
+.bottomSum::after {
+	content: attr(data-count);
+}

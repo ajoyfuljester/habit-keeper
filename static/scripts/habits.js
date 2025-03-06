@@ -30,7 +30,9 @@ function loadHabits(data) {
 	const elEditorLink = createEditorLink()
 	elData.appendChild(elEditorLink)
 
-	updateColors(elData)
+	createSumRow(elData)
+
+	updateView(elData)
 
 	return elData
 }
@@ -120,7 +122,6 @@ function createDate(date) {
 	return elDate
 }
 
-
 /**
 	* @returns {HTMLAnchorElement} element that redirects to the editor
 */
@@ -196,7 +197,7 @@ async function handleToggleOffset(habitName, day, element, elData) {
 	}
 
 	element.classList.toggle('offset')
-	updateColors(elData)
+	updateView(elData)
 
 	return 0
 }
@@ -256,6 +257,11 @@ async function deleteOffset(habitName, day) {
 
 }
 
+function updateView(elParent) {
+	updateColors(elParent)
+	updateSumRow(elParent)
+}
+
 /**
 	* @param {HTMLDivElement} elData element with the data stuff
 	* @todo from left to right check neighbours
@@ -265,6 +271,7 @@ function updateColors(elData) {
 	const elDays = elData.querySelectorAll('.day')
 	const numberOfDays = +elData.style.getPropertyValue('--number-of-days')
 
+	// TODO: move this to the updateHabits(), write updateHabits() but maybe rename it to updateView
 	if (elDays.length % numberOfDays !== 0) {
 		console.warn('number of day elements not divisible by provided --number-of-days', elDays.length, numberOfDays)
 	}
@@ -294,15 +301,53 @@ function updateColors(elData) {
 	}
 }
 
+
 /**
-	* @param {Number} n number of the color or something
-	* @returns {String} css color as string
-	* @deprecated idk how to mark this as a temporary function, it will probably evolve into a normal function
+	* @param {HTMLDivElement} elParent elData, grid
 */
-function _colorsTemp(n) {
-	const colors = ['#ff0', '#0f0', '#0ff', '#00f']
-	return colors[n % colors.length]
+function createSumRow(elParent) {
+	const numberOfDays = +elParent.style.getPropertyValue('--number-of-days')
+	
+	for (let i = 0; i < numberOfDays; i++) {
+		const elSum = document.createElement('div')
+		elSum.dataset.count = 0
+		elSum.classList.add('bottomSum')
+		elParent.appendChild(elSum)
+	}
+
 }
+
+
+/**
+	* @param {HTMLDivElement} elParent elData, grid
+*/
+function updateSumRow(elParent) {
+	const elDays = elParent.querySelectorAll('.day')
+	const numberOfDays = +elParent.style.getPropertyValue('--number-of-days')
+
+	/** @type {Array<HTMLDivElement>} */
+	const elSums = elParent.querySelectorAll('.bottomSum')
+
+
+	/** @type {Array<Array<HTMLDivElement>>} */
+	const elDaysArrays = [];
+	for (let i = 0; i < elDays.length; i++) {
+		if (i % numberOfDays === 0) {
+			elDaysArrays.push([])
+		}
+		const elDay = elDays[i]
+		elDaysArrays.at(-1).push(elDay)
+	}
+
+	const minLength = elDaysArrays.map(array => array.length).reduce((prev, cur) => cur > prev ? prev : cur, Infinity)
+
+	for (let i = 0; i < minLength; i++) {
+		const count = elDaysArrays.map(array => array[i]).filter(el => el.classList.contains('offset')).length
+		elSums[i].dataset.count = count
+	}
+
+}
+
 
 
 /**

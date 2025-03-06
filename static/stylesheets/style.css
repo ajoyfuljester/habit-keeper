@@ -96,3 +96,10 @@ a.cell:hover {
 	justify-content: space-evenly;
 	align-items: center;
 }
+
+.flex-column {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+}
