@@ -248,7 +248,6 @@ function createInitButton() {
 function createInitForceButton() {
 	const el = document.createElement('input')
 	el.type = 'button'
-	el.classList.add('danger')
 	el.value = 'DESTROY YOUR DATA'
 	el.addEventListener('click', () => handleInit(true))
 

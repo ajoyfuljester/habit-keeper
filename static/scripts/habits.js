@@ -13,6 +13,7 @@ function loadHabits(data) {
 	const days = [addDays(today, -6), addDays(today, -5), addDays(today, -4), addDays(today, -3), addDays(today, -2), addDays(today, -1), today]
 
 	elData.style.setProperty('--number-of-days', days.length)
+	elData.style.setProperty('--number-of-habits', data.habits.length)
 
 
 	elData.appendChild(_createPlaceholder())
@@ -31,6 +32,8 @@ function loadHabits(data) {
 	elData.appendChild(elEditorLink)
 
 	createSumRow(elData)
+
+	elData.appendChild(_createPlaceholder())
 
 	updateView(elData)
 
