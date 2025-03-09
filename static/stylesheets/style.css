@@ -1,5 +1,9 @@
+* {
+	box-sizing: border-box;
+}
+
 :root {
-	font-family: 'Helvetica';
+	font-family: sans-serif;
 	--golden-ratio: calc((1 + sqrt(5)) / 2);
 	--golden-ratio-long: calc(var(--golden-ratio) * 2);
 }
@@ -8,7 +12,7 @@ body {
 	margin: 0;
 	min-height: 100vh;
 
-	--clr-1: #eee;
+	--clr-1: #fafafa;
 	--clr-1-accent: #bbb;
 	--clr-2: #b2d;
 	--clr-3: #2d4;

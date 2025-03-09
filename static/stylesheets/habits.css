@@ -13,8 +13,39 @@
 }
 
 .grid-habits > .day {
-	background-color: var(--clr-1-accent);
+	background-color: var(--clr-1);
 	padding: 0.2em 0.4em;
+	align-content: center;
+	text-align: center;
+	font-size: 1.4vw;
+	font-weight: bold;
+}
+
+.grid-habits > .day:hover {
+	border: 0.4rem solid var(--clr-1);
+	background-color: var(--clr-offset);
+	color: var(--clr-1);
+}
+
+.grid-habits > .day:hover::after {
+	content: 'mark';
+}
+
+.grid-habits > .offset:hover {
+	border: 0.4rem solid var(--clr-offset);
+	background-color: var(--clr-1);
+	color: var(--clr-offset);
+}
+
+.grid-habits > .offset:hover::after {
+	content: 'unmark';
+}
+
+/* .grid-habits needed because specificity */
+.grid-habits > .offset {
+	--clr-offset: var(--clr-3);
+	background-color: var(--clr-offset);
+	aspect-ratio: calc(var(--golden-ratio) + 1);
 }
 
 .grid-habits > h3 {
@@ -23,13 +54,6 @@
 	background-color: var(--clr-1);
 
 	border-left: var(--border);
-}
-
-/* .grid-habits needed because specificity */
-.grid-habits > .offset {
-	--color-offset: var(--clr-3);
-	background-color: var(--color-offset);
-	aspect-ratio: calc(var(--golden-ratio) + 1);
 }
 
 .grid-habits > .date {

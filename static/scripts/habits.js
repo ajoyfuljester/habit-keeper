@@ -294,7 +294,7 @@ function updateColors(elData) {
 		let strike = 0
 		for (const elDay of elDaysArray) {
 			const hue = +elDay.style.getPropertyValue('--hue')
-			elDay.style.setProperty('--color-offset', Colors.gradient(strike, numberOfDays - 1, hue))
+			elDay.style.setProperty('--clr-offset', Colors.gradient(strike, numberOfDays - 1, hue))
 			if (elDay.classList.contains('offset')) {
 				strike += 1
 			} else {

@@ -89,7 +89,7 @@ export async function handleDataGet(req, _info, params) {
 /**
 	* @type {Route}
 */
-export function handleDataSet(req, _info, params) { // TODO: write this
+export function handleDataSet(req, _info, params) {
 	const res = tokenResponse(req, {params, permissions: 2})
 	if (res[0]) {
 		return res[0]

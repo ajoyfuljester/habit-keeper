@@ -36,7 +36,7 @@ await db.addUser('test', '0', 1)
 const routes = [
 	{
 		pattern: new URLPattern({ pathname: "/" }),
-		handler: _ => new Response(null, { status: 308, headers: {"Location": "/static/sites/login.html"}}),
+		handler: _ => new Response(null, {status: 308, headers: {"Location": "/static/sites/login.html"}}),
 	},
 	{
 		pattern: new URLPattern({ pathname: "/static/*" }),
@@ -44,27 +44,27 @@ const routes = [
 	},
 	{
 		pattern: new URLPattern({ pathname: "/u/:name/habits" }),
-		handler: (req, _info, params) => {
-			const result = tokenResponse(req, {params, permissions: 1})
-			if (result[0]) {
-				return result[0]
+		handler: async (req, _info, params) => {
+			const response = await redirectingHandler(req, _info, params, 1)
+			if (response !== null) {
+				return response
 			}
 			return serveFile(req, 'dynamic/habits.html')
 		},
 	},
 	{
 		pattern: new URLPattern({ pathname: "/u/:name/editor" }),
-		handler: (req, _info, params) => {
-			const result = tokenResponse(req, {params, permissions: 1})
-			if (result[0]) {
-				return result[0]
+		handler: async (req, _info, params) => {
+			const response = await redirectingHandler(req, _info, params, 2)
+			if (response !== null) {
+				return response
 			}
 			return serveFile(req, 'dynamic/editor.html')
 		},
 	},
 	{
 		pattern: new URLPattern({ pathname: "/u/:name" }),
-		handler: (_req, _info, params) => new Response(null, { status: 308, headers: {"Location": `/u/${params.pathname.groups.name}/habits`}}),
+		handler: (_req, _info, params) => new Response(null, {status: 308, headers: {"Location": `/u/${params.pathname.groups.name}/habits`}}),
 	},
 	{
 		pattern: new URLPattern({ pathname: "/admin" }),
@@ -117,6 +117,21 @@ const routes = [
 */
 function defaultHandler(_req) {
   return new Response("not found", { status: 404 });
+}
+
+/**
+	* @param {Request} req request from the client
+	* @param {*} _info i do not contain the knowledge of this particular parameter
+	* @param {*} params i don't know what this is, but it has `pathname.groups` stuff
+	* @param {*} permissions needed permission to go to that particular url
+	* @returns {Promise<Response | null>} response redirecting to login or null, if the permissions are good
+*/
+async function redirectingHandler(req, _info, params, permissions) {
+	const result = tokenResponse(req, {params, permissions})
+	if (result[0]) {
+		return new Response(`error response with code ${result[0].status} and body: "${await result[0].text()}"`, {status: 308, headers: {"Location": "/static/sites/login.html"}})
+	}
+	return null
 }
 
 Deno.serve({
