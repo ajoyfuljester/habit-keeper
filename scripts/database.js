@@ -1,4 +1,3 @@
-import { assert } from "jsr:@std/assert/assert";
 import { generateToken, hash } from "./encryption.js";
 import { Database } from "jsr:@db/sqlite";
 import { now } from "./utils.js";
@@ -117,11 +116,48 @@ export function userExists(name) {
 
 
 /**
-	* @deprecated should rewrite this before using
+	* @param {String} name user name
+	* @param {Object} parameters object with NEW parameters to APPLY TO THE DATABASE
+	* @param {String?} parameters.password NEW password
+	* @param {String?} parameters.name NEW user name
+	* @param {Number?} parameters.adminMode NEW adminMode
+	*
+	* @returns {0 | 1} exitCode:
+	* `0` - success
+	* `1` - user with the new name (`parameters.name`) already exists
 */
-export async function updateUser(name, newName, password, admin = 0) { // TODO: rewrite this (separate params, like in 'tokens'), check if newName is taken
-	const hashedPassword = await hash(password);
-	db.prepare('UPDATE user SET name = ?, password = ?, adminMode = ? WHERE name = ?').run(newName, hashedPassword, admin, name)
+export async function updateUser(name, parameters) {
+	let query = "UPDATE user SET "
+	let i = 0;
+
+	if (parameters.name != undefined && userExists(parameters.name)) {
+		return 1
+	}
+
+	for (const entry of Object.entries(parameters)) {
+		if (!entry[1]) {
+			continue
+		}
+
+		if (i !== 0) {
+			query += ", "
+		}
+
+		query += `${entry[0]} = ?`
+
+		i++;
+	}
+
+	if (parameters.password != undefined) {
+		parameters.password = await hash(parameters.password)
+	}
+
+	query += " WHERE name = ?"
+	console.log(query)
+
+	db.prepare(query).run(...Object.values(parameters).filter(v => !!v), name)
+
+	return 0
 }
 
 

@@ -10,10 +10,12 @@ import _c from "./config.json" with {type: "json"};
 
 
 /**
-	* @typedef {Object} config
+	* @typedef {Object} config config file
 	* @property {Object} config.defaultAccount
 	* @property {String} config.defaultAccount.name
 	* @property {String} config.defaultAccount.password
+	*
+	* @property {Number} config.port
 */
 
 /** @type {config} */
@@ -55,7 +57,7 @@ const routes = [
 	{
 		pattern: new URLPattern({ pathname: "/u/:name/editor" }),
 		handler: async (req, _info, params) => {
-			const response = await redirectingHandler(req, _info, params, 2)
+			const response = await redirectingHandler(req, _info, params, 1)
 			if (response !== null) {
 				return response
 			}
@@ -135,7 +137,7 @@ async function redirectingHandler(req, _info, params, permissions) {
 }
 
 Deno.serve({
-	port: 8000,
+	port: CONFIG.port,
 }, (...stuff) => {
 	// console.log(stuff)
 	return route(routes, defaultHandler)(...stuff)

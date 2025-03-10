@@ -267,14 +267,12 @@ function updateView(elParent) {
 
 /**
 	* @param {HTMLDivElement} elData element with the data stuff
-	* @todo from left to right check neighbours
 	* @todo idea: TWO DIMENSIONAL GRADIENT!!!!!!!
 */
 function updateColors(elData) {
 	const elDays = elData.querySelectorAll('.day')
 	const numberOfDays = +elData.style.getPropertyValue('--number-of-days')
 
-	// TODO: move this to the updateHabits(), write updateHabits() but maybe rename it to updateView
 	if (elDays.length % numberOfDays !== 0) {
 		console.warn('number of day elements not divisible by provided --number-of-days', elDays.length, numberOfDays)
 	}

@@ -32,7 +32,6 @@ body {
 	width: fit-content;
 	gap: 2rem;
 	padding: 2rem;
-	box-shadow: 0 0 1rem #000a;
 
 	background-color: var(--clr-1);
 }

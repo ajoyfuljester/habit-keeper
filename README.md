@@ -5,26 +5,19 @@ first time using deno
 i wish you a good life and succesful new habits or something
 
 # TODO
-- add port to the config file
+- test creating a habit because i think something is wrong with the startingDate
 - add a screenshot to this file
 - add user registration
-- add borders to days
 - add more colors
 - maybe require some kind of additional confirmation in requests to perform more dangerous actions
 - check if very bad requests crash the server
-- REDIRECTS WHEN TOKEN IS INVALID, BUT ALSO SOMEHOW GIVE INFORMATION HOPEFULLY HTTP WILL ALLOW
-- clean up this list
 - create a release
 - FOCUS ON MAKING IT USABLE and then improve
-- ADD LABELS FOR THE DAYS!!!!!!!
 - variable habit length? in smaller intervals than 1 day if i'm crazy enough
-- stop with the ROUNDED CORNERS
 - replace all console.warn with just assert()
 - add clean up for expired tokens
 - add admin control panel
 - add the option to register a new user on the client
-- add well basically the whole client
-- add well almost the whole server (handling '.../action' requests)
 - add data file backups
 - write documentation
     - json schema

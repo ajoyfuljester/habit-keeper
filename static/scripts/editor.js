@@ -25,7 +25,6 @@ async function main() {
 }
 
 
-// TODO HEREEEEEE!!!!!!!! 9
 /**
 	* @param {import("./habits.js").habitObject[]} habitsObject - array of objects with information about the habits
 */
