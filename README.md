@@ -17,7 +17,6 @@ i wish you a good life and succesful new habits or something
 - replace all console.warn with just assert()
 - add clean up for expired tokens
 - add admin control panel
-- add the option to register a new user on the client
 - add data file backups
 - write documentation
     - json schema
