@@ -6,6 +6,7 @@ i wish you a good life and succesful new habits or something
 
 # TODO
 - test creating a habit because i think something is wrong with the startingDate
+- write the thing in the deno file for normal running or whatever
 - add a screenshot to this file
 - add user registration
 - add more colors

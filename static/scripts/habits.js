@@ -1,5 +1,6 @@
 import { extractName, getData, dateToOffset, addDays, randomInteger, redirect } from './utils.js'
 import * as Colors from "./colors.js"
+import * as Stats from "./stats.js"
 
 /**
 	* @param {import('./utils.js').dataObject} data - data-like object I DON'T KNOW HOW TO WRITE DOCUMENTATION!!!!!!!!!!!!
@@ -25,7 +26,7 @@ function loadHabits(data) {
 
 	for (const habit of data.habits) {
 		createHabit(elData, habit, {days})
-		elData.appendChild(createStatistics(habit))
+		elData.appendChild(Stats.createStats(habit))
 	}
 
 	const elEditorLink = createEditorLink()
@@ -140,35 +141,6 @@ function createEditorLink() {
 }
 
 
-
-function statistics(habitInfo) {
-	const stats = {}
-	stats.successes = habitInfo.offsets?.length
-
-
-	return stats;
-
-}
-/**
-	* @param {habitObject} habitInfo information about the habit
-	* @returns {HTMLDivElement} statistic element
-*/
-function createStatistics(habitInfo) {
-	const elStats = document.createElement('div')
-	elStats.classList.add('stats')
-
-	return elStats
-}
-
-function createStat(key, value) {
-	const elKey = document.createElement('div');
-	elKey.innerText = key
-	const elValue = document.createElement('div');
-	elValue.innerText = value
-
-	return [elKey, elValue]
-
-}
 
 
 /**
@@ -289,14 +261,14 @@ function updateColors(elData) {
 
 	for (const elDaysArray of elDaysArrays) {
 		// TODO: possibly have many functions to compute this
-		let strike = 0
+		let streak = 0
 		for (const elDay of elDaysArray) {
 			const hue = +elDay.style.getPropertyValue('--hue')
-			elDay.style.setProperty('--clr-offset', Colors.gradient(strike, numberOfDays - 1, hue))
+			elDay.style.setProperty('--clr-offset', Colors.gradient(streak, numberOfDays - 1, hue))
 			if (elDay.classList.contains('offset')) {
-				strike += 1
+				streak += 1
 			} else {
-				strike = 0
+				streak = 0
 			}
 		}
 	}
