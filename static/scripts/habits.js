@@ -1,6 +1,6 @@
 import { extractName, getData, dateToOffset, addDays, randomInteger, redirect } from './utils.js'
 import * as Colors from "./colors.js"
-import * as Stats from "./stats.js"
+import { createStats } from "./stats.js"
 
 /**
 	* @param {import('./utils.js').dataObject} data - data-like object I DON'T KNOW HOW TO WRITE DOCUMENTATION!!!!!!!!!!!!
@@ -26,7 +26,7 @@ function loadHabits(data) {
 
 	for (const habit of data.habits) {
 		createHabit(elData, habit, {days})
-		elData.appendChild(Stats.createStats(habit))
+		createStats(elData, habit.offsets, [0])
 	}
 
 	const elEditorLink = createEditorLink()
