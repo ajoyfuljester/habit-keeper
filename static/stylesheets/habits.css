@@ -4,7 +4,7 @@
 
 .grid-habits {
 	display: grid;
-	grid-template-columns: auto repeat(calc(var(--number-of-days)), 1fr) auto;
+	grid-template-columns: auto repeat(var(--number-of-days), 1fr) repeat(var(--number-of-stats), auto);
 	grid-template-rows: auto repeat(calc(var(--number-of-habits)), 1fr) auto;
 
 	text-align: center;

@@ -10,12 +10,16 @@ function loadHabits(data) {
 	const elData = document.querySelector("#data")
 	elData.classList.add('grid-habits')
 
+	elData.style.setProperty('--number-of-habits', data.habits.length)
+
 	const today = new Date();
 	const days = [addDays(today, -6), addDays(today, -5), addDays(today, -4), addDays(today, -3), addDays(today, -2), addDays(today, -1), today]
 
 	elData.style.setProperty('--number-of-days', days.length)
-	elData.style.setProperty('--number-of-habits', data.habits.length)
 
+	const statsIDs = [0]
+
+	elData.style.setProperty('--number-of-stats', statsIDs.length)
 
 	elData.appendChild(_createPlaceholder())
 	for (const day of days) {
