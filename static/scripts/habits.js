@@ -1,6 +1,6 @@
 import { extractName, getData, dateToOffset, addDays, randomInteger, redirect } from './utils.js'
 import * as Colors from "./colors.js"
-import { createStats } from "./stats.js"
+import { createStats, Stats } from "./stats.js"
 
 /**
 	* @param {import('./utils.js').dataObject} data - data-like object I DON'T KNOW HOW TO WRITE DOCUMENTATION!!!!!!!!!!!!
@@ -22,15 +22,28 @@ function loadHabits(data) {
 	elData.style.setProperty('--number-of-stats', statsIDs.length)
 
 	elData.appendChild(_createPlaceholder())
+
 	for (const day of days) {
 		const elDay = createDate(day)
 		elData.appendChild(elDay)
 	}
+
+	for (const _ of statsIDs) {
+		elData.appendChild(_createPlaceholder())
+	}
+
 	elData.appendChild(_createPlaceholder())
+
+	for (const id of statsIDs) {
+		const el = document.createElement('span')
+		el.innerText = Stats[id].name
+		elData.appendChild(el)
+
+	}
 
 	for (const habit of data.habits) {
 		createHabit(elData, habit, {days})
-		createStats(elData, habit.offsets, [0])
+		createStats(elData, habit.offsets, statsIDs)
 	}
 
 	const elEditorLink = createEditorLink()
@@ -239,6 +252,7 @@ async function deleteOffset(habitName, day) {
 function updateView(elParent) {
 	updateColors(elParent)
 	updateSumRow(elParent)
+	updateStats(elParent)
 }
 
 /**
