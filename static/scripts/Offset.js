@@ -6,6 +6,10 @@ export class Offset {
 	*/
 	
 	constructor([offset, value]) {
+		if (!(offset && value)) {
+			console.error('INVALID OFFSET')
+		}
+
 		/** @type {Number} offset in days from `startingDate` */
 		this.day = offset;
 		/** @type {Number} value of the day */

@@ -7,16 +7,10 @@ export class Habit {
 		* @returns {Habit} instance of `Habit`, possibly invalid, see `Habit.valid`
 		* @see {@link habitObject}
 	*/
-	constructor({name, startingDate = dateToISO(), offsets = []}) {
-		/** @type {Boolean} whether the instance valid */
-		this.valid = false
-
-		/** @type {Number} validation state (0 is valid) */
-		this.validation = validateHabit({name, startingDate, offsets})
-		if (this.validation !== 0) {
-			return this
+	constructor({name, startingDate, offsets}) {
+		if (!(name && startingDate && offsets)) {
+			console.error('INVALID HABIT')
 		}
-		this.valid = true
 
 		/** @type {String} name of the habit */
 		this.name = name
@@ -26,6 +20,9 @@ export class Habit {
 
 		/** @type {Offset[]} array of `Offsets` */
 		this.offsets = offsets
+
+
+
 	}
 
 	/** @returns {import("./habits").habitObject} a simple object that is jsonifable */
@@ -109,6 +106,16 @@ export class Habit {
 			offsets: offsets,
 		})
 
+	}
+
+	#initiateHTML() {
+		const el = document.createElement('div')
+
+
+
+
+
+		return el
 	}
 	
 }
