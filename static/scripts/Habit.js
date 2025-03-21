@@ -108,14 +108,41 @@ export class Habit {
 
 	}
 
-	#initiateHTML() {
-		const el = document.createElement('div')
+	#initiateDay(date) {
+		const elDay = document.createElement('div');
+		elDay.classList.add('day')
 
+		// TODO: write a function to maybe set value, but that's less important i think
+		elDay.addEventListener('click', () => this.#handleToggleOffset(habitObject.name, day, elDay, elParent))
+		elParent.appendChild(elDay)
+		if (!this.findOffset(habitObject.offsets, day)) {
+			return elDay
+		}
+		elDay.classList.add('offset')
 
-
-
-
-		return el
+		return elDay
 	}
-	
+
+	/**
+		* @param {Number} day offset offset/day thingy, days since `startingDate`
+		* @returns {Promise<0 | 1>} exitCode
+		*/
+		async #handleToggleOffset(day) {
+			let exitCode = undefined;
+			if (element.classList.contains('offset')) {
+				exitCode = await deleteOffset(habitName, day, element)
+			} else {
+				exitCode = await createOffset(habitName, day)
+			}
+
+			if (exitCode !== 0) {
+				return exitCode
+			}
+
+			element.classList.toggle('offset')
+			updateView(elData)
+
+			return 0
+		}
+
 }

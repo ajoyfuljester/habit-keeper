@@ -89,6 +89,7 @@ export async function handleDataAction(req, _info, params) {
 	* @property {actionHabitDelete} Action.habit.delete deletes a habit with name (see {@link actionHabitDelete})
 	* @property {Object} Action.offset object with functions with actions that user can perform using requests on offsets
 	* @property {actionOffsetCreate} Action.offset.create creates an offset with data
+	* @property {actionOffsetDelete} Action.offset.delete delete an offset with habit name and day
 */
 
 

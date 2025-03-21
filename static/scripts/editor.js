@@ -254,16 +254,6 @@ function createInitForceButton() {
 }
 
 
-/**
-	* @param {Boolean} [force=false] whether to force init - overwrite data
-	* @returns {Boolean} whether `init` request was successful
-*/
-async function handleInit(force = false) {
-	const name = extractName()
-	const res = await fetch(`/api/data/${name}/init${force ? '/force' : ''}`)
-	console.log("init", res.ok)
-	return res.ok
-}
 
 const exitCode = await main()
 

@@ -2,10 +2,15 @@
 
 first time using deno
 
+i have not used a javascript framework in my entire life, thanks to this project maybe i can see the benefits of using one
+i hate unnecessary web apps, they annoy me as a user and will annoy me if i will have to use them as an api or something probably i don't know. what i want to say is that `habit-keeper` is made with requests because i see it more or less as an universal api
+
 i wish you a good life and succesful new habits or something
 
 # TODO
 - test creating a habit because i think something is wrong with the startingDate
+- mask data file names with a hash
+- add views - should they be on the server? yes, but add it in the server config as an option
 - write the thing in the deno file for normal running or whatever
 - add a screenshot to this file
 - add user registration

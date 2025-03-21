@@ -101,17 +101,6 @@ function createHabit(elParent, habitObject, {days = []}) {
 	const relativeDays = days.map(d => dateToOffset(habitObject.startingDate, d))
 	const hue = randomInteger(0, 360)
 	for (const day of relativeDays) {
-		const elOffset = document.createElement('div');
-		elOffset.classList.add('day')
-		elOffset.style.setProperty('--hue', hue)
-
-		// TODO: write a function to maybe set value, but that's less important i think
-		elOffset.addEventListener('click', () => handleToggleOffset(habitObject.name, day, elOffset, elParent))
-		elParent.appendChild(elOffset)
-		if (!hasOffset(habitObject.offsets, day)) {
-			continue;
-		}
-		elOffset.classList.add('offset')
 	}
 
 	return 0
@@ -160,94 +149,6 @@ function createEditorLink() {
 
 
 
-/**
-	* @param {offsetArray[]} array array containing offsets (haystack)
-	* @param {Number} day day number (needle) I HATE NAMING THINGS
-	* @returns {Boolean} wherther the `array` has the `day`
-*/
-function hasOffset(array, day) {
-	return !!array.find(o => o[0] === day)
-}
-
-
-/**
-	* @param {String} habitName name of the habit that the offset is in
-	* @param {Number} day offset offset/day thingy, days since `startingDate`
-	* @param {HTMLElement} element offset html to be marked with a class if successful fetch
-	* @returns {Promise<0 | 1>} exitCode
-*/
-async function handleToggleOffset(habitName, day, element, elData) {
-	let exitCode = undefined;
-	if (element.classList.contains('offset')) {
-		exitCode = await deleteOffset(habitName, day, element)
-	} else {
-		exitCode = await createOffset(habitName, day)
-	}
-	
-	if (exitCode !== 0) {
-		return exitCode
-	}
-
-	element.classList.toggle('offset')
-	updateView(elData)
-
-	return 0
-}
-
-
-/**
-	* @param {String} habitName name of the habit that the offset is in
-	* @param {Number} day offset offset/day thingy, days since `startingDate`
-	* @returns {Promise<0 | 1>} exitCode
-*/
-async function createOffset(habitName, day) {
-	const name = extractName()
-	const req = new Request(`/api/data/${name}/action`, {
-		method: "POST",
-		body: JSON.stringify({
-			action: "create",
-			type: "offset",
-			where: habitName,
-			what: [day, 1],
-		}), // i am so sorry for how i name these things
-	})
-
-	const res = await fetch(req)
-	
-	if (res.status !== 201) {
-		console.error("create offset failed", res)
-		return 1
-	}
-	return 0
-
-}
-
-/**
-	* @param {String} habitName name of the habit that the offset is in
-	* @param {Number} day offset offset/day thingy, days since `startingDate`
-	* @returns {Promise<0 | 1>} exitCode
-*/
-async function deleteOffset(habitName, day) {
-	const name = extractName()
-	const req = new Request(`/api/data/${name}/action`, {
-		method: "POST",
-		body: JSON.stringify({
-			action: "delete",
-			type: "offset",
-			where: habitName,
-			what: day,
-		}),
-	})
-
-	const res = await fetch(req)
-	
-	if (res.status !== 201) {
-		console.error("create offset failed", res)
-		return 1
-	}
-	return 0
-
-}
 
 function updateView(elParent) {
 	updateColors(elParent)
