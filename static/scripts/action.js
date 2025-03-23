@@ -83,7 +83,8 @@ HandleAction.habit.delete = async (habitName) => {
 
 /**
 	* @callback handleActionHabitRename
-	* @param {String} habitName name of the habit to be deleted
+	* @param {String} oldHabitName current name of the habit
+	* @param {String} newHabitName new name of the habit
 	* @returns {Promise<0 | 1>} exitCode
 */
 HandleAction.habit.rename = async (oldHabitName, newHabitName) => {

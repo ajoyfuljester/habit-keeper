@@ -1,3 +1,4 @@
+import { HandleAction } from './action.js'
 import { extractName, getData, redirect } from './utils.js'
 
 async function main() {
@@ -95,22 +96,10 @@ function createHabitManager(habitsObject) {
 async function handleCreateHabit(elHabitName) {
 	const habitName = elHabitName.value
 
-	const name = extractName()
-	const req = new Request(`/api/data/${name}/action`, {
-		method: "POST",
-		body: JSON.stringify({
-			action: "create",
-			type: "habit",
-			what: {name: habitName},
-		})
-	})
-	// TODO: logging here too
-	
-	const res = await fetch(req)
-	
-	if (res.status !== 201) {
-		// TODO: logging here too
-		return res
+	const result = await HandleAction.habit.create(habitName)
+
+	if (result !== 0) {
+		return result
 	}
 
 	location.reload()
@@ -140,21 +129,10 @@ async function handleRenameHabit(elHabitName) {
 	const oldHabitName = elHabitName.placeholder
 	const newHabitName = elHabitName.value
 
-	const name = extractName()
-	const req = new Request(`/api/data/${name}/action`, {
-		method: "POST",
-		body: JSON.stringify({
-			action: "rename",
-			type: "habit",
-			what: oldHabitName,
-			toWhat: newHabitName,
-		})
-	})
-	
-	const res = await fetch(req)
-	
-	if (res.status !== 201) {
-		return res
+	const result = await HandleAction.habit.rename(oldHabitName, newHabitName)
+
+	if (result !== 0) {
+		return result
 	}
 
 	location.reload()
@@ -168,20 +146,10 @@ async function handleRenameHabit(elHabitName) {
 async function handleDeleteHabit(elHabitName) {
 	const habitName = elHabitName.value
 
-	const name = extractName()
-	const req = new Request(`/api/data/${name}/action`, {
-		method: "POST",
-		body: JSON.stringify({
-			action: "delete",
-			type: "habit",
-			what: habitName,
-		})
-	})
-	
-	const res = await fetch(req)
-	
-	if (res.status !== 201) {
-		return res
+	const result = await HandleAction.habit.delete(habitName)
+
+	if (result !== 0) {
+		return result
 	}
 
 	location.reload()
