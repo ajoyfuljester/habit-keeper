@@ -1,4 +1,6 @@
 import { Offset } from "./Offset.js"
+import { HandleAction } from "./action.js"
+import { dateToOffset } from "./utils.js"
 
 
 export class Habit {
@@ -108,14 +110,22 @@ export class Habit {
 
 	}
 
+	/**
+		* @param {Date} date date of the thing
+		* @returns {HTMLDivElement} elDay html element of the day/offset
+		* i hate naming things
+	*/
 	#initiateDay(date) {
 		const elDay = document.createElement('div');
 		elDay.classList.add('day')
 
+		const day = dateToOffset(this.startingDate, date)
+
+
 		// TODO: write a function to maybe set value, but that's less important i think
-		elDay.addEventListener('click', () => this.#handleToggleOffset(habitObject.name, day, elDay, elParent))
+		elDay.addEventListener('click', () => this.#handleToggleOffset())
 		elParent.appendChild(elDay)
-		if (!this.findOffset(habitObject.offsets, day)) {
+		if (!this.findOffset(day)) {
 			return elDay
 		}
 		elDay.classList.add('offset')
@@ -126,13 +136,13 @@ export class Habit {
 	/**
 		* @param {Number} day offset offset/day thingy, days since `startingDate`
 		* @returns {Promise<0 | 1>} exitCode
-		*/
-		async #handleToggleOffset(day) {
+	*/
+	async #handleToggleOffset(day) {
 			let exitCode = undefined;
 			if (element.classList.contains('offset')) {
-				exitCode = await deleteOffset(habitName, day, element)
+				exitCode = await HandleAction.offset.delete(this.name, day)
 			} else {
-				exitCode = await createOffset(habitName, day)
+				exitCode = await HandleAction.offset.create(this.name, day)
 			}
 
 			if (exitCode !== 0) {
