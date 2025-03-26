@@ -2,6 +2,7 @@ import { route } from "jsr:@std/http/unstable-route";
 import { serveDir, serveFile } from "jsr:@std/http/file-server";
 import * as db from "./scripts/database.js";
 import { handleDefaultLogin, handleLogin } from "./scripts/login.js";
+import { handleRegister } from './scripts/register.js'
 import { handleDataGet, handleDataSet, handleDataInit, handleWho, tokenResponse } from "./scripts/data.js";
 import { handleDataAction } from "./scripts/action.js";
 import { handleAdmin, handleAdminStats } from "./scripts/admin.js";
@@ -75,6 +76,11 @@ const routes = [
 	{
 		pattern: new URLPattern({ pathname: "/api/login" }),
 		handler: handleLogin,
+		method: ['POST'],
+	},
+	{
+		pattern: new URLPattern({ pathname: "/api/register" }),
+		handler: handleRegister,
 		method: ['POST'],
 	},
 	{

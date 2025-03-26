@@ -15,8 +15,15 @@ function inputData() {
 */
 async function handleRegister() {
 	const data = inputData()
-	// TODO HEREREERERERE, check if api exists (definitely no)
-	const result = await login(data)
+
+
+	if (data.password !== data.confirmPassword) {
+		return 1
+	}
+
+	// TODO HEEEEREEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	const result = await register(data.name, data.password)
 	const code = result.code;
 
 	let message = ''
@@ -31,4 +38,28 @@ async function handleRegister() {
 
 	document.querySelector('#result').innerText = message
 		
+}
+
+
+/**
+	* @param {String} name name of the user to be created
+	* @param {String} password password of the user to be created
+	* @returns {Promise<Number>} response code
+*/
+async function register(name, password) {
+	const req = new Request(`/api/register`, {
+		method: "POST",
+		body: JSON.stringify({
+			name,
+			password,
+		})
+	})
+	// TODO: logging here too
+	
+	const res = await fetch(req)
+	
+	const responseData = await res.json()
+
+	return responseData.code
+
 }
