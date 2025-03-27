@@ -11,32 +11,42 @@ function inputData() {
 
 
 /**
-	* get data from inputs, attempt to log in, display result, if successful then redirect to user page
+	* get data from inputs, attempt to register a new user, display result, if successful then redirect to user page
+	* @returns {0 | 1 | 2 | 3 | 4} exit code
+	* `0` - success
+	* `1` - user exists
+	* `2` - invalid user name
+	* `3` - invalid password
+	* `4` - entered passwords do not match
+	* @see api route
 */
 async function handleRegister() {
 	const data = inputData()
 
 
 	if (data.password !== data.confirmPassword) {
-		return 1
+		document.querySelector("#result").innerText = 'Entered passwords do not match'
+		return 4
 	}
 
-	// TODO HEEEEREEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	const result = await register(data.name, data.password)
-	const code = result.code;
+	const code = await register(data.name, data.password)
 
 	let message = ''
-	if (code == 0) {
-		message += 'Succes'
-		redirect(`/u/${data.name}/habits`)
-	} else if (code == 1) {
-		message += 'User not found';
-	} else if (code == 2) {
-		message += 'Password is incorrect';
+	if (code === 0) {
+		message += `Succes a user with a name ${data.name} has been created. You can now go and try to <a href="/login">log in</a>`
+	} else if (code === 1) {
+		message += `User with the name "${data.name}" already exists`;
+	} else if (code === 2) {
+		message += `Name "${data.name}" contains invalid characters`;
+	} else if (code === 3) {
+		message += `Password contains invalid characters`;
 	}
 
-	document.querySelector('#result').innerText = message
+
+	document.querySelector("#result").innerText = message
+
+	return code
 		
 }
 
@@ -63,3 +73,5 @@ async function register(name, password) {
 	return responseData.code
 
 }
+
+document.querySelector('#register').addEventListener('click', handleRegister)
