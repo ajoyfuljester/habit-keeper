@@ -42,6 +42,14 @@ const routes = [
 		handler: _ => new Response(null, {status: 308, headers: {"Location": "/static/sites/login.html"}}),
 	},
 	{
+		pattern: new URLPattern({ pathname: "/login" }),
+		handler: _ => new Response(null, {status: 308, headers: {"Location": "/static/sites/login.html"}}),
+	},
+	{
+		pattern: new URLPattern({ pathname: "/register" }),
+		handler: _ => new Response(null, {status: 308, headers: {"Location": "/static/sites/register.html"}}),
+	},
+	{
 		pattern: new URLPattern({ pathname: "/static/*" }),
 		handler: req => serveDir(req),
 	},

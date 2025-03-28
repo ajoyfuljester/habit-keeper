@@ -86,5 +86,9 @@ async function handleDefaultLogin() {
 }
 
 document.querySelector('input#login').addEventListener('click', handleLogin)
+
 document.querySelector('input#alreadyLoggedIn').addEventListener('click', handleAlreadyLoggedIn)
+
 document.querySelector('input#defaultLogin').addEventListener('click', handleDefaultLogin)
+
+document.querySelector('input#register').addEventListener('click', () => { redirect('/register') })
