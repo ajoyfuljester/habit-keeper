@@ -44,7 +44,7 @@ async function handleRegister() {
 	}
 
 
-	document.querySelector("#result").innerText = message
+	document.querySelector("#result").innerHTML = message
 
 	return code
 		

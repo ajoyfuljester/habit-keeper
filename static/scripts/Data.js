@@ -1,5 +1,6 @@
 import { Habit } from "./Habit.js"
 import { List } from "./List.js"
+import * as HTMLUtils from "./htmlutils.js"
 
 
 
@@ -120,6 +121,96 @@ export class Data {
 			habits: habits,
 			lists: lists,
 		})
+
+	}
+
+	#initiateHTML() {
+
+		/** @type {HTMLDivElement} */
+		this.html = document.createElement('div')
+		this.html.classList.add(`data`)
+		this.html.classList.add('grid-habits')
+
+		this.html.style.setProperty('--number-of-habits', this.habits.length)
+
+		// TODO handle this whatever
+		const today = new Date();
+		const days = [addDays(today, -6), addDays(today, -5), addDays(today, -4), addDays(today, -3), addDays(today, -2), addDays(today, -1), today]
+
+		this.html.style.setProperty('--number-of-days', days.length)
+
+		const statsIDs = [0]
+
+		this.html.style.setProperty('--number-of-stats', statsIDs.length)
+
+		this.html.appendChild(_createPlaceholder())
+
+		for (const day of days) {
+			const elDay = Data.createDate(day)
+			this.html.appendChild(elDay)
+		}
+
+		for (const _ of statsIDs) {
+			this.html.appendChild(_createPlaceholder())
+		}
+
+		this.html.appendChild(_createPlaceholder())
+
+		for (const id of statsIDs) {
+			const el = document.createElement('span')
+			el.innerText = Stats[id].name
+			this.html.appendChild(el)
+
+		}
+
+		for (const habit of this.habits) {
+			// TODO HERE
+			createHabit(elData, habit, {days})
+			createStats(elData, habit.offsets, statsIDs)
+		}
+
+		const elEditorLink = HTMLUtils.createEditorLink()
+		this.html.appendChild(elEditorLink)
+
+
+		for (let i = 0; i < days.length; i++) {
+			// TODO this should be its own class? maybe? not class but something
+			const elSum = document.createElement('div')
+			elSum.dataset.count = 0
+			elSum.classList.add('bottomSum')
+			elParent.appendChild(elSum)
+		}
+
+		this.html.appendChild(_createPlaceholder())
+
+		updateView(elData)
+
+		return elData
+	}
+
+
+	/**
+		* @param {Date} date day to be displayed as a header but `<div>`
+		* @returns {HTMLDivElement} element with date information
+	*/
+	static createDate(date) {
+		const locale = navigator.language
+		const elDate = document.createElement('div')
+		elDate.classList.add('date')
+
+		const elMonth = document.createElement('span')
+		elMonth.innerText = Intl.DateTimeFormat(locale, {month: 'long'}).format(date)
+		elDate.appendChild(elMonth)
+
+		const elDay = document.createElement('span')
+		elDay.innerText = Intl.DateTimeFormat(locale, {day: 'numeric'}).format(date)
+		elDate.appendChild(elDay)
+
+		const elWeekday = document.createElement('span')
+		elWeekday.innerText = Intl.DateTimeFormat(locale, {weekday: 'long'}).format(date)
+		elDate.appendChild(elWeekday)
+
+		return elDate
 
 	}
 

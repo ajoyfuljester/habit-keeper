@@ -1,5 +1,7 @@
 # a habit keeper app [inspired](#why) by [Everyday](https://everyday.app) habit app
 
+## currently broken i think `3c77dc4` commit is the last one that's usable, sorry i will try to finish this refactoring a bit faster
+
 first time using deno
 
 i have not used a javascript framework in my entire life, thanks to this project maybe i can see the benefits of using one
@@ -13,6 +15,7 @@ i wish you a good life and succesful new habits or something
 - mask data file names with a hash
 - add views - should they be on the server? yes, but add it in the server config as an option
 - write the thing in the deno file for normal running or whatever
+- check the bug where default login does not work (look into requests in the browser), but it's hard to reproduce
 - add a screenshot to this file
 - add user registration
 - add more colors
