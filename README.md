@@ -13,6 +13,11 @@ i wish you a good life and succesful new habits or something
 - test creating a habit because i think something is wrong with the startingDate
 - add option in config to enable/disable user registration
 - mask data file names with a hash
+- CHOSEN VIEW ARCHITECTURE?
+    - views
+    - no signals
+    - new sites (nevermind not necessarily just return the element)
+    - no live updates
 - add views - should they be on the server? yes, but add it in the server config as an option
 - write the thing in the deno file for normal running or whatever
 - check the bug where default login does not work (look into requests in the browser), but it's hard to reproduce
