@@ -12,6 +12,7 @@ export class Habit {
 	constructor({name, startingDate, offsets}) {
 		if (!(name && startingDate && offsets)) {
 			console.error('INVALID HABIT')
+			console.warn({name, startingDate, offsets})
 		}
 
 		/** @type {String} name of the habit */
@@ -138,21 +139,21 @@ export class Habit {
 		* @returns {Promise<0 | 1>} exitCode
 	*/
 	async #handleToggleOffset(day) {
-			let exitCode = undefined;
-			if (element.classList.contains('offset')) {
-				exitCode = await HandleAction.offset.delete(this.name, day)
-			} else {
-				exitCode = await HandleAction.offset.create(this.name, day)
-			}
-
-			if (exitCode !== 0) {
-				return exitCode
-			}
-
-			element.classList.toggle('offset')
-			updateView(elData)
-
-			return 0
+		let exitCode = undefined;
+		if (element.classList.contains('offset')) {
+			exitCode = await HandleAction.offset.delete(this.name, day)
+		} else {
+			exitCode = await HandleAction.offset.create(this.name, day)
 		}
+
+		if (exitCode !== 0) {
+			return exitCode
+		}
+
+		element.classList.toggle('offset')
+		updateView(elData)
+
+		return 0
+	}
 
 }

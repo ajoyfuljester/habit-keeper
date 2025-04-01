@@ -44,11 +44,10 @@ export const Stats = [
 
 
 /**
-	* @param {HTMLDivElement} elParent grid
 	* @param {import("./habits").habitObject} habitInfo information about the habit
 	* @param {Number[]} stats numbers corresponding to a stat that will be displayed
 */
-export function createStats(elParent, offsets, statIDs) {
+export function createStats(offsets, statIDs) {
 	for (const id of statIDs) {
 		const value = Stats[id].function(offsets)
 		const el = document.createElement('span')
@@ -67,3 +66,18 @@ export function updateStats(elParent) {
 
 }
 
+
+
+/**
+	* @param {import("./View").viewObject} viewObject information about what to display
+*/
+function createStatSet({habits, dates, statIDs}) {
+	const elStatSet = document.createElement('div')
+
+	for (const statID of statIDs) {
+		const elSpan = document.createElement('span')
+		elSpan.innerText = Stats[statID].name
+	}
+
+	// TODO: heeeeeeeereeeeeeeee
+}

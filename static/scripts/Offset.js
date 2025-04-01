@@ -2,12 +2,13 @@ export class Offset {
 	/**
 		* @typedef {[offset: Number, value: Number]} offsetArray - an object to be parsed into an instance of `Offset`
 		* @param {offsetArray} offsetArray `[offset, value]` 
-		* @returns {Offset} instance of `Offset`, possibly invalid, check `Offset.valid`
+		* @returns {Offset} instance of `Offset`
 	*/
 	
 	constructor([offset, value]) {
 		if (!(offset && value)) {
 			console.error('INVALID OFFSET')
+			console.warn([offset, value])
 		}
 
 		/** @type {Number} offset in days from `startingDate` */

@@ -18,6 +18,7 @@ i wish you a good life and succesful new habits or something
     - no signals
     - new sites (nevermind not necessarily just return the element)
     - no live updates
+    - subgrid
 - add views - should they be on the server? yes, but add it in the server config as an option
 - write the thing in the deno file for normal running or whatever
 - check the bug where default login does not work (look into requests in the browser), but it's hard to reproduce

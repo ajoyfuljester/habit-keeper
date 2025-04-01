@@ -108,25 +108,9 @@ a.cell:hover {
 	align-items: center;
 }
 
-.danger {
-	background-image: repeating-linear-gradient(-45deg, #ff0, #ff0 2rem, #000 2rem, #000 4rem);
-	color: #000;
-}
+.subgrid {
+	display: grid;
 
-.danger > h1 {
-	background-color: var(--clr-danger);
-	backdrop-filter: blur(4px);
-}
-
-.danger > h1:first-child {
-	margin-top: 0;
-}
-
-.danger input[type="button"] {
-	background-color: var(--clr-1);
-	border-color: var(--clr-danger);
-	color: #000;
-}
-
-.danger input[type="button"]:hover {
+	grid-template-columns: subgrid;
+	grid-template-rows: subgrid;
 }

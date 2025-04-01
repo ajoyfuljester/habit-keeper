@@ -16,8 +16,9 @@ export class Data {
 		* @returns {Data} instance of `Data`, may be invalid, see `Data.valid`
 	*/
 	constructor({habits, lists}) {
-		if (!(user && habits && lists)) {
+		if (!(habits && lists)) {
 			console.error("INVALID DATA")
+			console.warn({habits, lists})
 		}
 
 		/** @type {Habit[]} array of `Habit` */
