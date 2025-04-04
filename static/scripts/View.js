@@ -1,5 +1,6 @@
 import { Habit } from "./Habit.js"
 import * as HTMLUtils from "./HTMLUtils.js"
+import * as Stats from "./stats.js"
 
 
 /**
@@ -17,7 +18,7 @@ export class View {
 	*/
 	constructor({habits, dates, statIDs}) {
 		if (!(habits && dates && (statIDs.length !== 0))) {
-			console.error('INVALID OFFSET')
+			console.error('INVALID VIEW')
 			console.warn({habits, dates, statIDs})
 		}
 
@@ -41,23 +42,13 @@ export class View {
 
 		elData.style.setProperty('--number-of-stats', this.statIDs.length)
 
-		elData.appendChild(_createPlaceholder())
-
 		const elDateSet = HTMLUtils.createDateSet()
 		elDateSet.classList.add('subgrid')
 
-		for (const _ of this.statIDs) {
-			elData.appendChild(_createPlaceholder())
-		}
+		const elStatSet = Stats.createStatSet({habits: this.habits, dates: this.dates})
+		elStatSet.classList.add('subgrid')
 
-		elData.appendChild(_createPlaceholder())
 
-		for (const id of this.statIDs) {
-			const el = document.createElement('span')
-			el.innerText = Stats[id].name
-			elData.appendChild(el)
-
-		}
 
 		for (const habit of data.habits) {
 			createHabit(elData, habit, {days: this.dates})
@@ -77,5 +68,35 @@ export class View {
 
 	}
 
+
+}
+
+/**
+	* @typedef {Object} objectHabitsDates
+	* @property {Habit[]} objectHabitsDates.habits array of hsbits with the data I DON'T KNOW HOW TO WRITE DOCUMENTATION
+	* @property {Date[]} objectHabitsDates.dates array of dates to filter the data
+*/
+
+/**
+	* @param {objectHabitsDates} objectHabitsDates habits and dates
+	* @returns {HTMLDivElement} element that contains offset representation for the given habits and dates
+*/
+function createOffsetSet({habits, dates}) {
+	const elOffsetSet = document.createElement('div')
+
+	loop:
+	for (const habit of habits) {
+		for (const date of dates) {
+			const el = document.createElement('div')
+			// TODO: colors
+
+			const offset = habit.dateToOffset(date)
+			if (!habit.findOffset(offset)) {
+				break loop;
+			}
+
+			el.classList.add('offset')
+		}
+	}
 
 }

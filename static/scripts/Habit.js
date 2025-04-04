@@ -156,4 +156,17 @@ export class Habit {
 		return 0
 	}
 
+	/**
+		* @param {Date} date Date object to convert to offset
+		* @returns {Number} offset/day value
+	*/
+	dateToOffset(date) {
+		const startDate = new Date(this.startingDate)
+		const difference = date.getTime() - startDate.getTime()
+		const offset = Math.floor(difference / (1000 * 60 * 60 * 24))
+
+	return offset
+
+	}
+
 }

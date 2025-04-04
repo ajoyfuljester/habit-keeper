@@ -1,14 +1,45 @@
+import { Habit } from "./Habit"
+
+
 /**
-	* @param {import("./habits").offsetArray[]} offsets array with offsets
-	* @returns {Number} highest streak
+	* @typedef {Object} statParams parameters for stat functions
+	* @property {Habit} statParams.habit habit with the data
+	* @property {Date[]} statParams.dates arrayof dates to filter thr data
+	*
 */
-function calculateMaxStreak(offsets) {
+
+/**
+	* @callback statFunction function that computes a statistic
+	* @param {statParams} stat parameters - habits and dates
+	* @returns {Number} value of the statistic
+*/
+/**
+	* @typedef {Object} StatsObject
+	* @property {statFunction} StatsObject.function function of the statistic
+	* @property {String} StatsObject.name name of the statistic
+*/
+
+/**
+	* @type {StatsObject[]} array with stuff about statistics, including a function and a name
+*/
+const Stats = [
+	{function: calculateMaxStreak, name: "Max streak"},
+]
+
+
+/** @type {statFunction} */
+Stats[0].function = ({habit, dates}) => {
 	let maxStreak = 0
+
+	const offsets = dates.map(d => habit.dateToOffset(d))
+
+	if (!offsets.some(o => !!habit.findOffset(o))) {
+		return 0
+	}
 	
 	offsets.sort((o1, o2) => o1[0] - o2[0])
 
 	let currentStreak = 1
-	// TODO: this
 	for (let i = 1; i < offsets.length; i++) {
 		if (offsets[i][0] - 1 === offsets[i - 1][0]) {
 			currentStreak++
@@ -23,24 +54,6 @@ function calculateMaxStreak(offsets) {
 	return maxStreak
 
 }
-
-/**
-	* @callback statFunction function that computes a statistic
-	* @param {import("./habits").offsetArray} array of offsets
-	* @returns {Number} value of the statistic
-	*
-	* @typedef {Object} StatsObject
-	* @property {statFunction} StatsObject.function function of the statistic
-	* @property {String} StatsObject.name name of the statistic
-*/
-
-/**
-	* @type {StatsObject[]} array with stuff about statistics, including a function and a name
-*/
-export const Stats = [
-	{function: calculateMaxStreak, name: "Max streak"},
-]
-
 
 
 /**
@@ -70,8 +83,9 @@ export function updateStats(elParent) {
 
 /**
 	* @param {import("./View").viewObject} viewObject information about what to display
+	* @returns {HTMLDivElement} element which contains values of the stats
 */
-function createStatSet({habits, dates, statIDs}) {
+export function createStatSet({habits, dates, statIDs}) {
 	const elStatSet = document.createElement('div')
 
 	for (const statID of statIDs) {
@@ -79,5 +93,17 @@ function createStatSet({habits, dates, statIDs}) {
 		elSpan.innerText = Stats[statID].name
 	}
 
-	// TODO: heeeeeeeereeeeeeeee
+	for (const habit of habits) {
+		for (const statID of statIDs) {
+			const el = document.createElement('span')
+			const statValue = Stats[statID].function({habit, dates})
+			el.innerText = statValue
+			elStatSet.appendChild(el)
+				
+		}
+	}
+
+
+
+	return elStatSet
 }
