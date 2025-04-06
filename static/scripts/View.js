@@ -84,7 +84,6 @@ export class View {
 function createOffsetSet({habits, dates}) {
 	const elOffsetSet = document.createElement('div')
 
-	loop:
 	for (const habit of habits) {
 		for (const date of dates) {
 			const el = document.createElement('div')
@@ -92,11 +91,34 @@ function createOffsetSet({habits, dates}) {
 
 			const offset = habit.dateToOffset(date)
 			if (!habit.findOffset(offset)) {
-				break loop;
+				continue
 			}
 
 			el.classList.add('offset')
+
+			elOffsetSet.appendChild(el)
 		}
 	}
+
+	return elOffsetSet
+
+}
+
+/**
+	* @param {Habit[]} habits habits to get the name and display it
+	* @returns {HTMLDivElement} element that has habit names as headers but `<span>`
+*/
+function createHabitNameSet(habits) {
+	const elHabitNameSet = document.createElement('div')
+
+	for (const habit of habits) {
+		const el = document.createElement('span')
+
+		el.innerText = habit.name
+
+		elHabitNameSet.appendChild(el)
+	}
+
+	return elHabitNameSet
 
 }
