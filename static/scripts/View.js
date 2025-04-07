@@ -89,8 +89,7 @@ function createOffsetSet({habits, dates}) {
 			const el = document.createElement('div')
 			// TODO: colors
 
-			const offset = habit.dateToOffset(date)
-			if (!habit.findOffset(offset)) {
+			if (!habit.findOffsetByDate(date)) {
 				continue
 			}
 
@@ -120,5 +119,34 @@ function createHabitNameSet(habits) {
 	}
 
 	return elHabitNameSet
+
+}
+
+
+/**
+	* @param {objectHabitsDates} objectHabitsDates habits and dates
+	* @returns {HTMLDivElement} element that contains bottom sums
+*/
+function createSummarySet({habits, dates}) {
+	const elSummarySet = document.createElement('div')
+
+	for (const date of dates) {
+		let count = 0;
+
+		for (const habit of habits) {
+			if (!habit.findOffsetByDate(date)) {
+				continue;
+			}
+			count += 1;
+		}
+
+		const el = document.createElement('div')
+		el.innerText = count;
+
+		elSummarySet.appendChild(el)
+	}
+
+
+	return elSummarySet
 
 }

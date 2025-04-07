@@ -165,8 +165,18 @@ export class Habit {
 		const difference = date.getTime() - startDate.getTime()
 		const offset = Math.floor(difference / (1000 * 60 * 60 * 24))
 
-	return offset
+		return offset
 
 	}
+
+	/**
+		* @param {Date} date date that will be checked if has an offset
+		* @returns {Offset | undefined} `Offset` instance if found or `undefined` if offset was not found
+	*/
+	findOffsetByDate(date) {
+		const day = this.dateToOffset(date)
+		return this.offsets.find(o => o.day === day)
+	}
+
 
 }
