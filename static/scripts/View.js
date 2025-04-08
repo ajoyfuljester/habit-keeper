@@ -48,23 +48,16 @@ export class View {
 		const elStatSet = Stats.createStatSet({habits: this.habits, dates: this.dates})
 		elStatSet.classList.add('subgrid')
 
+		const habitNameSet = createHabitNameSet({habits, dates})
+		habitNameSet.classList.add('subgrid')
+
+		const offsetSet = createOffsetSet({habits, dates})
+		offsetSet.classList.add('subgrid')
+
+		const summarySet = createSummarySet({habits, dates})
+		summarySet.classList.add('subgrid')
 
 
-		for (const habit of data.habits) {
-			createHabit(elData, habit, {days: this.dates})
-			createStats(elData, habit.offsets, this.statIDs)
-		}
-
-		const elEditorLink = createEditorLink()
-		elData.appendChild(elEditorLink)
-
-		createSumRow(elData)
-
-		elData.appendChild(_createPlaceholder())
-
-		updateView(elData)
-
-		return elData
 
 	}
 
