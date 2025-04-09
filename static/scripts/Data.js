@@ -138,7 +138,7 @@ export class Data {
 		const today = new Date();
 		const days = [addDays(today, -6), addDays(today, -5), addDays(today, -4), addDays(today, -3), addDays(today, -2), addDays(today, -1), today]
 
-		this.html.style.setProperty('--number-of-days', days.length)
+		this.html.style.setProperty('--number-of-dates', days.length)
 
 		const statsIDs = [0]
 

@@ -38,7 +38,7 @@ export class View {
 
 		elData.style.setProperty('--number-of-habits', this.habits.length)
 
-		elData.style.setProperty('--number-of-days', this.dates.length)
+		elData.style.setProperty('--number-of-dates', this.dates.length)
 
 		elData.style.setProperty('--number-of-stats', this.statIDs.length)
 
