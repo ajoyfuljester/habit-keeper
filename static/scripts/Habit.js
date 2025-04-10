@@ -5,7 +5,7 @@ import { dateToOffset } from "./utils.js"
 
 export class Habit {
 	/**
-		* @param {import("./habits").habitObject} habitObject - `{name, startingDate, offsets}`
+		* @param {import("./habits.js.old").habitObject} habitObject - `{name, startingDate, offsets}`
 		* @returns {Habit} instance of `Habit`, possibly invalid, see `Habit.valid`
 		* @see {@link habitObject}
 	*/
@@ -28,7 +28,7 @@ export class Habit {
 
 	}
 
-	/** @returns {import("./habits").habitObject} a simple object that is jsonifable */
+	/** @returns {import("./habits.js.old").habitObject} a simple object that is jsonifable */
 	toJSON() {
 		return {
 			name: this.name,

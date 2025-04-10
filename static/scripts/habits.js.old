@@ -15,7 +15,7 @@ function loadHabits(data) {
 	const today = new Date();
 	const days = [addDays(today, -6), addDays(today, -5), addDays(today, -4), addDays(today, -3), addDays(today, -2), addDays(today, -1), today]
 
-	elData.style.setProperty('--number-of-days', days.length)
+	elData.style.setProperty('--number-of-dates', days.length)
 
 	const statsIDs = [0]
 
@@ -149,10 +149,10 @@ function updateView(elParent) {
 */
 function updateColors(elData) {
 	const elDays = elData.querySelectorAll('.day')
-	const numberOfDays = +elData.style.getPropertyValue('--number-of-days')
+	const numberOfDays = +elData.style.getPropertyValue('--number-of-dates')
 
 	if (elDays.length % numberOfDays !== 0) {
-		console.warn('number of day elements not divisible by provided --number-of-days', elDays.length, numberOfDays)
+		console.warn('number of day elements not divisible by provided --number-of-dates', elDays.length, numberOfDays)
 	}
 
 	/** @type {Array<Array<HTMLDivElement>>} */
@@ -185,7 +185,7 @@ function updateColors(elData) {
 	* @param {HTMLDivElement} elParent elData, grid
 */
 function createSumRow(elParent) {
-	const numberOfDays = +elParent.style.getPropertyValue('--number-of-days')
+	const numberOfDays = +elParent.style.getPropertyValue('--number-of-dates')
 	
 	for (let i = 0; i < numberOfDays; i++) {
 		const elSum = document.createElement('div')
@@ -202,7 +202,7 @@ function createSumRow(elParent) {
 */
 function updateSumRow(elParent) {
 	const elDays = elParent.querySelectorAll('.day')
-	const numberOfDays = +elParent.style.getPropertyValue('--number-of-days')
+	const numberOfDays = +elParent.style.getPropertyValue('--number-of-dates')
 
 	/** @type {Array<HTMLDivElement>} */
 	const elSums = elParent.querySelectorAll('.bottomSum')

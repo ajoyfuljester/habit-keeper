@@ -35,6 +35,7 @@ export class View {
 	initiateHTML() {
 		const elData = document.querySelector("#data")
 		elData.classList.add('grid-habits')
+		elData.classList.add('layout-default')
 
 		elData.style.setProperty('--number-of-habits', this.habits.length)
 
@@ -44,19 +45,31 @@ export class View {
 
 		const elDateSet = HTMLUtils.createDateSet()
 		elDateSet.classList.add('subgrid')
+		elDateSet.classList.add('view-dates')
+		elData.appendChild(elDateSet)
 
 		const elStatSet = Stats.createStatSet({habits: this.habits, dates: this.dates})
 		elStatSet.classList.add('subgrid')
+		elStatSet.classList.add('view-stats')
+		elData.appendChild(elStatSet)
 
 		const habitNameSet = createHabitNameSet({habits, dates})
 		habitNameSet.classList.add('subgrid')
+		habitNameSet.classList.add('view-habit-names')
+		elData.appendChild(habitNameSet)
 
 		const offsetSet = createOffsetSet({habits, dates})
 		offsetSet.classList.add('subgrid')
+		offsetSet.classList.add('view-offsets')
+		elData.appendChild(offsetSet)
 
 		const summarySet = createSummarySet({habits, dates})
 		summarySet.classList.add('subgrid')
+		summarySet.classList.add('view-summary')
+		elData.appendChild(summarySet)
 
+
+		return elData
 
 
 	}

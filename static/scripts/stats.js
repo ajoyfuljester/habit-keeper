@@ -57,7 +57,7 @@ Stats[0].function = ({habit, dates}) => {
 
 
 /**
-	* @param {import("./habits").habitObject} habitInfo information about the habit
+	* @param {import("./habits.js.old").habitObject} habitInfo information about the habit
 	* @param {Number[]} stats numbers corresponding to a stat that will be displayed
 */
 export function createStats(offsets, statIDs) {

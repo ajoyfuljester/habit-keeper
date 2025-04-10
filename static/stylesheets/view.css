@@ -1,0 +1,31 @@
+.layout-default {
+	grid-template-columns: [habit-names-start] auto [habit-names-end dates-start offsets-start summary-start]
+	repeat(var(--number-of-dates), 1fr) [dates-end offsets-end summary-end stats-start]
+	repeat(var(--number-of-stats), auto) [stats-end];
+
+	grid-template-rows: [dates-start] 1fr 1fr [dates-end habit-names-start offsets-start stats-start]
+	repeat(var(--number-of-habits), 1fr) [habit-names-end offsets-end stats-end summary-start]
+	1fr [summary-end];
+
+}
+
+
+.view-habit-names {
+	grid-area: habit-names;
+}
+
+.view-dates {
+	grid-area: dates;
+}
+
+.view-offsets {
+	grid-area: offsets;
+}
+
+.view-stats {
+	grid-area: stats;
+}
+
+.view-summary {
+	grid-area: summary;
+}

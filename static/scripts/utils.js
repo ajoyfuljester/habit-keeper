@@ -29,7 +29,7 @@ export function extractName() {
 
 /**
 	* @typedef {Object} dataObject - raw data object from the server
-	* @property {import("./habits").habitObject[]} habits - array of habit-like objects
+	* @property {import("./habits.js.old").habitObject[]} habits - array of habit-like objects
 	*
 	* @returns {Promise<false | dataObject>} data or false
 */
