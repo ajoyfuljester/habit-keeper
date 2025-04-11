@@ -1,4 +1,4 @@
-import { Habit } from "./Habit"
+import { Habit } from "./Habit.js"
 
 
 /**
@@ -23,7 +23,7 @@ import { Habit } from "./Habit"
 	* @type {StatsObject[]} array with stuff about statistics, including a function and a name
 */
 const Stats = [
-	{function: calculateMaxStreak, name: "Max streak"},
+	{name: "Max streak"},
 ]
 
 
@@ -91,6 +91,7 @@ export function createStatSet({habits, dates, statIDs}) {
 	for (const statID of statIDs) {
 		const elSpan = document.createElement('span')
 		elSpan.innerText = Stats[statID].name
+		elStatSet.appendChild(elSpan)
 	}
 
 	for (const habit of habits) {

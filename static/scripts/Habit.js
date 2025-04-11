@@ -91,16 +91,13 @@ export class Habit {
 		*
 		* @param {rawHabitObject} rawHabitObject plain `Object` with habit stuff
 		* @see {@link rawHabitObject}
-		* @returns {Habit | undefined} `Habit` if conversion was successful or undefined
+		* @returns {Habit} `Habit` if conversion was successful or undefined
 	*/
 	static autoConvert(rawHabitObject) {
 		/** @type {Offset[]} */
 		const offsets = []
 		for (const offsetArray of (rawHabitObject.offsets ?? [])) {
 			const offset = new Offset(offsetArray)
-			if (!offset.valid) {
-				return undefined
-			}
 			offsets.push(offset)
 		}
 		return new Habit({

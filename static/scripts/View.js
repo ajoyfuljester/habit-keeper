@@ -14,7 +14,7 @@ export class View {
 	/**
 		*
 		* @param {viewObject} viewObject object with fields `habits`, `dates`, `stats`
-		* @returns {Offset} instance of `Offset`
+		* @returns {View} instance of `View`
 	*/
 	constructor({habits, dates, statIDs}) {
 		if (!(habits && dates && (statIDs.length !== 0))) {
@@ -33,7 +33,9 @@ export class View {
 	// IDEA: have different view layouts
 
 	initiateHTML() {
-		const elData = document.querySelector("#data")
+		const elData = document.createElement('div')
+		// TODO: think if this is necessary
+		elData.id = 'data'
 		elData.classList.add('grid-habits')
 		elData.classList.add('layout-default')
 
@@ -43,27 +45,27 @@ export class View {
 
 		elData.style.setProperty('--number-of-stats', this.statIDs.length)
 
-		const elDateSet = HTMLUtils.createDateSet()
+		const elDateSet = HTMLUtils.createDateSet(this.dates)
 		elDateSet.classList.add('subgrid')
 		elDateSet.classList.add('view-dates')
 		elData.appendChild(elDateSet)
 
-		const elStatSet = Stats.createStatSet({habits: this.habits, dates: this.dates})
+		const elStatSet = Stats.createStatSet({habits: this.habits, dates: this.dates, statIDs: this.statIDs})
 		elStatSet.classList.add('subgrid')
 		elStatSet.classList.add('view-stats')
 		elData.appendChild(elStatSet)
 
-		const habitNameSet = createHabitNameSet({habits, dates})
+		const habitNameSet = createHabitNameSet(this.habits)
 		habitNameSet.classList.add('subgrid')
 		habitNameSet.classList.add('view-habit-names')
 		elData.appendChild(habitNameSet)
 
-		const offsetSet = createOffsetSet({habits, dates})
+		const offsetSet = createOffsetSet({habits: this.habits, dates: this.dates})
 		offsetSet.classList.add('subgrid')
 		offsetSet.classList.add('view-offsets')
 		elData.appendChild(offsetSet)
 
-		const summarySet = createSummarySet({habits, dates})
+		const summarySet = createSummarySet({habits: this.habits, dates: this.dates})
 		summarySet.classList.add('subgrid')
 		summarySet.classList.add('view-summary')
 		elData.appendChild(summarySet)

@@ -28,10 +28,7 @@ export function extractName() {
 
 
 /**
-	* @typedef {Object} dataObject - raw data object from the server
-	* @property {import("./habits.js.old").habitObject[]} habits - array of habit-like objects
-	*
-	* @returns {Promise<false | dataObject>} data or false
+	* @returns {Promise<false | import("./Data").rawDataObject>} data or false
 */
 export async function getData() {
 	const name = extractName()

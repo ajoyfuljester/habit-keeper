@@ -1,14 +1,19 @@
 import { Habit } from "./Habit.js"
 import { List } from "./List.js"
-import * as HTMLUtils from "./htmlutils.js"
+import * as HTMLUtils from "./HTMLUtils.js"
 
+/**
+	* @typedef {Object} rawDataObject - plain `Object` that has plain components
+	* @property {habitObject[]?} rawDataObject.habits array of habit-like objects
+	* @property {listObject[]?} rawDataObject.lists array of list-like objects
+	*
+*/
 
 
 export class Data {
 
 	/**
 		* @typedef {Object} dataObject - object to be parsed to `Data` - `{user, habits}`
-		* @property {String} dataObject.user - user name of the owner of the data
 		* @property {Habit[]} [dataObject.habits=[]] - array of habits objects
 		* @property {List[]} [dataObject.lists=[]] - array of lists objects
 		*
@@ -88,37 +93,25 @@ export class Data {
 	}
 
 	/**
-		* @typedef {Object} rawDataObject - plain `Object` that has plain components
-		* @property {String} rawDataObject.user owner of the data file
-		* @property {habitObject[]?} rawDataObject.habits array of habit-like objects
-		* @property {listObject[]?} rawDataObject.lists array of list-like objects
-		*
 		* @param {rawDataObject} rawDataObject plain `Object` with data file stuff
 		* @see {@link rawDataObject}
-		* @returns {Data | undefined} instance of `Data` if conversion was successful or undefined
+		* @returns {Data} instance of `Data` if conversion was successful or undefined
 	*/
 	static autoConvert(rawDataObject) {
 		/** @type {Habit[]} */
 		const habits = []
 		for (const habitObject of (rawDataObject.habits ?? [])) {
 			const habit = Habit.autoConvert(habitObject)
-			if (!habit.valid) {
-				return undefined
-			}
 			habits.push(habit)
 		}
 		/** @type {Habit[]} */
 		const lists = []
 		for (const listObject of (rawDataObject.lists ?? [])) {
 			const list = new List(listObject)
-			if (!list.valid) {
-				return undefined
-			}
 			habits.push(list)
 		}
 		
 		return new Data({
-			user: rawDataObject.user,
 			habits: habits,
 			lists: lists,
 		})
