@@ -11,6 +11,7 @@ function loadHabits(data) {
 	for (let i = 0; i >= -6; i--) {
 		dates.push(Utils.addDays(today, i))
 	}
+	dates.reverse()
 
 	const statIDs = [0]
 

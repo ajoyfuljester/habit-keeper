@@ -95,6 +95,9 @@ function createOffsetSet({habits, dates}) {
 	for (const habit of habits) {
 		for (const date of dates) {
 			const el = document.createElement('div')
+			// TODO: toggle here onclick
+			
+
 			// TODO: colors
 
 			if (!habit.findOffsetByDate(date)) {
@@ -156,5 +159,20 @@ function createSummarySet({habits, dates}) {
 
 
 	return elSummarySet
+
+}
+
+/**
+	* @param {String} habitName name of the habit
+	* @param {Number} offsetDay day of the offset thingy
+	* @param {Number} offsetValue value of the offset thingy
+*/
+function handleHandleOffsetToggle(habitName, offsetDay, offsetValue = 0) {
+	
+	// TODO: HHHEREEEREEE, think how to program this
+	
+}
+
+function handleOffsetToggle() {
 
 }

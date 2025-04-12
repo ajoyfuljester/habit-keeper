@@ -116,9 +116,10 @@ HandleAction.habit.rename = async (oldHabitName, newHabitName) => {
 	* @callback handleActionOffsetCreate
 	* @param {String} habitName name of the habit that the offset is in
 	* @param {Number} day offset offset/day thingy, days since `startingDate`
+	* @param {Number} [value=1] value of the offset thingy
 	* @returns {Promise<0 | 1>} exitCode
 */
-HandleAction.offset.create = async (habitName, day) => {
+HandleAction.offset.create = async (habitName, day, value = 1) => {
 	const name = extractName()
 	const req = new Request(`/api/data/${name}/action`, {
 		method: "POST",
@@ -126,7 +127,7 @@ HandleAction.offset.create = async (habitName, day) => {
 			action: "create",
 			type: "offset",
 			where: habitName,
-			what: [day, 1],
+			what: [day, value],
 		}), // i am so sorry for how i name these things
 	})
 
