@@ -1,3 +1,4 @@
+import { HandleAction } from "./action.js"
 import { Habit } from "./Habit.js"
 import * as HTMLUtils from "./HTMLUtils.js"
 import * as Stats from "./stats.js"
@@ -96,11 +97,13 @@ function createOffsetSet({habits, dates}) {
 		for (const date of dates) {
 			const el = document.createElement('div')
 			// TODO: toggle here onclick
-			
+
+			const offset = habit.dateToOffset(date)
+			el.addEventListener('click', () => handleOffsetToggle(el, habit.name, offset))
 
 			// TODO: colors
 
-			if (!habit.findOffsetByDate(date)) {
+			if (!habit.findOffset(offset)) {
 				continue
 			}
 
@@ -163,16 +166,16 @@ function createSummarySet({habits, dates}) {
 }
 
 /**
+	* @param {HTMLDivElement} el html element to check whether to create or delete the offset based on whether the element has a class of `offset`
 	* @param {String} habitName name of the habit
 	* @param {Number} offsetDay day of the offset thingy
-	* @param {Number} offsetValue value of the offset thingy
+	* @param {Number} [offsetValue=1] value of the offset thingy
+	* @returns {Promise<0 | 1>} promise that resolves to the return value of the HandlAction functions
 */
-function handleHandleOffsetToggle(habitName, offsetDay, offsetValue = 0) {
-	
-	// TODO: HHHEREEEREEE, think how to program this
-	
-}
-
-function handleOffsetToggle() {
-
+async function handleOffsetToggle(el, habitName, offsetDay, offsetValue = 1) {
+	if (el.classList.contains('offset')) {
+		return await HandleAction.offset.delete(habitName, offsetDay)
+	} else {
+		return await HandleAction.offset.create(habitName, offsetDay, offsetValue)
+	}
 }
