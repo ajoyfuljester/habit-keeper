@@ -2,6 +2,8 @@ import { HandleAction } from "./action.js"
 import { Habit } from "./Habit.js"
 import * as HTMLUtils from "./HTMLUtils.js"
 import * as Stats from "./stats.js"
+import * as Utils from "./utils.js"
+import * as Colors from "./colors.js"
 
 
 /**
@@ -93,15 +95,17 @@ export class View {
 function createOffsetSet({habits, dates}) {
 	const elOffsetSet = document.createElement('div')
 
-	for (const habit of habits) {
+	const hue = Utils.randomInteger(1, 360)
+	const colorFunction = Colors.gradient(habits.length, hue)
+	for (const [i, habit] of habits.entries()) {
 		for (const date of dates) {
 			const el = document.createElement('div')
-			// TODO: toggle here onclick
 
 			const offset = habit.dateToOffset(date)
 			el.addEventListener('click', () => handleOffsetToggle(el, habit.name, offset))
 
-			// TODO: colors
+			el.style.setProperty('--color', colorFunction(i))
+			elOffsetSet.appendChild(el)
 
 			if (!habit.findOffset(offset)) {
 				continue
@@ -109,7 +113,6 @@ function createOffsetSet({habits, dates}) {
 
 			el.classList.add('offset')
 
-			elOffsetSet.appendChild(el)
 		}
 	}
 

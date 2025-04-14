@@ -1,3 +1,4 @@
+import * as Utils from "./utils.js";
 
 /**
 	* @typedef {Object} HandleAction object with types of objects, which have functions with actions that user can perform using requests
@@ -30,7 +31,7 @@ export const HandleAction = {
 	* @returns {Promise<0 | 1>} exitCode
 */
 HandleAction.habit.create = async (habitName) => {
-	const name = extractName()
+	const name = Utils.extractName()
 	const req = new Request(`/api/data/${name}/action`, {
 		method: "POST",
 		body: JSON.stringify({
@@ -58,7 +59,7 @@ HandleAction.habit.create = async (habitName) => {
 	* @returns {Promise<0 | 1>} exitCode
 */
 HandleAction.habit.delete = async (habitName) => {
-	const name = extractName()
+	const name = Utils.extractName()
 	const req = new Request(`/api/data/${name}/action`, {
 		method: "POST",
 		body: JSON.stringify({
@@ -88,7 +89,7 @@ HandleAction.habit.delete = async (habitName) => {
 	* @returns {Promise<0 | 1>} exitCode
 */
 HandleAction.habit.rename = async (oldHabitName, newHabitName) => {
-	const name = extractName()
+	const name = Utils.extractName()
 	const req = new Request(`/api/data/${name}/action`, {
 		method: "POST",
 		body: JSON.stringify({
@@ -120,7 +121,7 @@ HandleAction.habit.rename = async (oldHabitName, newHabitName) => {
 	* @returns {Promise<0 | 1>} exitCode
 */
 HandleAction.offset.create = async (habitName, day, value = 1) => {
-	const name = extractName()
+	const name = Utils.extractName()
 	const req = new Request(`/api/data/${name}/action`, {
 		method: "POST",
 		body: JSON.stringify({
@@ -149,7 +150,7 @@ HandleAction.offset.create = async (habitName, day, value = 1) => {
 	* @returns {Promise<0 | 1>} exitCode
 */
 HandleAction.offset.delete = async (habitName, day) => {
-	const name = extractName()
+	const name = Utils.extractName()
 	const req = new Request(`/api/data/${name}/action`, {
 		method: "POST",
 		body: JSON.stringify({
@@ -177,7 +178,7 @@ HandleAction.offset.delete = async (habitName, day) => {
 	* @returns {Promise<Boolean>} exitCode
 */
 HandleAction.init = async (force = false) => {
-	const name = extractName()
+	const name = Utils.extractName()
 	const res = await fetch(`/api/data/${name}/init${force ? '/force' : ''}`)
 	return res.ok
 }
