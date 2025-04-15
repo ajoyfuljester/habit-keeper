@@ -39,7 +39,7 @@ export class View {
 		const elData = document.createElement('div')
 		// TODO: think if this is necessary
 		elData.id = 'data'
-		elData.classList.add('grid-habits')
+		elData.classList.add('layout')
 		elData.classList.add('layout-default')
 
 		elData.style.setProperty('--number-of-habits', this.habits.length)

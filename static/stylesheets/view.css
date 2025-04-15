@@ -7,6 +7,9 @@
 	repeat(var(--number-of-habits), 1fr) [habit-names-end offsets-end stats-end summary-start]
 	1fr [summary-end];
 
+	> .view-dates > div {
+		grid-row: span 2;
+	}
 }
 
 
@@ -16,12 +19,6 @@
 
 .view-dates {
 	grid-area: dates;
-
-	> div {
-		display: flex;
-		flex-direction: column;
-		grid-row: span 2;
-	}
 }
 
 .view-offsets {
@@ -34,4 +31,76 @@
 
 .view-summary {
 	grid-area: summary;
+}
+
+
+
+
+.layout {
+	display: grid;
+
+	--border: 0.2rem solid var(--clr-1-accent);
+}
+
+.view-offsets > div {
+	background-color: var(--clr-1);
+	align-content: center;
+	text-align: center;
+	font-size: 1.4vw;
+	font-weight: bold;
+
+	--border-width: 0.3rem;
+	min-height: calc(1em + (var(--border-width) * 2));
+}
+
+.view-offsets > div:hover {
+	border: var(--border-width) solid var(--clr-1);
+	background-color: var(--clr-offset);
+	color: var(--clr-1);
+}
+
+.view-offsets > div:hover::after {
+	content: 'mark';
+}
+
+.view-offsets > .offset:hover {
+	border: var(--border-width) solid var(--clr-offset);
+	background-color: var(--clr-1);
+	color: var(--clr-offset);
+}
+
+.view-offsets > .offset:hover::after {
+	content: 'unmark';
+}
+
+/* .view-offsets needed because specificity */
+.view-offsets > .offset {
+	--clr-offset: var(--clr-3);
+	background-color: var(--clr-offset);
+	/*
+	aspect-ratio: calc(var(--golden-ratio) + 1);
+	*/
+}
+
+
+.view-habit-names > span {
+	align-content: center;
+	margin: 0;
+	background-color: var(--clr-1);
+
+	border-left: var(--border);
+}
+
+.view-dates > div {
+
+	display: flex;
+	flex-direction: column;
+
+	background-color: var(--clr-1);
+
+	border-top: var(--border);
+}
+
+.view-stats > span {
+	border-right: var(--border);
 }
