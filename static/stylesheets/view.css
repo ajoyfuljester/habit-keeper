@@ -83,7 +83,7 @@
 }
 
 
-.view-habit-names > span {
+.view-habit-names {
 	align-content: center;
 	margin: 0;
 	background-color: var(--clr-1);
@@ -91,16 +91,23 @@
 	border-left: var(--border);
 }
 
-.view-dates > div {
+.view-dates {
 
-	display: flex;
-	flex-direction: column;
+	border-top: var(--border);
 
 	background-color: var(--clr-1);
 
-	border-top: var(--border);
+
+	> div {
+		display: flex;
+		flex-direction: column;
+	}
 }
 
-.view-stats > span {
+.view-stats {
 	border-right: var(--border);
+}
+
+.view-summary {
+	border-bottom: var(--border);
 }

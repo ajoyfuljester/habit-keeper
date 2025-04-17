@@ -176,9 +176,19 @@ function createSummarySet({habits, dates}) {
 	* @returns {Promise<0 | 1>} promise that resolves to the return value of the HandlAction functions
 */
 async function handleOffsetToggle(el, habitName, offsetDay, offsetValue = 1) {
+	let result;
 	if (el.classList.contains('offset')) {
-		return await HandleAction.offset.delete(habitName, offsetDay)
+		result = await HandleAction.offset.delete(habitName, offsetDay)
 	} else {
-		return await HandleAction.offset.create(habitName, offsetDay, offsetValue)
+		result = await HandleAction.offset.create(habitName, offsetDay, offsetValue)
 	}
+
+	if (result !== 0) {
+		return result
+	}
+
+	// TODO: update stuff
+
+
+	return result
 }
