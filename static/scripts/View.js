@@ -97,14 +97,14 @@ function createOffsetSet({habits, dates}) {
 
 	const hue = Utils.randomInteger(1, 360)
 	const colorFunction = Colors.gradient(habits.length, hue)
-	for (const [i, habit] of habits.entries()) {
-		for (const date of dates) {
+	for (const [y, habit] of habits.entries()) {
+		for (const [x, date] of dates.entries()) {
 			const el = document.createElement('div')
 
 			const offset = habit.dateToOffset(date)
 			el.addEventListener('click', () => handleOffsetToggle(el, habit.name, offset))
 
-			el.style.setProperty('--color', colorFunction(i))
+			el.style.setProperty('--clr-offset', colorFunction({x, y}))
 			elOffsetSet.appendChild(el)
 
 			if (!habit.findOffset(offset)) {
