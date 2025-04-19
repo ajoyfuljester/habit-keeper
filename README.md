@@ -7,17 +7,15 @@ first time using deno
 i have not used a javascript framework in my entire life, thanks to this project maybe i can see the benefits of using one
 i hate unnecessary web apps, they annoy me as a user and will annoy me if i will have to use them as an api or something probably i don't know. what i want to say is that `habit-keeper` is made with requests because i see it more or less as an universal api
 
-i wish you a good life and succesful new habits or something
+i wish you a good life and successful new habits or something
 
 # TODO
 - test creating a habit because i think something is wrong with the startingDate
 - add option in config to enable/disable user registration
 - mask data file names with a hash
 - CHOSEN VIEW ARCHITECTURE?
-    - views
-    - no signals
-    - new sites (nevermind not necessarily just return the element)
-    - no live updates
+    - CLASSES FOR HTML - OFFSET WITH ONCLICK BUT HOW DO I SEND IT TO THE PARENT? WHATEVER I PROBABLY CAN  JUST PASS THE REFERENCE? YEA PROBABLY. OTHER STUFF. NEED TO REWRITE AGAIN BECAUSE I DIDN'T THINK ENOUGH AGAIN
+    - LIVE UPDATES? definitely for one view, but if i make data class have the multiple views then it could update them all
     - subgrid
 - add views - should they be on the server? yes, but add it in the server config as an option
 - write the thing in the deno file for normal running or whatever
@@ -53,6 +51,6 @@ i wish you a good life and succesful new habits or something
 1. read (1)
 
 # why
-because i saw it. it was bautiful. and then i got angry because it wasn't open source and i want it to run locally
+because i saw it. it was beautiful. and then i got angry because it wasn't open source and i want it to run locally
 if i'm wrong, please tell me somehow, maybe through issues on github
 also it's very likely that i will copy the design, because it would be very hard to come up with a better one, maybe even impossible
