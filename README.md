@@ -16,6 +16,7 @@ i wish you a good life and successful new habits or something
 - CHOSEN VIEW ARCHITECTURE?
     - CLASSES FOR HTML - OFFSET WITH ONCLICK BUT HOW DO I SEND IT TO THE PARENT? WHATEVER I PROBABLY CAN  JUST PASS THE REFERENCE? YEA PROBABLY. OTHER STUFF. NEED TO REWRITE AGAIN BECAUSE I DIDN'T THINK ENOUGH AGAIN
     - LIVE UPDATES? definitely for one view, but if i make data class have the multiple views then it could update them all
+    - NUMBER OF HABITS AND DATES STAYS CONSTANT, NO WAY I'M DELING WITH THIS. REFRESH THE PAGE, TAKE IT OR LEAVE IT
     - subgrid
 - add views - should they be on the server? yes, but add it in the server config as an option
 - write the thing in the deno file for normal running or whatever

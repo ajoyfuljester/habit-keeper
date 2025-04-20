@@ -79,6 +79,15 @@ export class View {
 
 	}
 
+	/**
+		* @param {String} habitName name of the habit
+		* @param {Number} day offset/day number relative to starting date
+		* @param {Number} [value=1] value of the offset
+	*/
+	setOffset(habitName, day, value = 1) {
+
+	}
+
 
 }
 
