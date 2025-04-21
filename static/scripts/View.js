@@ -31,13 +31,17 @@ export class View {
 		this.dates = dates
 		/** @type {Number[]} ids of stats that will be displayed */
 		this.statIDs = statIDs
+
+		this.html = null
 	}
 
-	// IDEA: have different view layouts
 
+	// IDEA: have different view layouts
+	/**
+		* `this.HTML` will contain the generated element
+	*/
 	initiateHTML() {
 		const elData = document.createElement('div')
-		// TODO: think if this is necessary
 		elData.id = 'data'
 		elData.classList.add('layout')
 		elData.classList.add('layout-default')
@@ -73,9 +77,7 @@ export class View {
 		summarySet.classList.add('view-summary')
 		elData.appendChild(summarySet)
 
-
-		return elData
-
+		this.html = elData
 
 	}
 
@@ -85,6 +87,9 @@ export class View {
 		* @param {Number} [value=1] value of the offset
 	*/
 	setOffset(habitName, day, value = 1) {
+		if (!this.html) {
+			return 1
+		}
 
 	}
 
