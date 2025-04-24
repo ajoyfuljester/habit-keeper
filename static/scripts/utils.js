@@ -50,19 +50,22 @@ export async function getData() {
 }
 
 
-
 /**
-	* @param {String} startingDate date in the format `YYYY-MM-DD`
-	* @param {Date} date date object to convert to a relative offset
-	* @returns {Number} number of days since `startingDate` to `date`
+	* @param {Date} dateToConvert - date object to convert
+	* @returns {String} date in ISO format (YYYY-MM-DD)
 */
-export function dateToOffset(startingDate, date) {
-	const startDate = new Date(startingDate)
-	const difference = date.getTime() - startDate.getTime()
-	const offset = Math.floor(difference / (1000 * 60 * 60 * 24))
+export function dateToISO(dateToConvert) {
+	const date = dateToConvert ?? new Date()
+	const year = date.getFullYear().toString().padStart(4, '0')
+	const month = date.getMonth().toString().padStart(2, '0')
+	const day = date.getDate() .toString().padStart(2, '0')
 
-	return offset
+	return `${year}-${month}-${day}`
+
+	
 }
+
+
 
 /**
 	* @param {Date} date anchor date, base, idk

@@ -90,6 +90,28 @@ export class View {
 		if (!this.html) {
 			return 1
 		}
+		
+		const habit = this.habits.find(h => h.name === habitName)
+		if (!habit) {
+			console.error('could not find offset element by habit', habitName, day)
+			return 2
+		}
+
+		const y = this.habits.indexOf(habit)
+		const date = habit.offsetToDate(day)
+		const dateISO = Utils.dateToISO(date)
+		const x = this.dates.findIndex(d => Utils.dateToISO(d) === dateISO)
+		if (!x) {
+			console.error('could not find offset element by offset', habitName, day)
+			return 3
+		}
+
+		const index = (y * this.dates.length) + x + 1
+
+		const elOffsets = this.html.querySelector("view-offsets")
+		elOffsets.children.item(index)
+
+		// TODO: heeeeere
 
 	}
 
