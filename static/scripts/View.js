@@ -16,7 +16,7 @@ export class View {
 
 	/**
 		*
-		* @param {viewObject} viewObject object with fields `habits`, `dates`, `stats`
+		* @param {viewObject} viewObject object with initial fields `habits`, `dates`, `stats`
 		* @returns {View} instance of `View`
 	*/
 	constructor({habits, dates, statIDs}) {
@@ -25,54 +25,51 @@ export class View {
 			console.warn({habits, dates, statIDs})
 		}
 
-		/** @type {Habit[]} habits that will be displayed */
-		this.habits = habits
-		/** @type {Date[]} dates that will be displayed */
-		this.dates = dates
-		/** @type {Number[]} ids of stats that will be displayed */
-		this.statIDs = statIDs
 
 		this.html = null
+		this.#initiateHTML({habits, dates, statIDs})
+
 	}
 
 
 	// IDEA: have different view layouts
 	/**
-		* `this.HTML` will contain the generated element
+		* @param {viewObject} viewObject object with fields `habits`, `dates`, `stats`
+		* `this.html` will contain the generated element
 	*/
-	initiateHTML() {
+	#initiateHTML({habits, dates, statIDs}) {
 		const elData = document.createElement('div')
 		elData.id = 'data'
 		elData.classList.add('layout')
 		elData.classList.add('layout-default')
 
-		elData.style.setProperty('--number-of-habits', this.habits.length)
+		elData.style.setProperty('--number-of-habits', habits.length)
 
-		elData.style.setProperty('--number-of-dates', this.dates.length)
+		elData.style.setProperty('--number-of-dates', dates.length)
 
-		elData.style.setProperty('--number-of-stats', this.statIDs.length)
+		elData.style.setProperty('--number-of-stats', statIDs.length)
 
-		const elDateSet = HTMLUtils.createDateSet(this.dates)
+		const elDateSet = HTMLUtils.createDateSet(dates)
 		elDateSet.classList.add('subgrid')
 		elDateSet.classList.add('view-dates')
 		elData.appendChild(elDateSet)
 
-		const elStatSet = Stats.createStatSet({habits: this.habits, dates: this.dates, statIDs: this.statIDs})
+		const elStatSet = Stats.createStatSet({habits: habits, dates: dates, statIDs: statIDs})
 		elStatSet.classList.add('subgrid')
 		elStatSet.classList.add('view-stats')
 		elData.appendChild(elStatSet)
 
-		const habitNameSet = createHabitNameSet(this.habits)
+		const habitNameSet = createHabitNameSet(habits)
 		habitNameSet.classList.add('subgrid')
 		habitNameSet.classList.add('view-habit-names')
 		elData.appendChild(habitNameSet)
 
-		const offsetSet = createOffsetSet({habits: this.habits, dates: this.dates})
+		const offsetSet = createOffsetSet({habits: habits, dates: dates})
 		offsetSet.classList.add('subgrid')
 		offsetSet.classList.add('view-offsets')
 		elData.appendChild(offsetSet)
 
-		const summarySet = createSummarySet({habits: this.habits, dates: this.dates})
+		const summarySet = createSummarySet({habits: habits, dates: dates})
 		summarySet.classList.add('subgrid')
 		summarySet.classList.add('view-summary')
 		elData.appendChild(summarySet)
@@ -138,6 +135,7 @@ function createOffsetSet({habits, dates}) {
 			const el = document.createElement('div')
 
 			const offset = habit.dateToOffset(date)
+			// TODO: HERE! hmmm... let's try sending the request and on success propagate to the instance of Page? yea sure but what is the correct way to do it? i don't know
 			el.addEventListener('click', () => handleOffsetToggle(el, habit.name, offset))
 
 			el.style.setProperty('--clr-offset', colorFunction({x, y}))
