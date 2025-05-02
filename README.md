@@ -21,6 +21,7 @@ i wish you a good life and successful new habits or something
 - add views - should they be on the server? yes, but add it in the server config as an option
 - write the thing in the deno file for normal running or whatever
 - add view creator
+- make it accessible? idk but make it work with a vim extenstion or something
 - check the bug where default login does not work (look into requests in the browser), but it's hard to reproduce
 - add a screenshot to this file
 - add user registration
