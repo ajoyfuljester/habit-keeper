@@ -11,6 +11,7 @@ import * as Colors from "./colors.js"
 	* @property {Habit[]} viewObject.habits array of `Habit` - the data that will be displayed
 	* @property {Date[]} viewObject.dates array of `Date` - the dates that the data will be displayed for
 	* @property {Number[]} viewObject.statIDs array of numbers - stat ids, which will be computed and displayed
+	* @property {Page} viewObject.page parent of the view to whichm the events will be transmitted
 	*/
 export class View {
 
@@ -19,12 +20,13 @@ export class View {
 		* @param {viewObject} viewObject object with initial fields `habits`, `dates`, `stats`
 		* @returns {View} instance of `View`
 	*/
-	constructor({habits, dates, statIDs}) {
+	constructor({habits, dates, statIDs, page}) {
 		if (!(habits && dates && (statIDs.length !== 0))) {
 			console.error('INVALID VIEW')
-			console.warn({habits, dates, statIDs})
+			console.warn({habits, dates, statIDs, page})
 		}
 
+		this.page = page
 
 		this.html = null
 		this.#initiateHTML({habits, dates, statIDs})
@@ -34,42 +36,43 @@ export class View {
 
 	// IDEA: have different view layouts
 	/**
-		* @param {viewObject} viewObject object with fields `habits`, `dates`, `stats`
+		* @param {viewObject} viewObject object with fields `habits`, `dates`, `stats`, `page`
 		* `this.html` will contain the generated element
+		* @see {@link viewObject}
 	*/
-	#initiateHTML({habits, dates, statIDs}) {
+	#initiateHTML() {
 		const elData = document.createElement('div')
 		elData.id = 'data'
 		elData.classList.add('layout')
 		elData.classList.add('layout-default')
 
-		elData.style.setProperty('--number-of-habits', habits.length)
+		elData.style.setProperty('--number-of-habits', this.habits.length)
 
-		elData.style.setProperty('--number-of-dates', dates.length)
+		elData.style.setProperty('--number-of-dates', this.dates.length)
 
-		elData.style.setProperty('--number-of-stats', statIDs.length)
+		elData.style.setProperty('--number-of-stats', this.statIDs.length)
 
-		const elDateSet = HTMLUtils.createDateSet(dates)
+		const elDateSet = HTMLUtils.createDateSet(this.dates)
 		elDateSet.classList.add('subgrid')
 		elDateSet.classList.add('view-dates')
 		elData.appendChild(elDateSet)
 
-		const elStatSet = Stats.createStatSet({habits: habits, dates: dates, statIDs: statIDs})
+		const elStatSet = Stats.createStatSet({habits: this.habits, dates: this.dates, statIDs: this.statIDs})
 		elStatSet.classList.add('subgrid')
 		elStatSet.classList.add('view-stats')
 		elData.appendChild(elStatSet)
 
-		const habitNameSet = createHabitNameSet(habits)
+		const habitNameSet = createHabitNameSet(this.habits)
 		habitNameSet.classList.add('subgrid')
 		habitNameSet.classList.add('view-habit-names')
 		elData.appendChild(habitNameSet)
 
-		const offsetSet = createOffsetSet({habits: habits, dates: dates})
+		const offsetSet = createOffsetSet({habits: this.habits, dates: this.dates})
 		offsetSet.classList.add('subgrid')
 		offsetSet.classList.add('view-offsets')
 		elData.appendChild(offsetSet)
 
-		const summarySet = createSummarySet({habits: habits, dates: dates})
+		const summarySet = createSummarySet({habits: this.habits, dates: this.dates})
 		summarySet.classList.add('subgrid')
 		summarySet.classList.add('view-summary')
 		elData.appendChild(summarySet)

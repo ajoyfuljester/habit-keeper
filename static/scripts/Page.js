@@ -12,13 +12,13 @@ class Page {
 	}
 
 	/**
-		* @param {View} view View that will be added
+		* @param {import("./View").viewObject} view View that will be added
 	*/
-	addView(view) {
-		for (const elOffset of view.html.querySelector('.view-offsets').children) {
-			// TODO: idk if this is the right way to do it sorry
-			elOffset.addEventListener()
-		}
+	createView(viewObject) {
+
+		viewObject.page = this
+
+
 
 		this.views.push(view)
 	}
