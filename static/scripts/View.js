@@ -21,7 +21,7 @@ export class View {
 		* @returns {View} instance of `View`
 	*/
 	constructor({habits, dates, statIDs, page}) {
-		if (!(habits && dates && (statIDs.length !== 0))) {
+		if (!(habits && dates && (statIDs.length !== 0) && page)) {
 			console.error('INVALID VIEW')
 			console.warn({habits, dates, statIDs, page})
 		}
@@ -29,7 +29,7 @@ export class View {
 		this.page = page
 
 		this.html = null
-		this.#initiateHTML({habits, dates, statIDs})
+		this.#initiateHTML()
 
 	}
 
@@ -67,7 +67,7 @@ export class View {
 		habitNameSet.classList.add('view-habit-names')
 		elData.appendChild(habitNameSet)
 
-		const offsetSet = createOffsetSet({habits: this.habits, dates: this.dates})
+		const offsetSet = createOffsetSet({habits: this.habits, dates: this.dates, page: this.page})
 		offsetSet.classList.add('subgrid')
 		offsetSet.classList.add('view-offsets')
 		elData.appendChild(offsetSet)
@@ -81,20 +81,24 @@ export class View {
 
 	}
 
+
+
+	#findOffsetIndex() {
+		// TODO: HEEEEERE. COPY THE THING FROM BELOW OVER THERE
+
+	}
+
+
 	/**
 		* @param {String} habitName name of the habit
 		* @param {Number} day offset/day number relative to starting date
 		* @param {Number} [value=1] value of the offset
+		* TODO: docs return value
 	*/
 	setOffset(habitName, day, value = 1) {
-		if (!this.html) {
-			return 1
-		}
-		
 		const habit = this.habits.find(h => h.name === habitName)
 		if (!habit) {
-			console.error('could not find offset element by habit', habitName, day)
-			return 2
+			return 1
 		}
 
 		const y = this.habits.indexOf(habit)
@@ -102,16 +106,16 @@ export class View {
 		const dateISO = Utils.dateToISO(date)
 		const x = this.dates.findIndex(d => Utils.dateToISO(d) === dateISO)
 		if (!x) {
-			console.error('could not find offset element by offset', habitName, day)
-			return 3
+			return 2
 		}
 
 		const index = (y * this.dates.length) + x + 1
+		console.table({x, y, index})
 
 		const elOffsets = this.html.querySelector("view-offsets")
 		elOffsets.children.item(index)
 
-		// TODO: heeeeere
+		elOffsets.classList.add('offset')
 
 	}
 
@@ -122,13 +126,14 @@ export class View {
 	* @typedef {Object} objectHabitsDates
 	* @property {Habit[]} objectHabitsDates.habits array of hsbits with the data I DON'T KNOW HOW TO WRITE DOCUMENTATION
 	* @property {Date[]} objectHabitsDates.dates array of dates to filter the data
+	* @property {Page} objectHabitsDates.page Page object for the onclick events to propagate
 */
 
 /**
 	* @param {objectHabitsDates} objectHabitsDates habits and dates
 	* @returns {HTMLDivElement} element that contains offset representation for the given habits and dates
 */
-function createOffsetSet({habits, dates}) {
+function createOffsetSet({habits, dates, page}) {
 	const elOffsetSet = document.createElement('div')
 
 	const hue = Utils.randomInteger(1, 360)
@@ -139,7 +144,7 @@ function createOffsetSet({habits, dates}) {
 
 			const offset = habit.dateToOffset(date)
 			// TODO: HERE! hmmm... let's try sending the request and on success propagate to the instance of Page? yea sure but what is the correct way to do it? i don't know
-			el.addEventListener('click', () => handleOffsetToggle(el, habit.name, offset))
+			el.addEventListener('click', () => page.handleOffsetToggle(el, habit.name, offset))
 
 			el.style.setProperty('--clr-offset', colorFunction({x, y}))
 			elOffsetSet.appendChild(el)
