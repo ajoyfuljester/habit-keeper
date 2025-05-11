@@ -81,11 +81,35 @@ export class View {
 
 	}
 
+	/**
+		* @typedef {Object} offsetCoordsObject object that contains coordinates and index of a given Offset
+		* @property {Number} offsetCoordsObject.y number of the row from 0
+		* @property {Number} offsetCoordsObject.x number of the column from 0
+		* @property {Number} offsetCoordsObject.index number of the offset
+	*/
 
+	/**
+		* @param {String} habitName name of the habit
+		* @param {Number} day offset/day number relative to starting date
+		* @returns {offsetCoordsObject} coords to the offset
+	*/
+	#findOffsetIndex(habitName, day) {
+		const habit = this.habits.find(h => h.name === habitName)
+		if (!habit) {
+			return null
+		}
 
-	#findOffsetIndex() {
-		// TODO: HEEEEERE. COPY THE THING FROM BELOW OVER THERE
+		const y = this.habits.indexOf(habit)
+		const date = habit.offsetToDate(day)
+		const dateISO = Utils.dateToISO(date)
+		const x = this.dates.findIndex(d => Utils.dateToISO(d) === dateISO)
+		if (!x) {
+			return null
+		}
 
+		const index = (y * this.dates.length) + x + 1
+
+		return {x, y, index}
 	}
 
 
@@ -96,21 +120,7 @@ export class View {
 		* TODO: docs return value
 	*/
 	setOffset(habitName, day, value = 1) {
-		const habit = this.habits.find(h => h.name === habitName)
-		if (!habit) {
-			return 1
-		}
-
-		const y = this.habits.indexOf(habit)
-		const date = habit.offsetToDate(day)
-		const dateISO = Utils.dateToISO(date)
-		const x = this.dates.findIndex(d => Utils.dateToISO(d) === dateISO)
-		if (!x) {
-			return 2
-		}
-
-		const index = (y * this.dates.length) + x + 1
-		console.table({x, y, index})
+		const { index } = this.#findOffsetIndex(habitName, day)
 
 		const elOffsets = this.html.querySelector("view-offsets")
 		elOffsets.children.item(index)
