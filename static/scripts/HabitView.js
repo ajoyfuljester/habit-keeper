@@ -7,24 +7,30 @@ import * as Colors from "./colors.js"
 
 
 /**
-	* @typedef {Object} viewObject an object to be parsed into an instance of `View`
+	* @typedef {Object} viewObject an object to be parsed into an instance of `HabitView`
 	* @property {Habit[]} viewObject.habits array of `Habit` - the data that will be displayed
 	* @property {Date[]} viewObject.dates array of `Date` - the dates that the data will be displayed for
 	* @property {Number[]} viewObject.statIDs array of numbers - stat ids, which will be computed and displayed
 	* @property {Page} viewObject.page parent of the view to whichm the events will be transmitted
 	*/
-export class View {
+export class HabitView {
 
 	/**
 		*
 		* @param {viewObject} viewObject object with initial fields `habits`, `dates`, `stats`
-		* @returns {View} instance of `View`
+		* @returns {HabitView} instance of `HabitView`
+		* TODO: REWRITE THIS TO USE `Data` instead of raw habits
 	*/
 	constructor({habits, dates, statIDs, page}) {
 		if (!(habits && dates && (statIDs.length !== 0) && page)) {
 			console.error('INVALID VIEW')
 			console.warn({habits, dates, statIDs, page})
 		}
+
+		this.habits = habits
+		this.dates = dates
+		this.statIDs = statIDs
+		this.page = page
 
 		this.page = page
 
@@ -127,6 +133,21 @@ export class View {
 
 		elOffsets.classList.add('offset')
 
+	}
+
+
+	/**
+		* @param {String} habitName name of the habit
+		* @param {Number} day offset/day number relative to starting date
+	*/
+	deleteOffset(habitName, day) {
+		const { index } = this.#findOffsetIndex(habitName, day)
+		this.habits
+
+		const elOffsets = this.html.querySelector("view-offsets")
+		elOffsets.children.item(index)
+
+		elOffsets.classList.remove('offset')
 	}
 
 
