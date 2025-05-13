@@ -7,17 +7,17 @@ import * as Colors from "./colors.js"
 
 
 /**
-	* @typedef {Object} viewObject an object to be parsed into an instance of `HabitView`
-	* @property {Habit[]} viewObject.habits array of `Habit` - the data that will be displayed
-	* @property {Date[]} viewObject.dates array of `Date` - the dates that the data will be displayed for
-	* @property {Number[]} viewObject.statIDs array of numbers - stat ids, which will be computed and displayed
-	* @property {Page} viewObject.page parent of the view to whichm the events will be transmitted
+	* @typedef {Object} habitViewObject an object to be parsed into an instance of `HabitView`
+	* @property {Habit[]} habitViewObject.habits array of `Habit` - the data that will be displayed
+	* @property {Date[]} habitViewObject.dates array of `Date` - the dates that the data will be displayed for
+	* @property {Number[]} habitViewObject.statIDs array of numbers - stat ids, which will be computed and displayed
+	* @property {Page} habitViewObject.page parent of the view to whichm the events will be transmitted
 	*/
 export class HabitView {
 
 	/**
 		*
-		* @param {viewObject} viewObject object with initial fields `habits`, `dates`, `stats`
+		* @param {habitViewObject} habitViewObject object with initial fields `habits`, `dates`, `stats`
 		* @returns {HabitView} instance of `HabitView`
 		* TODO: REWRITE THIS TO USE `Data` instead of raw habits
 	*/
@@ -42,9 +42,9 @@ export class HabitView {
 
 	// IDEA: have different view layouts
 	/**
-		* @param {viewObject} viewObject object with fields `habits`, `dates`, `stats`, `page`
+		* @param {habitViewObject} habitViewObject object with fields `habits`, `dates`, `stats`, `page`
 		* `this.html` will contain the generated element
-		* @see {@link viewObject}
+		* @see {@link habitViewObject}
 	*/
 	#initiateHTML() {
 		const elData = document.createElement('div')

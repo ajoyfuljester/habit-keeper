@@ -82,7 +82,7 @@ export function updateStats(elParent) {
 
 
 /**
-	* @param {import("./View").viewObject} viewObject information about what to display
+	* @param {import("./HabitView.js").habitViewObject} habitViewObject information about what to display
 	* @returns {HTMLDivElement} element which contains values of the stats
 */
 export function createStatSet({habits, dates, statIDs}) {
