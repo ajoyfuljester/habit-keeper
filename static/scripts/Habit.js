@@ -1,6 +1,6 @@
 import { Offset } from "./Offset.js"
 import { HandleAction } from "./action.js"
-import { dateToOffset } from "./utils.js"
+import * as Utils from "./utils.js"
 
 
 export class Habit {
@@ -173,6 +173,15 @@ export class Habit {
 	findOffsetByDate(date) {
 		const day = this.dateToOffset(date)
 		return this.offsets.find(o => o.day === day)
+	}
+
+
+	/**
+		* @param {Number} day day/offset to convert to a Date
+		* @returns {Date} instance of Date pointing to the corresponding offset
+	*/
+	offsetToDate(day) {
+		return Utils.addDays(new Date(this.startingDate), day)
 	}
 
 

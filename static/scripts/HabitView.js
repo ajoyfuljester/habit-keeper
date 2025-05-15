@@ -4,11 +4,12 @@ import * as HTMLUtils from "./HTMLUtils.js"
 import * as Stats from "./stats.js"
 import * as Utils from "./utils.js"
 import * as Colors from "./colors.js"
+import { Data } from "./Data.js"
 
 
 /**
 	* @typedef {Object} habitViewObject an object to be parsed into an instance of `HabitView`
-	* @property {Habit[]} habitViewObject.habits array of `Habit` - the data that will be displayed
+	* @property {Data} habitViewObject.data instance of Data with the habits and lists
 	* @property {Date[]} habitViewObject.dates array of `Date` - the dates that the data will be displayed for
 	* @property {Number[]} habitViewObject.statIDs array of numbers - stat ids, which will be computed and displayed
 	* @property {Page} habitViewObject.page parent of the view to whichm the events will be transmitted
@@ -21,17 +22,15 @@ export class HabitView {
 		* @returns {HabitView} instance of `HabitView`
 		* TODO: REWRITE THIS TO USE `Data` instead of raw habits
 	*/
-	constructor({habits, dates, statIDs, page}) {
-		if (!(habits && dates && (statIDs.length !== 0) && page)) {
+	constructor({data, dates, statIDs, page}) {
+		if (!(data && dates && (statIDs.length !== 0) && page)) {
 			console.error('INVALID VIEW')
-			console.warn({habits, dates, statIDs, page})
+			console.warn({data, dates, statIDs, page})
 		}
 
-		this.habits = habits
+		this.data = data
 		this.dates = dates
 		this.statIDs = statIDs
-		this.page = page
-
 		this.page = page
 
 		this.html = null
@@ -52,7 +51,7 @@ export class HabitView {
 		elData.classList.add('layout')
 		elData.classList.add('layout-default')
 
-		elData.style.setProperty('--number-of-habits', this.habits.length)
+		elData.style.setProperty('--number-of-habits', this.data.habits.length)
 
 		elData.style.setProperty('--number-of-dates', this.dates.length)
 
@@ -63,22 +62,22 @@ export class HabitView {
 		elDateSet.classList.add('view-dates')
 		elData.appendChild(elDateSet)
 
-		const elStatSet = Stats.createStatSet({habits: this.habits, dates: this.dates, statIDs: this.statIDs})
+		const elStatSet = Stats.createStatSet({habits: this.data.habits, dates: this.dates, statIDs: this.statIDs})
 		elStatSet.classList.add('subgrid')
 		elStatSet.classList.add('view-stats')
 		elData.appendChild(elStatSet)
 
-		const habitNameSet = createHabitNameSet(this.habits)
+		const habitNameSet = createHabitNameSet(this.data.habits)
 		habitNameSet.classList.add('subgrid')
 		habitNameSet.classList.add('view-habit-names')
 		elData.appendChild(habitNameSet)
 
-		const offsetSet = createOffsetSet({habits: this.habits, dates: this.dates, page: this.page})
+		const offsetSet = createOffsetSet({habits: this.data.habits, dates: this.dates, page: this.page})
 		offsetSet.classList.add('subgrid')
 		offsetSet.classList.add('view-offsets')
 		elData.appendChild(offsetSet)
 
-		const summarySet = createSummarySet({habits: this.habits, dates: this.dates})
+		const summarySet = createSummarySet({habits: this.data.habits, dates: this.dates})
 		summarySet.classList.add('subgrid')
 		summarySet.classList.add('view-summary')
 		elData.appendChild(summarySet)
@@ -100,13 +99,14 @@ export class HabitView {
 		* @returns {offsetCoordsObject} coords to the offset
 	*/
 	#findOffsetIndex(habitName, day) {
-		const habit = this.habits.find(h => h.name === habitName)
-		if (!habit) {
+		const habitIndex = this.data.findHabitIndexByName(habitName)
+		if (-1 === habitIndex) {
 			return null
 		}
 
-		const y = this.habits.indexOf(habit)
-		const date = habit.offsetToDate(day)
+		const y = habitIndex
+		const date = this.data.habits[habitIndex].offsetToDate(day)
+		// IDEA: rewrite this but idk how, i just don't like it but i don't think there's a solution
 		const dateISO = Utils.dateToISO(date)
 		const x = this.dates.findIndex(d => Utils.dateToISO(d) === dateISO)
 		if (!x) {

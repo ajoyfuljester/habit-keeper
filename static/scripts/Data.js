@@ -44,7 +44,7 @@ export class Data {
 		* @param {String} name - name of the habit
 		* @returns {Habit | undefined} `Habit` instance if found or `undefined` if habit was not found
 	*/
-	findHabit(name) {
+	findHabitByName(name) {
 		return this.habits.find(b => b.name === name)
 	}
 
@@ -52,7 +52,7 @@ export class Data {
 		* @param {String} name - name of the habit
 		* @returns {-1 | Number} index of the found habit or -1 if not found
 	*/
-	#findHabitIndex(name) {
+	findHabitIndexByName(name) {
 		return this.habits.findIndex(b => b.name === name)
 	}
 
@@ -63,7 +63,7 @@ export class Data {
 		* `1` - habit with the given name does not exist
 	*/
 	removeHabit(name) {
-		const index = this.#findHabitIndex(name)
+		const index = this.findHabitIndexByName(name)
 		if (index === -1) {
 			return 1
 		}
@@ -84,7 +84,7 @@ export class Data {
 		if (!(habitObj instanceof Habit)) {
 			return 1
 		}
-		if (this.findHabit(habitObj.name)) {
+		if (this.findHabitByName(habitObj.name)) {
 			return 2
 		}
 
