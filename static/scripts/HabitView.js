@@ -20,7 +20,6 @@ export class HabitView {
 		*
 		* @param {habitViewObject} habitViewObject object with initial fields `habits`, `dates`, `stats`
 		* @returns {HabitView} instance of `HabitView`
-		* TODO: REWRITE THIS TO USE `Data` instead of raw habits
 	*/
 	constructor({data, dates, statIDs, page}) {
 		if (!(data && dates && (statIDs.length !== 0) && page)) {
@@ -175,7 +174,9 @@ function createOffsetSet({habits, dates, page}) {
 
 			const offset = habit.dateToOffset(date)
 			// TODO: HERE! hmmm... let's try sending the request and on success propagate to the instance of Page? yea sure but what is the correct way to do it? i don't know
-			el.addEventListener('click', () => page.handleOffsetToggle(el, habit.name, offset))
+			// TODO: test if this works
+			el.addEventListener('click', () => console.log(el.classList.contains('offset')))
+			// el.addEventListener('click', () => page.handleOffsetToggle(el, habit.name, offset))
 
 			el.style.setProperty('--clr-offset', colorFunction({x, y}))
 			elOffsetSet.appendChild(el)

@@ -1,5 +1,4 @@
-import { View } from "./View";
-
+import { HabitView } from "./HabitView";
 
 class Page {
 	/**
@@ -12,13 +11,11 @@ class Page {
 	}
 
 	/**
-		* @param {import("./View").viewObject} view View that will be added
+		* @param {import("./HabitView").habitViewObject} viewObject HabitView that will be added
 	*/
 	createView(viewObject) {
-
 		viewObject.page = this
-
-
+		view = HabitView(viewObject)
 
 		this.views.push(view)
 	}
