@@ -1,6 +1,7 @@
 import { Data } from './Data.js'
+import { HabitView } from './HabitView.js'
+import { Page } from './Page.js'
 import * as Utils from './utils.js'
-import { View } from './View.js'
 
 /**
 	* @param {Data} data Data instance I DON'T KNOW HOW TO WRITE DOCUMENTATION!!!!!!!!!!!!
@@ -15,11 +16,12 @@ function loadHabits(data) {
 
 	const statIDs = [0]
 
-	const view = new View({habits: data.habits, dates: dates, statIDs: statIDs})
 
-	const elData = view.initiateHTML()
+	const page = new Page()
 
-	document.body.appendChild(elData)
+	const view = new HabitView({data: data, dates: dates, statIDs: statIDs, page: page})
+
+	document.body.appendChild(view.html)
 
 }
 

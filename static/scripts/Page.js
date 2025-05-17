@@ -1,6 +1,6 @@
-import { HabitView } from "./HabitView";
+import { HabitView } from "./HabitView.js";
 
-class Page {
+export class Page {
 	/**
 		*
 	*/
@@ -21,10 +21,13 @@ class Page {
 	}
 
 
-	async handleOffsetToggle(el, habitName, offsetDay, offsetValue = 1) {
+	async handleOffsetToggle(bool, habitName, offsetDay, offsetValue = 1) {
 		let result;
 
-		if (el.classList.contains('offset')) {
+		// TODO: test if this works
+		console.log(bool)
+
+		if (bool) {
 			result = await HandleAction.offset.delete(habitName, offsetDay)
 		} else {
 			result = await HandleAction.offset.create(habitName, offsetDay, offsetValue)

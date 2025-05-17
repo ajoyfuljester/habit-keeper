@@ -32,7 +32,6 @@ export class HabitView {
 		this.statIDs = statIDs
 		this.page = page
 
-		this.html = null
 		this.#initiateHTML()
 
 	}
@@ -170,13 +169,11 @@ function createOffsetSet({habits, dates, page}) {
 	const colorFunction = Colors.gradient(habits.length, hue)
 	for (const [y, habit] of habits.entries()) {
 		for (const [x, date] of dates.entries()) {
-			const el = document.createElement('div')
+			const el = document.createElement('button')
 
 			const offset = habit.dateToOffset(date)
 			// TODO: HERE! hmmm... let's try sending the request and on success propagate to the instance of Page? yea sure but what is the correct way to do it? i don't know
-			// TODO: test if this works
-			el.addEventListener('click', () => console.log(el.classList.contains('offset')))
-			// el.addEventListener('click', () => page.handleOffsetToggle(el, habit.name, offset))
+			el.addEventListener('click', () => page.handleOffsetToggle(el.classList.contains("offset"), habit.name, offset))
 
 			el.style.setProperty('--clr-offset', colorFunction({x, y}))
 			elOffsetSet.appendChild(el)
