@@ -94,7 +94,7 @@ export class HabitView {
 	/**
 		* @param {String} habitName name of the habit
 		* @param {Number} day offset/day number relative to starting date
-		* @returns {offsetCoordsObject} coords to the offset
+		* @returns {offsetCoordsObject | null} coords to the offset
 	*/
 	#findOffsetIndex(habitName, day) {
 		const habitIndex = this.data.findHabitIndexByName(habitName)
@@ -111,7 +111,7 @@ export class HabitView {
 			return null
 		}
 
-		const index = (y * this.dates.length) + x + 1
+		const index = (y * this.dates.length) + x
 
 		return {x, y, index}
 	}
@@ -121,16 +121,25 @@ export class HabitView {
 		* @param {String} habitName name of the habit
 		* @param {Number} day offset/day number relative to starting date
 		* @param {Number} [value=1] value of the offset
-		* TODO: docs return value
+		* @returns {0 | 1} exitCode where
+		* `0` - success
+		* `1` - offset not found in the view 
 	*/
 	setOffset(habitName, day, value = 1) {
-		const { index } = this.#findOffsetIndex(habitName, day)
+		const coords = this.#findOffsetIndex(habitName, day)
+		if (null === coords) {
+			return 1
+		}
 
-		const elOffsets = this.html.querySelector("view-offsets")
-		elOffsets.children.item(index)
+		const { index } = coords
 
-		elOffsets.classList.add('offset')
+		const elOffsets = this.html.querySelector(".view-offsets")
+		const elOffset = elOffsets.children.item(index)
+		console.log(habitName, day, x, y, index)
 
+		elOffset.classList.add('offset')
+
+		return 0
 	}
 
 
@@ -142,7 +151,7 @@ export class HabitView {
 		const { index } = this.#findOffsetIndex(habitName, day)
 		this.habits
 
-		const elOffsets = this.html.querySelector("view-offsets")
+		const elOffsets = this.html.querySelector(".view-offsets")
 		elOffsets.children.item(index)
 
 		elOffsets.classList.remove('offset')

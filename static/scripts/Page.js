@@ -1,4 +1,5 @@
 import { HabitView } from "./HabitView.js";
+import { HandleAction } from "./action.js";
 
 export class Page {
 	/**
@@ -6,12 +7,12 @@ export class Page {
 	*/
 	constructor() {
 
-		/** @type {View[]} array of views, used for updating */
+		/** @type {HabitView[]} array of views, used for updating */
 		this.views = []
 	}
 
 	/**
-		* @param {import("./HabitView").habitViewObject} viewObject HabitView that will be added
+		* @param {import("./HabitView").habitViewObject} viewObject object that will be parsed into HabitView and added
 	*/
 	createView(viewObject) {
 		viewObject.page = this
@@ -20,28 +21,44 @@ export class Page {
 		this.views.push(view)
 	}
 
+	/**
+		* @param {HabitView} view view that will be added
+	*/
+	addView(view) {
+		this.views.push(view)
+	}
 
-	async handleOffsetToggle(bool, habitName, offsetDay, offsetValue = 1) {
+	/**
+		* @param {Boolean} isOffset whether to delete (`true`) or create (`false`) offset
+		* @param {String} habitName name of the habit to create offset for
+		* @param {String} offsetDay day of the offset
+		* @param {Number} [offsetValue=1] value of the offset
+		* @returns {Promise<0 | 1>} exitCode propagated from HandleAction
+	*/
+	async handleOffsetToggle(isOffset, habitName, offsetDay, offsetValue = 1) {
 		let result;
 
-		// TODO: test if this works
-		console.log(bool)
-
-		if (bool) {
+		if (isOffset) {
 			result = await HandleAction.offset.delete(habitName, offsetDay)
 		} else {
 			result = await HandleAction.offset.create(habitName, offsetDay, offsetValue)
 		}
+
+		console.log(result)
 
 
 		if (result !== 0) {
 			return result
 		}
 
+		console.log(this.views)
 
 		for (const view of this.views) {
+			console.log(view)
 			view.setOffset(habitName, offsetDay, offsetValue)
 		}
+
+		return result
 
 	}
 
