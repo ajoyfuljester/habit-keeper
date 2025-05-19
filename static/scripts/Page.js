@@ -53,10 +53,16 @@ export class Page {
 
 		console.log(this.views)
 
-		for (const view of this.views) {
-			console.log(view)
-			view.setOffset(habitName, offsetDay, offsetValue)
+		if (isOffset) {
+			for (const view of this.views) {
+				view.setOffset(habitName, offsetDay, offsetValue)
+			}
+		} else {
+			for (const view of this.views) {
+				view.deleteOffset(habitName, offsetDay)
+			}
 		}
+
 
 		return result
 
