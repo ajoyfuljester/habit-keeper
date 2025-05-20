@@ -44,7 +44,8 @@
 	--border: 0.2rem solid var(--clr-1-accent);
 }
 
-.view-offsets > div {
+.view-offsets > button {
+	border: none;
 	background-color: var(--clr-1);
 	align-content: center;
 	text-align: center;
@@ -55,13 +56,13 @@
 	min-height: calc(1em + (var(--border-width) * 2));
 }
 
-.view-offsets > div:hover {
+.view-offsets > button:hover {
 	border: var(--border-width) solid var(--clr-1);
 	background-color: var(--clr-offset);
 	color: var(--clr-1);
 }
 
-.view-offsets > div:hover::after {
+.view-offsets > button:hover::after {
 	content: 'mark';
 }
 
@@ -100,6 +101,7 @@
 	background-color: var(--clr-1);
 
 
+	/* TODO: probably should be span */
 	> div {
 		display: flex;
 		flex-direction: column;
