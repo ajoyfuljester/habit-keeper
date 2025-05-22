@@ -104,7 +104,6 @@ export class HabitView {
 
 		const y = habitIndex
 		const date = this.data.habits[habitIndex].offsetToDate(day)
-		// IDEA: rewrite this but idk how, i just don't like it but i don't think there's a solution
 		const dateISO = Utils.dateToISO(date)
 		const x = this.dates.findIndex(d => Utils.dateToISO(d) === dateISO)
 		if (!x) {
@@ -189,7 +188,6 @@ function createOffsetSet({habits, dates, page}) {
 			const el = document.createElement('button')
 
 			const offset = habit.dateToOffset(date)
-			// TODO: HERE! hmmm... let's try sending the request and on success propagate to the instance of Page? yea sure but what is the correct way to do it? i don't know
 			el.addEventListener('click', () => page.handleOffsetToggle(el.classList.contains("offset"), habit.name, offset))
 
 			el.style.setProperty('--clr-offset', colorFunction({x, y}))
@@ -256,27 +254,3 @@ function createSummarySet({habits, dates}) {
 
 }
 
-/**
-	* @param {HTMLDivElement} el html element to check whether to create or delete the offset based on whether the element has a class of `offset`
-	* @param {String} habitName name of the habit
-	* @param {Number} offsetDay day of the offset thingy
-	* @param {Number} [offsetValue=1] value of the offset thingy
-	* @returns {Promise<0 | 1>} promise that resolves to the return value of the HandlAction functions
-*/
-async function handleOffsetToggle(el, habitName, offsetDay, offsetValue = 1) {
-	let result;
-	if (el.classList.contains('offset')) {
-		result = await HandleAction.offset.delete(habitName, offsetDay)
-	} else {
-		result = await HandleAction.offset.create(habitName, offsetDay, offsetValue)
-	}
-
-	if (result !== 0) {
-		return result
-	}
-
-	// TODO: update stuff
-
-
-	return result
-}
