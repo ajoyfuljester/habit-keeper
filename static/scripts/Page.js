@@ -55,11 +55,11 @@ export class Page {
 
 		if (isOffset) {
 			for (const view of this.views) {
-				view.setOffset(habitName, offsetDay, offsetValue)
+				view.deleteOffset(habitName, offsetDay)
 			}
 		} else {
 			for (const view of this.views) {
-				view.deleteOffset(habitName, offsetDay)
+				view.setOffset(habitName, offsetDay, offsetValue)
 			}
 		}
 
