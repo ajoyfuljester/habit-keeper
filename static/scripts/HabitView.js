@@ -10,7 +10,7 @@ import { Data } from "./Data.js"
 /**
 	* @typedef {Object} habitViewObject an object to be parsed into an instance of `HabitView`
 	* @property {Data} habitViewObject.data instance of Data with the habits and lists
-	* @property {Date[]} habitViewObject.dates array of `Date` - the dates that the data will be displayed for
+	* @property {DateList} habitViewObject.dates DateList created from an array of `Date`, the dates that the data will be displayed for
 	* @property {Number[]} habitViewObject.statIDs array of numbers - stat ids, which will be computed and displayed
 	* @property {Page} habitViewObject.page parent of the view to whichm the events will be transmitted
 	*/
@@ -137,6 +137,8 @@ export class HabitView {
 
 		elOffset.classList.add('offset')
 
+
+
 		return 0
 	}
 
@@ -162,6 +164,20 @@ export class HabitView {
 		elOffset.classList.remove('offset')
 
 		return 0
+	}
+
+
+	/**
+		* @param {Date} date date of the view to update summary idk
+		* @returns {0 | 1} exitCode where
+		* `0` - success
+		* `1` - corresponding summary column not found in the view 
+	*/
+	updateSummary(date) {
+
+		const elSummary = this.html.querySelector('.view-summary')
+
+		const index = this.dates.find()
 	}
 
 
@@ -254,3 +270,36 @@ function createSummarySet({habits, dates}) {
 
 }
 
+
+
+// TODO: check if i can make it behave like an array
+class DateList {
+
+	/**
+		* @param {Date[]} dates array of dates
+	*/
+	constructor(dates) {
+		this.dates = dates ?? []
+	}
+
+	/**
+		* @param {Date} date date for the index to be found
+		* @returns {Number} index or -1 if not found
+	*/
+	findIndex(date) {
+		const dateISO = Utils.dateToISO(date)
+		const index = this.dates.findIndex(d => Utils.dateToISO(d) === dateISO)
+
+		return index
+	}
+
+
+	/**
+		* @returns {Number} number of the dates
+	*/
+	get length() {
+		return this.dates.length
+	}
+
+
+}
