@@ -55,12 +55,12 @@ export class HabitView {
 
 		elData.style.setProperty('--number-of-stats', this.statIDs.length)
 
-		const elDateSet = HTMLUtils.createDateSet(this.dates)
+		const elDateSet = HTMLUtils.createDateSet(this.dates.dates)
 		elDateSet.classList.add('subgrid')
 		elDateSet.classList.add('view-dates')
 		elData.appendChild(elDateSet)
 
-		const elStatSet = Stats.createStatSet({habits: this.data.habits, dates: this.dates, statIDs: this.statIDs})
+		const elStatSet = Stats.createStatSet({habits: this.data.habits, dates: this.dates.dates, statIDs: this.statIDs})
 		elStatSet.classList.add('subgrid')
 		elStatSet.classList.add('view-stats')
 		elData.appendChild(elStatSet)
@@ -70,12 +70,12 @@ export class HabitView {
 		habitNameSet.classList.add('view-habit-names')
 		elData.appendChild(habitNameSet)
 
-		const offsetSet = createOffsetSet({habits: this.data.habits, dates: this.dates, page: this.page})
+		const offsetSet = createOffsetSet({habits: this.data.habits, dates: this.dates.dates, page: this.page})
 		offsetSet.classList.add('subgrid')
 		offsetSet.classList.add('view-offsets')
 		elData.appendChild(offsetSet)
 
-		const summarySet = createSummarySet({habits: this.data.habits, dates: this.dates})
+		const summarySet = createSummarySet({habits: this.data.habits, dates: this.dates.dates})
 		summarySet.classList.add('subgrid')
 		summarySet.classList.add('view-summary')
 		elData.appendChild(summarySet)
@@ -104,9 +104,8 @@ export class HabitView {
 
 		const y = habitIndex
 		const date = this.data.habits[habitIndex].offsetToDate(day)
-		const dateISO = Utils.dateToISO(date)
-		const x = this.dates.findIndex(d => Utils.dateToISO(d) === dateISO)
-		if (!x) {
+		const x = this.dates.findIndex(date)
+		if (x === -1) {
 			return null
 		}
 
@@ -293,12 +292,20 @@ class DateList {
 		return index
 	}
 
-
 	/**
 		* @returns {Number} number of the dates
 	*/
 	get length() {
 		return this.dates.length
+	}
+
+	/**
+		* @yields {Date} next date in `this.dates`
+	*/
+	*[Symbol.iterator]() {
+		for (const date of this.dates) {
+			yield date
+		}
 	}
 
 
