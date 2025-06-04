@@ -12,6 +12,7 @@ i wish you a good life and successful new habits or something
 # TODO
 - test creating a habit because i think something is wrong with the startingDate
 - add option in config to enable/disable user registration
+- change license to AGPL, possibly split code into two (branches?), one with only api and the other one this or just client?
 - mask data file names with a hash
 - CHOSEN VIEW ARCHITECTURE?
     - CLASSES FOR HTML - OFFSET WITH ONCLICK BUT HOW DO I SEND IT TO THE PARENT? WHATEVER I PROBABLY CAN  JUST PASS THE REFERENCE? YEA PROBABLY. OTHER STUFF. NEED TO REWRITE AGAIN BECAUSE I DIDN'T THINK ENOUGH AGAIN

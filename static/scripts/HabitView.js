@@ -105,7 +105,7 @@ export class HabitView {
 		const y = habitIndex
 		const date = this.data.habits[habitIndex].offsetToDate(day)
 		const x = this.dates.findIndex(date)
-		if (x === -1) {
+		if (-1 === x) {
 			return null
 		}
 
@@ -137,6 +137,11 @@ export class HabitView {
 		elOffset.classList.add('offset')
 
 
+		const habit = this.data.habits[coords.y]
+		const date = habit.offsetToDate(day)
+
+		this.updateSummary(date)
+
 
 		return 0
 	}
@@ -162,6 +167,13 @@ export class HabitView {
 
 		elOffset.classList.remove('offset')
 
+
+		const habit = this.data.habits[coords.y]
+		const date = habit.offsetToDate(day)
+
+		this.updateSummary(date)
+
+
 		return 0
 	}
 
@@ -176,7 +188,20 @@ export class HabitView {
 
 		const elSummary = this.html.querySelector('.view-summary')
 
-		const index = this.dates.find()
+		const index = this.dates.findIndex(date)
+		if (-1 === index) {
+			return 1
+		}
+
+
+		const count = this.data.habits.map(h => h.findOffsetByDate(date)).filter(o => !!o).length
+
+		elSummary.innerText = count
+
+
+		return 0
+
+
 	}
 
 
@@ -249,14 +274,16 @@ function createSummarySet({habits, dates}) {
 	const elSummarySet = document.createElement('div')
 
 	for (const date of dates) {
-		let count = 0;
+		// let count = 0;
+		//
+		// for (const habit of habits) {
+		// 	if (!habit.findOffsetByDate(date)) {
+		// 		continue;
+		// 	}
+		// 	count += 1;
+		// }
 
-		for (const habit of habits) {
-			if (!habit.findOffsetByDate(date)) {
-				continue;
-			}
-			count += 1;
-		}
+		const count = habits.map(h => h.findOffsetByDate(date)).filter(o => !!o).length
 
 		const el = document.createElement('div')
 		el.innerText = count;
