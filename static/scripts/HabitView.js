@@ -141,6 +141,7 @@ export class HabitView {
 		const date = habit.offsetToDate(day)
 
 		this.updateSummary(date)
+		this.updateStats(habitName)
 
 
 		return 0
@@ -172,6 +173,7 @@ export class HabitView {
 		const date = habit.offsetToDate(day)
 
 		this.updateSummary(date)
+		this.updateStats(habitName)
 
 
 		return 0
@@ -201,6 +203,40 @@ export class HabitView {
 
 		return 0
 
+
+	}
+
+
+	/**
+		* @param {String} habitName name of the hsbit, where stats should be updated
+		* @returns {0 | 1} exitCode where
+		* `0` - success
+		* `1` - corresponding habit was not found in the view
+	*/
+	updateStats(habitName) {
+		const row = this.data.findHabitIndexByName(habitName)
+		if (-1 === row) {
+			return 1
+		}
+
+
+		const habit = this.data.habits[row]
+
+		const elStatSet = this.html.querySelector(".view-stats")
+
+		for (const [ i, statID ] of this.statIDs.entries()) {
+			const statValue = Stats.Stats[statID].function({habit, dates: this.dates})
+
+			// y = statIDs.length * (row + 1), + 1 because headers
+			// x = i
+			const index = this.statIDs.length * (row + 1) + i
+			const el = elStatSet.children[index]
+
+			el.innerText = statValue
+		}
+
+
+		return 0
 
 	}
 

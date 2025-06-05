@@ -22,7 +22,7 @@ import { Habit } from "./Habit.js"
 /**
 	* @type {StatsObject[]} array with stuff about statistics, including a function and a name
 */
-const Stats = [
+export const Stats = [
 	{name: "Max streak"},
 ]
 
@@ -56,19 +56,6 @@ Stats[0].function = ({habit, dates}) => {
 }
 
 
-/**
-	* @param {import("./habits.js.old").habitObject} habitInfo information about the habit
-	* @param {Number[]} stats numbers corresponding to a stat that will be displayed
-*/
-export function createStats(offsets, statIDs) {
-	for (const id of statIDs) {
-		const value = Stats[id].function(offsets)
-		const el = document.createElement('span')
-		el.innerText = value
-		elParent.appendChild(el)
-	}
-
-}
 
 // TODO: this
 // I AM SERIOUSLY QUESTIONING MY DECISION NOT TO USE CLASSES FOR THE DATAFILE ON THE CLIENT
@@ -81,6 +68,7 @@ export function updateStats(elParent) {
 
 
 
+// IDEA: possibly move this funtion to HabitView
 /**
 	* @param {import("./HabitView.js").habitViewObject} habitViewObject information about what to display
 	* @returns {HTMLDivElement} element which contains values of the stats
