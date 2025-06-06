@@ -1,4 +1,3 @@
-import { HandleAction } from "./action.js"
 import { Habit } from "./Habit.js"
 import * as HTMLUtils from "./HTMLUtils.js"
 import * as Stats from "./stats.js"
@@ -79,6 +78,12 @@ export class HabitView {
 		summarySet.classList.add('subgrid')
 		summarySet.classList.add('view-summary')
 		elData.appendChild(summarySet)
+
+
+		const elEditorLink = createEditorLink()
+		elEditorLink.classList.add('subgrid')
+		elEditorLink.classList.add('view-editor-link')
+		elData.appendChild(elEditorLink)
 
 		this.html = elData
 
@@ -333,8 +338,19 @@ function createSummarySet({habits, dates}) {
 }
 
 
+function createEditorLink() {
+	const el = document.createElement('a')
+	const user = Utils.extractName()
+	el.href = `/u/${user}/editor`
 
-// TODO: check if i can make it behave like an array
+	el.innerText = "Editor"
+
+	return el
+}
+
+
+
+
 class DateList {
 
 	/**
