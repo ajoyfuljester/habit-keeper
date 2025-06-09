@@ -245,6 +245,12 @@ export class HabitView {
 
 	}
 
+	/**
+		* @param {Date[]} dates array of new dates
+	*/
+	setDates(dates) {
+
+	}
 
 }
 
