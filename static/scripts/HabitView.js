@@ -43,51 +43,57 @@ export class HabitView {
 		* @see {@link habitViewObject}
 	*/
 	#initiateHTML() {
-		const elData = document.createElement('div')
-		elData.id = 'data'
-		elData.classList.add('layout')
-		elData.classList.add('layout-default')
-
-		elData.style.setProperty('--number-of-habits', this.data.habits.length)
-
-		elData.style.setProperty('--number-of-dates', this.dates.length)
-
-		elData.style.setProperty('--number-of-stats', this.statIDs.length)
+		const elData = this.#prepareDataElement()
 
 		const elDateSet = HTMLUtils.createDateSet(this.dates.dates)
-		elDateSet.classList.add('subgrid')
-		elDateSet.classList.add('view-dates')
+		prepareBaseViewElement(elDateSet, 'dates')
 		elData.appendChild(elDateSet)
 
 		const elStatSet = Stats.createStatSet({habits: this.data.habits, dates: this.dates.dates, statIDs: this.statIDs})
-		elStatSet.classList.add('subgrid')
-		elStatSet.classList.add('view-stats')
+		prepareBaseViewElement(elStatSet, 'stats')
 		elData.appendChild(elStatSet)
 
-		const habitNameSet = createHabitNameSet(this.data.habits)
-		habitNameSet.classList.add('subgrid')
-		habitNameSet.classList.add('view-habit-names')
-		elData.appendChild(habitNameSet)
+		const elHabitNameSet = createHabitNameSet(this.data.habits)
+		prepareBaseViewElement(elHabitNameSet, 'habit-names')
+		elData.appendChild(elHabitNameSet)
 
-		const offsetSet = createOffsetSet({habits: this.data.habits, dates: this.dates.dates, page: this.page})
-		offsetSet.classList.add('subgrid')
-		offsetSet.classList.add('view-offsets')
-		elData.appendChild(offsetSet)
+		const elOffsetSet = createOffsetSet({habits: this.data.habits, dates: this.dates.dates, page: this.page})
+		prepareBaseViewElement(elOffsetSet, 'offsets')
+		elData.appendChild(elOffsetSet)
 
-		const summarySet = createSummarySet({habits: this.data.habits, dates: this.dates.dates})
-		summarySet.classList.add('subgrid')
-		summarySet.classList.add('view-summary')
-		elData.appendChild(summarySet)
+		const elSummarySet = createSummarySet({habits: this.data.habits, dates: this.dates.dates})
+		prepareBaseViewElement(elSummarySet, 'summary')
+		elData.appendChild(elSummarySet)
 
 
 		const elEditorLink = createEditorLink()
-		elEditorLink.classList.add('subgrid')
-		elEditorLink.classList.add('view-editor-link')
+		prepareBaseViewElement(elEditorLink, 'editor-link')
 		elData.appendChild(elEditorLink)
 
 		this.html = elData
 
 	}
+
+
+	/**
+		* @returns {HTMLDivElement} main data element prepared with classes, css variables and an id
+	*/
+	#prepareDataElement() {
+		const elData = document.createElement('div')
+
+		elData.classList.add('habit-view')
+		elData.classList.add('layout')
+		elData.classList.add('layout-default')
+
+		elData.style.setProperty('--number-of-habits', this.data.habits.length)
+		elData.style.setProperty('--number-of-dates', this.dates.length)
+		elData.style.setProperty('--number-of-stats', this.statIDs.length)
+
+
+		return elData
+	}
+
+
 
 	/**
 		* @typedef {Object} offsetCoordsObject object that contains coordinates and index of a given Offset
@@ -250,9 +256,44 @@ export class HabitView {
 	*/
 	setDates(dates) {
 
+		this.dates = new DateList(dates)
+
+		const elDateSet = HTMLUtils.createDateSet(this.dates.dates)
+		prepareBaseViewElement(elDateSet, 'dates')
+		this.html.querySelector('.view-dates').remove()
+		this.html.appendChild(elDateSet)
+
+		const elOffsetSet = createOffsetSet({habits: this.data.habits, dates: this.dates.dates, page: this.page})
+		prepareBaseViewElement(elOffsetSet, 'offsets')
+		this.html.querySelector('.view-offsets').remove()
+		this.html.appendChild(elOffsetSet)
+
+		for (const habitName of this.data.habits) {
+			this.updateStats(habitName)
+		}
+
+		for (const date of this.dates) {
+			this.updateSummary(date)
+		}
+
 	}
 
 }
+
+
+/**
+	@param {HTMLElement} el element to which classes and stuff will be applied
+*/
+function prepareBaseViewElement(el, name) {
+
+	el.classList.add('subgrid')
+	el.classList.add(`view-${name}`)
+
+}
+
+
+
+
 
 /**
 	* @typedef {Object} objectHabitsDates
