@@ -278,6 +278,15 @@ export class HabitView {
 
 	}
 
+	/**
+		* @param {Number} [offset=1] number of days to add to each date I HATE NAMING THINGS
+	*/
+	shiftDates(offset = 1) {
+		const newDates = this.dates.dates.map(d => Utils.addDays(d, offset))
+
+		this.setDates(newDates)
+	}
+
 }
 
 

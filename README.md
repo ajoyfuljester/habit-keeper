@@ -1,7 +1,5 @@
 # a habit keeper app [inspired](#why) by [Everyday](https://everyday.app) habit app
 
-## currently broken i think `3c77dc4` commit is the last one that's usable, sorry i will try to finish this refactoring a bit faster
-
 first time using deno
 
 i have not used a javascript framework in my entire life, thanks to this project maybe i can see the benefits of using one
