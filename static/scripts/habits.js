@@ -19,7 +19,12 @@ function loadHabits(data) {
 
 	const page = new Page()
 
-	const view = new HabitView({data: data, dates: dates, statIDs: statIDs, page: page})
+	const view = new HabitView({
+		data: data,
+		dates: new Utils.DateList(dates),
+		statIDs: statIDs,
+		page: page,
+	})
 	page.addView(view)
 
 	document.body.appendChild(view.html)

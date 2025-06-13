@@ -93,3 +93,42 @@ export function randomInteger(min, max) {
 	const rand = Math.round(value) + min
 	return rand
 }
+
+export class DateList {
+
+	/**
+		* @param {Date[]} dates array of dates
+	*/
+	constructor(dates) {
+		this.dates = dates ?? []
+	}
+
+	/**
+		* @param {Date} date date for the index to be found
+		* @returns {Number} index or -1 if not found
+	*/
+	findIndex(date) {
+		const dateISO = dateToISO(date)
+		const index = this.dates.findIndex(d => dateToISO(d) === dateISO)
+
+		return index
+	}
+
+	/**
+		* @returns {Number} number of the dates
+	*/
+	get length() {
+		return this.dates.length
+	}
+
+	/**
+		* @yields {Date} next date in `this.dates`
+	*/
+	*[Symbol.iterator]() {
+		for (const date of this.dates) {
+			yield date
+		}
+	}
+
+
+}

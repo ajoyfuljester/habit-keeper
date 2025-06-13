@@ -4,6 +4,7 @@ import * as Stats from "./stats.js"
 import * as Utils from "./utils.js"
 import * as Colors from "./colors.js"
 import { Data } from "./Data.js"
+import { Offset } from "./Offset.js"
 
 
 /**
@@ -65,10 +66,17 @@ export class HabitView {
 		prepareBaseViewElement(elSummarySet, 'summary')
 		elData.appendChild(elSummarySet)
 
-
 		const elEditorLink = createEditorLink()
 		prepareBaseViewElement(elEditorLink, 'editor-link')
 		elData.appendChild(elEditorLink)
+
+		const elArrowLeft = createArrowLeft(this)
+		prepareBaseViewElement(elArrowLeft, 'arrow-left')
+		elData.appendChild(elArrowLeft)
+
+		const elArrowRight = createArrowRight(this)
+		prepareBaseViewElement(elArrowRight, 'arrow-right')
+		elData.appendChild(elArrowRight)
 
 		this.html = elData
 
@@ -140,7 +148,11 @@ export class HabitView {
 			return 1
 		}
 
-		const { index } = coords
+
+		const { index, y } = coords
+
+		const habit = this.data.habits[y]
+		habit.addOffset(new Offset([day, value]))
 
 		const elOffsets = this.html.querySelector(".view-offsets")
 		const elOffset = elOffsets.children.item(index)
@@ -148,7 +160,6 @@ export class HabitView {
 		elOffset.classList.add('offset')
 
 
-		const habit = this.data.habits[coords.y]
 		const date = habit.offsetToDate(day)
 
 		this.updateSummary(date)
@@ -172,7 +183,10 @@ export class HabitView {
 			return 1
 		}
 
-		const { index } = coords
+		const { index, y } = coords
+
+		const habit = this.data.habits[y]
+		habit.deleteOffset(day)
 
 		const elOffsets = this.html.querySelector(".view-offsets")
 		const elOffset = elOffsets.children.item(index)
@@ -180,7 +194,6 @@ export class HabitView {
 		elOffset.classList.remove('offset')
 
 
-		const habit = this.data.habits[coords.y]
 		const date = habit.offsetToDate(day)
 
 		this.updateSummary(date)
@@ -199,6 +212,8 @@ export class HabitView {
 	*/
 	updateSummary(date) {
 
+		console.log(Utils.dateToISO(date))
+
 		const elSummary = this.html.querySelector('.view-summary')
 
 		const index = this.dates.findIndex(date)
@@ -208,8 +223,19 @@ export class HabitView {
 
 
 		const count = this.data.habits.map(h => h.findOffsetByDate(date)).filter(o => !!o).length
+		console.log(this.data.habits)
+		console.log(this.data.habits.map(h => h.findOffsetByDate(date)))
+		console.log(this.data.habits.map(h => h.findOffsetByDate(date)).filter(o => !!o))
+		console.log(this.data.habits.map(h => h.findOffsetByDate(date)).filter(o => !!o).length)
 
-		elSummary.innerText = count
+		console.log(index)
+		console.log(elSummary.children[index])
+
+		elSummary.children[index].innerText = count
+
+		console.log(count)
+
+		// TODO: summary is not displayed properly
 
 
 		return 0
@@ -236,7 +262,7 @@ export class HabitView {
 		const elStatSet = this.html.querySelector(".view-stats")
 
 		for (const [ i, statID ] of this.statIDs.entries()) {
-			const statValue = Stats.Stats[statID].function({habit, dates: this.dates})
+			const statValue = Stats.Stats[statID].function({habit, dates: this.dates.dates})
 
 			// y = statIDs.length * (row + 1), + 1 because headers
 			// x = i
@@ -256,10 +282,11 @@ export class HabitView {
 	*/
 	setDates(dates) {
 
-		this.dates = new DateList(dates)
+		this.dates = new Utils.DateList(dates)
 
 		const elDateSet = HTMLUtils.createDateSet(this.dates.dates)
 		prepareBaseViewElement(elDateSet, 'dates')
+
 		this.html.querySelector('.view-dates').remove()
 		this.html.appendChild(elDateSet)
 
@@ -291,7 +318,8 @@ export class HabitView {
 
 
 /**
-	@param {HTMLElement} el element to which classes and stuff will be applied
+	* @param {HTMLElement} el element to which classes and stuff will be applied
+	* @param {String} name class which will be prefixed with `view-` and added to the element, it's mostly for the grid
 */
 function prepareBaseViewElement(el, name) {
 
@@ -396,6 +424,7 @@ function createSummarySet({habits, dates}) {
 
 function createEditorLink() {
 	const el = document.createElement('a')
+
 	const user = Utils.extractName()
 	el.href = `/u/${user}/editor`
 
@@ -405,43 +434,34 @@ function createEditorLink() {
 }
 
 
+/**
+	* @param {HabitView} view view needed for access to function to change dates
+	* @returns {HTMLButtonElement} button for shifting the dates backward
+*/
+function createArrowLeft(view) {
+	const el = document.createElement('button')
 
+	el.innerText = 'Previous'
 
-class DateList {
+	el.addEventListener('click', () => view.shiftDates(-1 * view.dates.length))
 
-	/**
-		* @param {Date[]} dates array of dates
-	*/
-	constructor(dates) {
-		this.dates = dates ?? []
-	}
-
-	/**
-		* @param {Date} date date for the index to be found
-		* @returns {Number} index or -1 if not found
-	*/
-	findIndex(date) {
-		const dateISO = Utils.dateToISO(date)
-		const index = this.dates.findIndex(d => Utils.dateToISO(d) === dateISO)
-
-		return index
-	}
-
-	/**
-		* @returns {Number} number of the dates
-	*/
-	get length() {
-		return this.dates.length
-	}
-
-	/**
-		* @yields {Date} next date in `this.dates`
-	*/
-	*[Symbol.iterator]() {
-		for (const date of this.dates) {
-			yield date
-		}
-	}
-
+	return el
 
 }
+
+/**
+	* @param {HabitView} view view needed for access to function to change dates
+	* @returns {HTMLButtonElement} button for shifting the dates forward
+*/
+function createArrowRight(view) {
+	const el = document.createElement('button')
+
+	el.innerText = 'Next'
+
+	el.addEventListener('click', () => view.shiftDates(view.dates.length))
+
+	return el
+
+}
+
+
