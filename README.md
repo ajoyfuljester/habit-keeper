@@ -23,6 +23,8 @@ i wish you a good life and successful new habits or something
 - add view creator
 - make it accessible? idk but make it work with a vim extenstion or something
 - check the bug where default login does not work (look into requests in the browser), but it's hard to reproduce
+- test the editor
+- css
 - add a screenshot to this file
 - add user registration
 - add more colors

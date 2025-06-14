@@ -48,6 +48,19 @@
 	--border: 0.2rem solid var(--clr-1-accent);
 }
 
+/* specificity */
+:where(.layout button) {
+	font: inherit;
+	background-color: transparent;
+	border: none;
+
+	align-items: center;
+
+}
+
+
+/* TODO: move this stuff to another file */
+
 .view-offsets > button {
 	border: none;
 	background-color: var(--clr-1);
@@ -118,4 +131,20 @@
 
 .view-summary {
 	border-bottom: var(--border);
+}
+
+.view-editor-link {
+	border-top: var(--border);
+	border-right: var(--border);
+
+	align-items: center;
+}
+
+.view-arrow-left {
+	border-right: var(--border);
+}
+
+.view-arrow-right {
+	border-bottom: var(--border);
+	border-left: var(--border);
 }
