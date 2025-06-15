@@ -4,7 +4,7 @@ import { Habit } from "./Habit.js"
 /**
 	* @typedef {Object} statParams parameters for stat functions
 	* @property {Habit} statParams.habit habit with the data
-	* @property {Date[]} statParams.dates arrayof dates to filter thr data
+	* @property {Date[]} statParams.dates array of dates to filter thr data
 	*
 */
 
@@ -31,17 +31,17 @@ export const Stats = [
 Stats[0].function = ({habit, dates}) => {
 	let maxStreak = 0
 
-	const offsets = dates.map(d => habit.dateToOffset(d))
+	const offsets = dates.map(d => habit.dateToOffsetNumber(d))
 
 	if (!offsets.some(o => !!habit.findOffset(o))) {
 		return 0
 	}
 	
-	offsets.sort((o1, o2) => o1[0] - o2[0])
+	offsets.sort((o1, o2) => o1 - o2)
 
 	let currentStreak = 1
 	for (let i = 1; i < offsets.length; i++) {
-		if (offsets[i][0] - 1 === offsets[i - 1][0]) {
+		if (habit.findOffset(offsets[i]) && habit.findOffset(offsets[i - 1])) {
 			currentStreak++
 			if (currentStreak > maxStreak) {
 				maxStreak = currentStreak
@@ -50,6 +50,8 @@ Stats[0].function = ({habit, dates}) => {
 			currentStreak = 1
 		}
 	}
+
+
 
 	return maxStreak
 

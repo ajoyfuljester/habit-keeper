@@ -235,8 +235,6 @@ export class HabitView {
 
 		console.log(count)
 
-		// TODO: summary is not displayed properly
-
 
 		return 0
 
@@ -352,7 +350,7 @@ function createOffsetSet({habits, dates, page}) {
 		for (const [x, date] of dates.entries()) {
 			const el = document.createElement('button')
 
-			const offset = habit.dateToOffset(date)
+			const offset = habit.dateToOffsetNumber(date)
 			el.addEventListener('click', () => page.handleOffsetToggle(el.classList.contains("offset"), habit.name, offset))
 
 			el.style.setProperty('--clr-offset', colorFunction({x, y}))
