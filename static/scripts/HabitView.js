@@ -54,6 +54,10 @@ export class HabitView {
 		prepareBaseViewElement(elStatSet, 'stats')
 		elData.appendChild(elStatSet)
 
+		const elStatHeader = createStatHeader()
+		prepareBaseViewElement(elStatHeader, 'stats-header')
+		elData.appendChild(elStatHeader)
+
 		const elHabitNameSet = createHabitNameSet(this.data.habits)
 		prepareBaseViewElement(elHabitNameSet, 'habit-names')
 		elData.appendChild(elHabitNameSet)
@@ -463,3 +467,10 @@ function createArrowRight(view) {
 }
 
 
+function createStatHeader() {
+	const el = document.createElement('span')
+
+	el.innerText = "Statistics"
+
+	return el
+}
