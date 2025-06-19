@@ -9,7 +9,7 @@ import * as Utils from './utils.js'
 function loadHabits(data) {
 	const dates = []
 	const today = new Date()
-	for (let i = 0; i >= -6; i--) {
+	for (let i = 0; i >= (-14 + 1); i--) {
 		dates.push(Utils.addDays(today, i))
 	}
 	dates.reverse()

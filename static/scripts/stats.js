@@ -23,7 +23,7 @@ import { Habit } from "./Habit.js"
 	* @type {StatsObject[]} array with stuff about statistics, including a function and a name
 */
 export const Stats = [
-	{name: "Max streak (pseudo)"},
+	{name: "Max view streak"},
 ]
 
 
