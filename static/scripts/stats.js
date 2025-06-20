@@ -24,6 +24,10 @@ import { Habit } from "./Habit.js"
 */
 export const Stats = [
 	{name: "Max view streak"},
+	{name: "Max streak"},
+	{name: "Count"},
+	{name: "Current streak"},
+
 ]
 
 
@@ -31,23 +35,23 @@ export const Stats = [
 Stats[0].function = ({habit, dates}) => {
 	let maxStreak = 0
 
-	const offsets = dates.map(d => habit.dateToOffsetNumber(d))
+	const days = dates.map(d => habit.dateToOffsetNumber(d))
 
-	if (!offsets.some(o => !!habit.findOffset(o))) {
+	if (!days.some(o => !!habit.findOffset(o))) {
 		return 0
 	}
 	
-	offsets.sort((o1, o2) => o1 - o2)
+	days.sort((o1, o2) => o1 - o2)
 
-	let currentStreak = 1
-	for (let i = 1; i < offsets.length; i++) {
-		if (habit.findOffset(offsets[i]) && habit.findOffset(offsets[i - 1])) {
-			currentStreak++
-			if (currentStreak > maxStreak) {
-				maxStreak = currentStreak
+	let streak = 1
+	for (let i = 1; i < days.length; i++) {
+		if (habit.findOffset(days[i]) && habit.findOffset(days[i - 1])) {
+			streak++
+			if (streak > maxStreak) {
+				maxStreak = streak
 			}
 		} else {
-			currentStreak = 1
+			streak = 1
 		}
 	}
 
@@ -56,6 +60,69 @@ Stats[0].function = ({habit, dates}) => {
 	return maxStreak
 
 }
+
+/** @type {statFunction} */
+Stats[1].function = ({habit}) => {
+	let maxStreak = 1
+
+	const days = habit.offsets.map(o => o.day)
+	if (days.length === 0) {
+		return 0
+	}
+
+	days.sort((o1, o2) => o1 - o2)
+
+	let streak = 1
+	for (let i = 1; i < days.length; i++) {
+		if (days[i] - 1 === days[i - 1]) {
+			streak++
+			if (streak > maxStreak) {
+				maxStreak = streak
+			}
+		} else {
+			streak = 1
+		}
+	}
+
+
+
+	return maxStreak
+
+}
+
+/** @type {statFunction} */
+Stats[2].function = ({habit}) => {
+	return habit.offsets.length
+}
+
+/** @type {statFunction} */
+Stats[3].function = ({habit}) => {
+	const days = habit.offsets.map(o => o.day)
+
+	if (days.length === 0) {
+		return 0
+	}
+	days.sort((o1, o2) => o1 - o2)
+
+	const today = habit.dateToOffsetNumber(new Date())
+
+	let i = days.length - 1
+
+	if (days[i] !== today) {
+		return 0
+	}
+
+	let streak = 1
+	while (i > 0 && (days[i] - 1 === days[i - 1])) {
+		streak++
+		i--
+	}
+
+
+	return streak
+}
+
+
 
 
 
@@ -74,6 +141,7 @@ export function updateStats(elParent) {
 /**
 	* @param {import("./HabitView.js").habitViewObject} habitViewObject information about what to display
 	* @returns {HTMLDivElement} element which contains values of the stats
+	* don't ask me why this function isn't in HabitView.js
 */
 export function createStatSet({habits, dates, statIDs}) {
 	const elStatSet = document.createElement('div')

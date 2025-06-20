@@ -14,7 +14,7 @@ function loadHabits(data) {
 	}
 	dates.reverse()
 
-	const statIDs = [0]
+	const statIDs = [1, 3, 2]
 
 
 	const page = new Page()

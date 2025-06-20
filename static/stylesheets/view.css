@@ -79,7 +79,7 @@
 	background-color: var(--clr-1);
 	align-content: center;
 	text-align: center;
-	font-size: 1.4vw;
+	font-size: 1.4vmin;
 	font-weight: bold;
 
 	--border-width: 0.3rem;

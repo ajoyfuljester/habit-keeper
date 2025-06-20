@@ -33,7 +33,7 @@ export function createDate(date) {
 	elDate.appendChild(elDay)
 
 	const elWeekday = document.createElement('span')
-	elWeekday.innerText = Intl.DateTimeFormat(locale, {weekday: 'long'}).format(date)
+	elWeekday.innerText = Intl.DateTimeFormat(locale, {weekday: 'short'}).format(date)
 	elDate.appendChild(elWeekday)
 
 	return elDate
