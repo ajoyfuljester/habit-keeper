@@ -132,3 +132,17 @@ export class DateList {
 
 
 }
+
+/**
+	* @param {Number} sourceValue 
+	* @param {Number} sourceMin 
+	* @param {Number} sourceMax 
+	* @param {Number} destinationMin 
+	* @param {Number} destinationMax 
+*/
+export function map(sourceValue, sourceMin, sourceMax, destinationMin, destinationMax) {
+	const fraction = (sourceValue - sourceMin) / (sourceMax - sourceMin)
+	return ((destinationMax - destinationMin) * fraction) + destinationMin
+}
+
+

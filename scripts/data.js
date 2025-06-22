@@ -72,9 +72,7 @@ export async function setDataFile(name, string) {
 */
 
 
-/**
-	* @type {RouteAsync}
-*/
+/** @type {RouteAsync} */
 export async function handleDataGet(req, _info, params) {
 	const res = tokenResponse(req, {params, permissions: 1})
 	if (res[0]) {
@@ -86,9 +84,7 @@ export async function handleDataGet(req, _info, params) {
 	return new Response(data, {status: 200, headers: {'Content-Type': 'application/json'}})
 }
 
-/**
-	* @type {Route}
-*/
+/** @type {Route} */
 export function handleDataSet(req, _info, params) {
 	const res = tokenResponse(req, {params, permissions: 2})
 	if (res[0]) {
@@ -132,9 +128,7 @@ export async function handleDataInit(req, force, params) {
 
 
 
-/**
-	* @type {Route}
-*/
+/** @type {Route} */
 export function handleWho(req) {
 	const token = extractToken(req);
 

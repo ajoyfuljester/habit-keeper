@@ -348,8 +348,15 @@ function prepareBaseViewElement(el, name) {
 function createOffsetSet({habits, dates, page}) {
 	const elOffsetSet = document.createElement('div')
 
-	const hue = Utils.randomInteger(1, 360)
-	const colorFunction = Colors.gradient(habits.length, hue)
+	const colorArray = Colors.gradient2({
+		columns: dates.length,
+		rows: habits.length,
+		lightnessMin: 82,
+		lightnessMax: 20,
+		hueMin: Utils.randomInteger(1, 360),
+		hueMax: Utils.randomInteger(1, 360),
+	})
+
 	for (const [y, habit] of habits.entries()) {
 		for (const [x, date] of dates.entries()) {
 			const el = document.createElement('button')
@@ -357,7 +364,9 @@ function createOffsetSet({habits, dates, page}) {
 			const offset = habit.dateToOffsetNumber(date)
 			el.addEventListener('click', () => page.handleOffsetToggle(el.classList.contains("offset"), habit.name, offset))
 
-			el.style.setProperty('--clr-offset', colorFunction({x, y}))
+			const index = (y * dates.length) + x
+
+			el.style.setProperty('--clr-offset', colorArray[index])
 			elOffsetSet.appendChild(el)
 
 			if (!habit.findOffset(offset)) {
