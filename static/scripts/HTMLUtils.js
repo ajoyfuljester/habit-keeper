@@ -25,15 +25,18 @@ export function createDate(date) {
 	elDate.classList.add('date')
 
 	const elMonth = document.createElement('span')
-	elMonth.innerText = Intl.DateTimeFormat(locale, {month: 'long'}).format(date)
+	elMonth.classList.add('date-month')
+	elMonth.innerText = Intl.DateTimeFormat(locale, {month: 'short'}).format(date)
 	elDate.appendChild(elMonth)
 
 	const elDay = document.createElement('span')
+	elDay.classList.add('date-day')
 	elDay.innerText = Intl.DateTimeFormat(locale, {day: 'numeric'}).format(date)
 	elDate.appendChild(elDay)
 
 	const elWeekday = document.createElement('span')
-	elWeekday.innerText = Intl.DateTimeFormat(locale, {weekday: 'short'}).format(date)
+	elWeekday.classList.add('date-weekday')
+	elWeekday.innerText = Intl.DateTimeFormat(locale, {weekday: 'short'}).format(date).toUpperCase()
 	elDate.appendChild(elWeekday)
 
 	return elDate

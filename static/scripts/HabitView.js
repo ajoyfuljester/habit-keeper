@@ -450,13 +450,15 @@ function createEditorLink() {
 	* @returns {HTMLButtonElement} button for shifting the dates backward
 */
 function createArrowLeft(view) {
-	const el = document.createElement('button')
+	const elButton = document.createElement('button')
+	const elSpan = document.createElement('span')
 
-	el.innerText = 'Previous'
+	elSpan.innerText = 'Previous'
+	elButton.appendChild(elSpan)
 
-	el.addEventListener('click', () => view.shiftDates(-1 * view.dates.length))
+	elButton.addEventListener('click', () => view.shiftDates(-1 * view.dates.length))
 
-	return el
+	return elButton
 
 }
 
@@ -465,21 +467,25 @@ function createArrowLeft(view) {
 	* @returns {HTMLButtonElement} button for shifting the dates forward
 */
 function createArrowRight(view) {
-	const el = document.createElement('button')
+	const elButton = document.createElement('button')
+	const elSpan = document.createElement('span')
 
-	el.innerText = 'Next'
+	elSpan.innerText = 'Next'
+	elButton.appendChild(elSpan)
 
-	el.addEventListener('click', () => view.shiftDates(view.dates.length))
+	elButton.addEventListener('click', () => view.shiftDates(view.dates.length))
 
-	return el
+	return elButton
 
 }
 
 
 function createStatHeader() {
-	const el = document.createElement('span')
+	const elWrapper = document.createElement('div')
+	const elSpan = document.createElement('span')
 
-	el.innerText = "Statistics"
+	elSpan.innerText = "Statistics"
+	elWrapper.appendChild(elSpan)
 
-	return el
+	return elWrapper
 }

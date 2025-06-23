@@ -12,6 +12,7 @@ i wish you a good life and successful new habits or something
 - add option in config to enable/disable user registration
 - center the texts!!
 - rename static/action.js to static/HandleAction.js
+- add more color schemas
 - add support for external api to automatically create offsets?
 - change license to AGPL, possibly split code into two (branches?), one with only api and the other one this or just client?
 - mask data file names with a hash

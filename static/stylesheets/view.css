@@ -1,18 +1,25 @@
 .layout-default {
 	grid-template-columns: [habit-names-start editor-link-start arrow-left-start] auto [habit-names-end editor-link-end arrow-left-end dates-start offsets-start summary-start]
-	repeat(var(--number-of-dates), 1fr) [dates-end offsets-end summary-end stats-start arrow-right-start stats-header-start]
+	repeat(var(--number-of-dates), min-content) [dates-end offsets-end summary-end stats-start arrow-right-start stats-header-start]
 	repeat(var(--number-of-stats), auto) [arrow-right-end stats-end stats-header-end];
 
 	grid-template-rows: [dates-start arrow-left-start arrow-right-start] 1fr [arrow-left-end arrow-right-end stats-start] 1fr [dates-end habit-names-start offsets-start]
 	repeat(var(--number-of-habits), 1fr) [habit-names-end offsets-end stats-end summary-start editor-link-start stats-header-start]
 	1fr [summary-end editor-link-end stats-header-end];
 
+
+	> .view-dates > div {
+		grid-row: span 2;
+	}
+
+}
+
+
+.layout {
+	display: grid;
 	text-align: center;
 
-	/* > .view-dates > div { */
-	/* 	grid-row: span 2; */
-	/* } */
-
+	--border: 0.2rem solid var(--clr-1-accent);
 }
 
 
@@ -54,13 +61,6 @@
 
 
 
-
-.layout {
-	display: grid;
-
-	--border: 0.2rem solid var(--clr-1-accent);
-}
-
 /* specificity */
 :where(.layout button) {
 	font: inherit;
@@ -72,13 +72,18 @@
 }
 
 
+.layout > :is(.view-arrow-left, .view-arrow-right, .view-stats-header) > span {
+	grid-area: 1 / 1 / -1 / -1;
+}
+
+
+
 /* TODO: move this stuff to another file */
 
 .view-offsets > button {
 	border: none;
 	background-color: var(--clr-1);
 	align-content: center;
-	text-align: center;
 	font-size: 1.4vmin;
 	font-weight: bold;
 
@@ -99,7 +104,7 @@
 .view-offsets > .offset:hover {
 	border: var(--border-width) solid var(--clr-offset);
 	background-color: var(--clr-1);
-	color: var(--clr-offset);
+	color: var(--clr-offset, #000);
 }
 
 .view-offsets > .offset:hover::after {
@@ -135,6 +140,8 @@
 	> div {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 	}
 }
 
@@ -164,4 +171,23 @@
 
 .view-stats-header {
 	align-items: center;
+}
+
+.view-dates > .date {
+	font-size: 1.3rem;
+	--margin-h: 0.6em;
+	margin-left: var(--margin-h);
+	margin-right: var(--margin-h);
+
+}
+
+.date-day {
+	font-size: 1.6em;
+	--margin-v: -0.1em;
+	margin-bottom: calc(var(--margin-v) - 0.1em);
+	margin-top: var(--margin-v);
+}
+
+.date-month, .date-weekday {
+	color: var(--clr-1-accent);
 }
