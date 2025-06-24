@@ -3,6 +3,7 @@ import * as Utils from './utils.js'
 /**
 	* @typedef {Object} HSL object with functions that handle converting arguments to css colors
 	* @property {hueLightness} HSLaaa.HL from hue and lightness
+	* @property {hueSaturation} HSLaaa.HL from hue and lightness
 */
 
 
@@ -18,6 +19,14 @@ const HSL = {
 */
 HSL.HL = (hue, lightness) => `hsl(${hue}deg, 100%, ${lightness}%)`;
 
+
+/**
+	* @callback hueSaturation
+	* @param {Number} hue hue
+	* @param {Number} saturation saturation
+	* @returns {String} css hsl color
+*/
+HSL.HS = (hue, saturation) => `hsl(${hue}deg, ${Math.max(saturation % 100, 100)}%, 50%)`;
 
 /**
 	* @typedef {Object} colorFunctionArgument object containing arguments for color function
@@ -57,3 +66,17 @@ export function gradient2({columns, rows, lightnessMin, lightnessMax, hueMin, hu
 
 
 
+export function random({columns, rows}) {
+	const colors = []
+	for (let y = 0; y < rows; y++) {
+		for (let x = 0; x < columns; x++) {
+			const color = HSL.HS(
+				Utils.randomInteger(0, 359),
+				Utils.randomInteger(50, 100),
+			)
+			colors.push(color)
+		}
+	}
+
+	return colors
+}
