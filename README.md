@@ -10,17 +10,18 @@ i wish you a good life and successful new habits or something
 # TODO
 - test creating a habit because i think something is wrong with the startingDate
 - add option in config to enable/disable user registration
+- add quick habit management (rename, create, colors?)
+- menu
 - center the texts!!
 - rename static/action.js to static/HandleAction.js
 - add more color schemas
 - add support for external api to automatically create offsets?
-- change license to AGPL, possibly split code into two (branches?), one with only api and the other one this or just client?
-- mask data file names with a hash
-- CHOSEN VIEW ARCHITECTURE?
-    - CLASSES FOR HTML - OFFSET WITH ONCLICK BUT HOW DO I SEND IT TO THE PARENT? WHATEVER I PROBABLY CAN  JUST PASS THE REFERENCE? YEA PROBABLY. OTHER STUFF. NEED TO REWRITE AGAIN BECAUSE I DIDN'T THINK ENOUGH AGAIN
-    - LIVE UPDATES? definitely for one view, but if i make data class have the multiple views then it could update them all
-    - NUMBER OF HABITS AND DATES STAYS CONSTANT, NO WAY I'M DELING WITH THIS. REFRESH THE PAGE, TAKE IT OR LEAVE IT
-    - subgrid
+- change license to AGPL, possibly split code into two (branches?), one with only api and the other one this or just client? DO THIS BEFORE CREATING A RELEASE!!!!!!
+<!-- - CHOSEN VIEW ARCHITECTURE? -->
+<!--     - CLASSES FOR HTML - OFFSET WITH ONCLICK BUT HOW DO I SEND IT TO THE PARENT? WHATEVER I PROBABLY CAN  JUST PASS THE REFERENCE? YEA PROBABLY. OTHER STUFF. NEED TO REWRITE AGAIN BECAUSE I DIDN'T THINK ENOUGH AGAIN -->
+<!--     - LIVE UPDATES? definitely for one view, but if i make data class have the multiple views then it could update them all -->
+<!--     - NUMBER OF HABITS AND DATES STAYS CONSTANT, NO WAY I'M DELING WITH THIS. REFRESH THE PAGE, TAKE IT OR LEAVE IT -->
+<!--     - subgrid -->
 - add views - should they be on the server? yes, but add it in the server config as an option
 - write the thing in the deno file for normal running or whatever
 - add view creator
@@ -30,7 +31,7 @@ i wish you a good life and successful new habits or something
 - test the editor
 - css
 - add a screenshot to this file
-- add user registration
+- add user registration, add a button to return to login
 - add more colors
 - maybe require some kind of additional confirmation in requests to perform more dangerous actions
 - check if very bad requests crash the server
