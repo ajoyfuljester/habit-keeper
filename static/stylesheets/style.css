@@ -11,11 +11,11 @@
 body {
 	margin: 0;
 	min-height: 100vh;
-
-	--clr-1: #fafafa;
+--clr-1: #fafafa;
 	--clr-1-accent: #777;
 	--clr-2: #b2d;
 	--clr-3: #2d4;
+	--clr-3-accent: #5fa;
 	--clr-danger: #c00d;
 
 	--bigger-font-size: 1.2rem;
@@ -113,4 +113,9 @@ a.cell:hover {
 
 	grid-template-columns: subgrid;
 	grid-template-rows: subgrid;
+}
+
+
+.iframe-menu {
+	width: 100vw;
 }

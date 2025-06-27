@@ -6,15 +6,12 @@
 		<link rel="stylesheet" href="/static/stylesheets/editor.css">		
 	</head>
 	<body>
+		<iframe src="/static/sites/menu.html" class="iframe-menu" frameborder="0"></iframe>
 
 		<main>
 
 		</main>
 
 		<script src="/static/scripts/editor.js" type="module"></script>
-		<script type="module">
-			import {redirect, extractName} from '/static/scripts/utils.js';
-			document.querySelectorAll('.habitsLink').forEach(el => el.addEventListener('click', () => redirect(`/u/${extractName()}/habits`)))
-		</script>
 	</body>
 </html>

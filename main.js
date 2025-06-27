@@ -8,6 +8,7 @@ import { handleDataAction } from "./scripts/action.js";
 import { handleAdmin, handleAdminStats } from "./scripts/admin.js";
 import { init } from "./scripts/init.js";
 import _c from "./config.json" with {type: "json"};
+import { getCookies } from "jsr:@std/http/cookie"
 
 
 /**
@@ -74,8 +75,28 @@ const routes = [
 		},
 	},
 	{
-		pattern: new URLPattern({ pathname: "/u/:name" }),
+		pattern: new URLPattern({ pathname: "/u/:name{/}?" }),
 		handler: (_req, _info, params) => new Response(null, {status: 308, headers: {"Location": `/u/${params.pathname.groups.name}/habits`}}),
+	},
+	{
+		pattern: new URLPattern({ pathname: "/me/*" }),
+		handler: (req, _info, params) => {
+			const token = getCookies(req.headers).token;
+
+			if (!token) {
+				return new Response("not found: token", {status: 308, headers: {"Location": "/"}});
+			}
+
+			const name = db.verifyToken(token)
+			if (!name) {
+				return new Response("not found: name for the token", {status: 308, headers: {"Location": "/"}});
+			}
+
+			const path = params.pathname.groups[0]
+
+			return new Response(JSON.stringify({ name }), {status: 308, headers: {"Location": `/u/${name}/${path}`, 'Content-Type': 'application/json'}});
+
+		},
 	},
 	{
 		pattern: new URLPattern({ pathname: "/admin" }),
@@ -132,7 +153,7 @@ const routes = [
 	* @returns {Response} defaultResponse - `status: 404, body: not found`
 */
 function defaultHandler(_req) {
-  return new Response("not found", { status: 404 });
+  return new Response("not found: site", { status: 404 });
 }
 
 /**

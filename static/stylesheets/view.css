@@ -20,6 +20,11 @@
 	text-align: center;
 
 	--border: 0.2rem solid var(--clr-1-accent);
+
+
+	div, span {
+		align-content: center;
+	}
 }
 
 
