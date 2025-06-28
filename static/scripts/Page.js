@@ -1,5 +1,5 @@
 import { HabitView } from "./HabitView.js";
-import { HandleAction } from "./action.js";
+import { HandleAction } from "./HandleAction.js";
 
 export class Page {
 	/**
@@ -12,7 +12,7 @@ export class Page {
 	}
 
 	/**
-		* @param {import("./HabitView").habitViewObject} viewObject object that will be parsed into HabitView and added
+		* @param {import("./HandleAction.js").habitViewObject} viewObject object that will be parsed into HabitView and added
 	*/
 	createView(viewObject) {
 		viewObject.page = this
@@ -44,14 +44,12 @@ export class Page {
 			result = await HandleAction.offset.create(habitName, offsetDay, offsetValue)
 		}
 
-		console.log(result)
 
 
 		if (result !== 0) {
 			return result
 		}
 
-		console.log(this.views)
 
 		if (isOffset) {
 			for (const view of this.views) {

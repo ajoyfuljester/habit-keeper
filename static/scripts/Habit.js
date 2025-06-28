@@ -1,11 +1,17 @@
 import { Offset } from "./Offset.js"
-import { HandleAction } from "./action.js"
 import * as Utils from "./utils.js"
 
+/**
+	* @typedef {Object} habitObject object containing info about a habit
+	* @property {String} habitObject.name name of the habit
+	* @property {String} habitObject.startingDate starting date of the habit
+	* @property {Offset[]} habitObject.offsets list of offsets in the habit
+	*
+*/
 
 export class Habit {
 	/**
-		* @param {import("./habits.js.old").habitObject} habitObject - `{name, startingDate, offsets}`
+		* @param {habitObject} habitObject - `{name, startingDate, offsets}`
 		* @returns {Habit} instance of `Habit`, possibly invalid, see `Habit.valid`
 		* @see {@link habitObject}
 	*/
@@ -28,7 +34,7 @@ export class Habit {
 
 	}
 
-	/** @returns {import("./habits.js.old").habitObject} a simple object that is jsonifable */
+	/** @returns {habitObject} a simple object that is jsonifable */
 	toJSON() {
 		return {
 			name: this.name,
@@ -106,51 +112,6 @@ export class Habit {
 			offsets: offsets,
 		})
 
-	}
-
-	/**
-		* @param {Date} date date of the thing
-		* @returns {HTMLDivElement} elDay html element of the day/offset
-		* i hate naming things
-	*/
-	#initiateDay(date) {
-		const elDay = document.createElement('div');
-		elDay.classList.add('day')
-
-		const day = dateToOffset(this.startingDate, date)
-
-
-		// TODO: write a function to maybe set value, but that's less important i think
-		elDay.addEventListener('click', () => this.#handleToggleOffset())
-		elParent.appendChild(elDay)
-		if (!this.findOffset(day)) {
-			return elDay
-		}
-		elDay.classList.add('offset')
-
-		return elDay
-	}
-
-	/**
-		* @param {Number} day offset offset/day thingy, days since `startingDate`
-		* @returns {Promise<0 | 1>} exitCode
-	*/
-	async #handleToggleOffset(day) {
-		let exitCode = undefined;
-		if (element.classList.contains('offset')) {
-			exitCode = await HandleAction.offset.delete(this.name, day)
-		} else {
-			exitCode = await HandleAction.offset.create(this.name, day)
-		}
-
-		if (exitCode !== 0) {
-			return exitCode
-		}
-
-		element.classList.toggle('offset')
-		updateView(elData)
-
-		return 0
 	}
 
 	/**

@@ -1,4 +1,4 @@
-import { HandleAction } from './action.js'
+import { HandleAction } from './HandleAction.js'
 import { extractName, getData, redirect } from './utils.js'
 
 async function main() {
@@ -27,7 +27,7 @@ async function main() {
 
 
 /**
-	* @param {import("./habits.js").habitObject[]} habitsObject - array of objects with information about the habits
+	* @param {import("./Habit.js").habitObject[]} habitsObject - array of objects with information about the habits
 */
 function createHabitManager(habitsObject) {
 	const elEditor = document.createElement('div')
@@ -40,7 +40,7 @@ function createHabitManager(habitsObject) {
 	const elHabits = document.createElement('div')
 	elHabits.classList.add('grid-habits')
 
-	for (let i in habitsObject) {
+	for (const i in habitsObject) {
 		const habit = habitsObject[i]
 		const elRename = document.createElement('input')
 		elRename.value = habit.name
