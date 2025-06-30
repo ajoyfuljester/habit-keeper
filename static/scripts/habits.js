@@ -27,7 +27,7 @@ function loadHabits(data) {
 	})
 	page.addView(view)
 
-	document.body.appendChild(view.html)
+	document.querySelector('main').appendChild(view.html)
 
 }
 

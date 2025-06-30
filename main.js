@@ -40,15 +40,31 @@ await db.addUser('test', '0', 1)
 const routes = [
 	{
 		pattern: new URLPattern({ pathname: "/" }),
-		handler: _ => new Response(null, {status: 308, headers: {"Location": "/static/sites/login.html"}}),
+		handler: () => new Response(null, {status: 308, headers: {"Location": "/login"}}),
 	},
 	{
 		pattern: new URLPattern({ pathname: "/login" }),
-		handler: _ => new Response(null, {status: 308, headers: {"Location": "/static/sites/login.html"}}),
+		handler: req => {
+
+			const token = getCookies(req.headers).token;
+
+			if (!token) {
+				return new Response("not found: token", {status: 308, headers: {"Location": "/static/sites/login.html"}})
+
+			}
+
+			const name = db.verifyToken(token)
+			if (!name) {
+				return new Response("not found: user associated with token", {status: 308, headers: {"Location": "/static/sites/login.html"}})
+
+			}
+
+			return new Response(JSON.stringify({ name }), {status: 308, headers: {"Location": `/u/${name}/habits`, "Content-Type": "application/json"}})
+		},
 	},
 	{
 		pattern: new URLPattern({ pathname: "/register" }),
-		handler: _ => new Response(null, {status: 308, headers: {"Location": "/static/sites/register.html"}}),
+		handler: () => new Response(null, {status: 308, headers: {"Location": "/static/sites/register.html"}}),
 	},
 	{
 		pattern: new URLPattern({ pathname: "/static/*" }),

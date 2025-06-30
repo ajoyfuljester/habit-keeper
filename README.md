@@ -13,6 +13,7 @@ i wish you a good life and successful new habits or something
 - add quick habit management (rename, create, colors?)
 - menu
 - center the texts!!
+- add a button for logging out
 - add more color schemas
 - add support for external api to automatically create offsets?
 - change license to AGPL, possibly split code into two (branches?), one with only api and the other one this or just client? DO THIS BEFORE CREATING A RELEASE!!!!!!
