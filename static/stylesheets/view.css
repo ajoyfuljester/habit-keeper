@@ -1,9 +1,9 @@
 .layout-default {
-	grid-template-columns: [habit-names-start editor-link-start arrow-left-start] max-content [habit-names-end editor-link-end arrow-left-end dates-start offsets-start summary-start]
+	grid-template-columns: [habit-names-start editor-link-start arrow-left-start habits-header-start] max-content [habit-names-end editor-link-end arrow-left-end habits-header-end dates-start offsets-start summary-start]
 	repeat(var(--number-of-dates), 1fr) [dates-end offsets-end summary-end stats-start arrow-right-start stats-header-start]
 	repeat(var(--number-of-stats), 1fr) [arrow-right-end stats-end stats-header-end];
 
-	grid-template-rows: [dates-start arrow-left-start arrow-right-start] 1fr [arrow-left-end arrow-right-end stats-start] 1fr [dates-end habit-names-start offsets-start]
+	grid-template-rows: [dates-start arrow-left-start arrow-right-start] 1fr [arrow-left-end arrow-right-end stats-start habits-header-start] 1fr [dates-end habits-header-end habit-names-start offsets-start]
 	repeat(var(--number-of-habits), 1fr) [habit-names-end offsets-end stats-end summary-start editor-link-start stats-header-start]
 	1fr [summary-end editor-link-end stats-header-end];
 
@@ -21,7 +21,7 @@
 
 	width: min-content;
 
-	--border: 0.2rem solid var(--clr-1-accent);
+	--border: 2px solid var(--clr-1-accent);
 
 
 	div, span {
@@ -64,6 +64,10 @@
 
 .view-stats-header {
 	grid-area: stats-header;
+}
+
+.view-habits-header {
+	grid-area: habits-header;
 }
 
 
@@ -134,6 +138,11 @@
 	background-color: var(--clr-1);
 
 	border-left: var(--border);
+
+	> span {
+		--margin: 0.5em;
+		margin: var(--margin) calc(2 * var(--margin));
+	}
 }
 
 .view-dates {
@@ -197,4 +206,14 @@
 
 .date-month, .date-weekday {
 	color: var(--clr-1-accent);
+}
+
+.view-stats-header {
+	border-top: var(--border);
+	border-left: var(--border);
+}
+
+.view-habits-header {
+	border-bottom: var(--border);
+	border-right: var(--border);
 }

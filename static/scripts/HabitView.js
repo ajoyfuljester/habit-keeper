@@ -1,9 +1,7 @@
-import { Habit } from "./Habit.js"
 import * as HTMLUtils from "./HTMLUtils.js"
 import * as Stats from "./stats.js"
 import * as Utils from "./utils.js"
 import * as Colors from "./colors.js"
-import { Data } from "./Data.js"
 import { Offset } from "./Offset.js"
 
 
@@ -58,6 +56,10 @@ export class HabitView {
 		prepareBaseViewElement(elStatHeader, 'stats-header')
 		elData.appendChild(elStatHeader)
 
+		const elHabitHeader = createHabitsHeader()
+		prepareBaseViewElement(elHabitHeader, 'habits-header')
+		elData.appendChild(elHabitHeader)
+
 		const elHabitNameSet = createHabitNameSet(this.data.habits)
 		prepareBaseViewElement(elHabitNameSet, 'habit-names')
 		elData.appendChild(elHabitNameSet)
@@ -88,12 +90,11 @@ export class HabitView {
 
 
 	/**
-		* @returns {HTMLDivElement} main data element prepared with classes, css variables and an id
+		* @returns {HTMLDivElement} main data element prepared with classes, css variables
 	*/
 	#prepareDataElement() {
 		const elData = document.createElement('div')
 
-		elData.classList.add('habit-view')
 		elData.classList.add('layout')
 		elData.classList.add('layout-default')
 
@@ -351,8 +352,8 @@ function createOffsetSet({habits, dates, page}) {
 	const colorArray = Colors.gradient2({
 		columns: dates.length,
 		rows: habits.length,
-		lightnessMin: 82,
-		lightnessMax: 20,
+		lightnessMin: 30,
+		lightnessMax: 80,
 		hueMin: Utils.randomInteger(1, 360),
 		hueMax: Utils.randomInteger(1, 360),
 	})
@@ -485,6 +486,16 @@ function createStatHeader() {
 	const elSpan = document.createElement('span')
 
 	elSpan.innerText = "Statistics"
+	elWrapper.appendChild(elSpan)
+
+	return elWrapper
+}
+
+function createHabitsHeader() {
+	const elWrapper = document.createElement('div')
+	const elSpan = document.createElement('span')
+
+	elSpan.innerText = "Habits"
 	elWrapper.appendChild(elSpan)
 
 	return elWrapper

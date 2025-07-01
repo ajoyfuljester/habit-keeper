@@ -26,6 +26,7 @@ function loadHabits(data) {
 		page: page,
 	})
 	page.addView(view)
+	view.html.style.margin = 'auto'
 
 	document.querySelector('main').appendChild(view.html)
 
