@@ -12,7 +12,6 @@ i wish you a good life and successful new habits or something
 - add option in config to enable/disable user registration
 - add quick habit management (rename, create, colors?)
 - menu
-- center the texts!!
 - add a button for logging out
 - add more color schemas
 - add support for external api to automatically create offsets?

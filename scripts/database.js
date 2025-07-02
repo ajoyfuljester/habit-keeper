@@ -25,10 +25,6 @@ db.prepare(`CREATE TABLE IF NOT EXISTS user (
 );`).run();
 
 
-/**
-	* @type {User}
-*/
-
 
 /**
 	* @typedef {Object} Token token object from database
@@ -176,11 +172,12 @@ export async function login(name, password) {
 		return 1;
 	}
 	const hashedPassword = await hash(password)
-	if (p['password'] == hashedPassword) {
-		return 0
+	if (p['password'] !== hashedPassword) {
+		return 2
 	}
-	return 2;
+	return 0;
 }
+
 
 
 /**
@@ -193,7 +190,10 @@ export async function login(name, password) {
 	* @returns {TokenObject} {@link TokenObject}
 */
 export function createToken(name) {
-	const token = generateToken()
+	let token = generateToken()
+	while (verifyToken(token)) {
+		token = generateToken()
+	}
 	let expirationDate = now();
 	const maxAge = 60 * (60);
 	expirationDate += maxAge;
@@ -217,6 +217,31 @@ export function verifyToken(token) {
 		return null;
 	}
 	return rows[0].userName;
+}
+
+
+/**
+	* @param {String} token token which will be deleted
+	* @returns {0} error code
+	* `0` - success... or not, idk
+*/
+export function logout(token) {
+	// probably there should be something to handle the case,
+	// where the token does not exist, but it doesn't seem to throw an error so i will ignore it
+	db.prepare('DELETE FROM token WHERE token = ?').run(token);
+
+	return 0;
+}
+
+/**
+	* @param {String} name user name
+	* @returns {0} error code
+	* `0` - success... or not, idk
+*/
+export function logoutAll(name) {
+	db.prepare('DELETE FROM token WHERE userName = ?').run(name);
+
+	return 0;
 }
 
 

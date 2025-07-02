@@ -1,5 +1,6 @@
 import * as db from "./database.js";
 import { CONFIG } from "../main.js"
+import { extractToken } from "./data.js";
 
 
 /**
@@ -26,11 +27,13 @@ export async function handleLogin(req) {
 	}});
 }
 
-
+/**
+	* @returns {Response}
+*/
 export async function handleDefaultLogin() {
 	const credentials = CONFIG.defaultAccount
 	if (!credentials) {
-		return new Response("default account is not set", {status: 503})
+		return new Response("default account is not set", {status: 500})
 	}
 
 	const loginResult = await db.login(credentials.name, credentials.password)
@@ -42,5 +45,59 @@ export async function handleDefaultLogin() {
 
 	return new Response("success", { status: 200, headers: {
 		'Set-Cookie': `token=${token.token}; Max-Age=${token.maxAge}; SameSite=Strict; Secure; Path=/; HttpOnly`,
+	}});
+}
+
+
+/**
+	* @param {Request} req request from the client
+	* @returns {Response} response
+	* 200 - logged out
+	* 401 - no token
+	* 500 - something went horribly wrong
+*/
+export function handleLogout(req) {
+	const token = extractToken(req)
+	if (!token) {
+		return new Response('not found: token', { status: 401 })
+	}
+
+	const result = db.logout(token)
+	if (result !== 0) {
+		return new Response('error: something went very wrong during logging out', { status: 500 })
+	}
+
+	return new Response('success', { status: 200, headers: {
+		'Set-Cookie': `token=; Max-Age=0; SameSite=Strict; Secure; Path=/; HttpOnly`,
+	}});
+}
+
+
+/**
+	* @param {Request} req request from the client
+	* @returns {Response} response with status
+	* 200 - logged out
+	* 401 - no token
+	* 403 - no user for the token
+	* 500 - something went horribly wrong
+*/
+export function handleLogoutAll(req) {
+	const token = extractToken(req)
+	if (!token) {
+		return new Response('not found: token', { status: 401 })
+	}
+
+	const user = db.verifyToken(token)
+	if (!user) {
+		return new Response("not found: user associated with token", { status: 403 })
+	}
+
+	const result = db.logoutAll(user)
+	if (result !== 0) {
+		return new Response('error: something went very wrong during logging out', { status: 500 })
+	}
+
+	return new Response('success', { status: 200, headers: {
+		'Set-Cookie': `token=; Max-Age=0; SameSite=Strict; Secure; Path=/; HttpOnly`,
 	}});
 }

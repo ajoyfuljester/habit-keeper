@@ -149,7 +149,7 @@ export function handleWho(req) {
 	* @param {Request} req - request from the client
 	* @returns {String | undefined} token string that is included in the request or `undefined` if it does not exist
 */
-function extractToken(req) {
+export function extractToken(req) {
 	return getCookies(req.headers).token
 }
 
