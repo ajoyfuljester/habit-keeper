@@ -53,20 +53,6 @@ async function handleLogin() {
 }
 
 
-/**
-	* check if logged in, dispkay rasult, if logged then redirect to user page
-*/
-async function handleAlreadyLoggedIn() {
-	const nameRes = await fetch('/api/who')
-	const json = await nameRes.json()
-
-	if (!json) {
-		document.querySelector('#result').innerText = 'Not logged in';
-		return false
-	}
-
-	redirect(`/u/${json.name}/habits`)
-}
 
 async function handleDefaultLogin() {
 	const res = await fetch('/api/login/default')
@@ -74,21 +60,13 @@ async function handleDefaultLogin() {
 		document.querySelector('#result').innerText = 'Default login failed';
 	}
 
-	const whoRes = await fetch('/api/who')
-	const json = await whoRes.json()
 
-
-	if (!json) {
-		document.querySelector('#result').innerText = 'Failed to find name';
-	}
-
-	redirect(`/u/${json.name}/habits`)
+	redirect(`/me/habits`)
 }
 
 document.querySelector('input#login').addEventListener('click', handleLogin)
 
-document.querySelector('input#alreadyLoggedIn').addEventListener('click', handleAlreadyLoggedIn)
+document.querySelector('input#default-login').addEventListener('click', handleDefaultLogin)
 
-document.querySelector('input#defaultLogin').addEventListener('click', handleDefaultLogin)
 
-document.querySelector('input#register').addEventListener('click', () => { redirect('/register') })
+

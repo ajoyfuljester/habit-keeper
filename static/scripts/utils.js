@@ -1,13 +1,20 @@
 /**
 	* @param {String} path - destination path (inside the server) that the client will be redirected to
+	* @param {boolean} [top=true] whether it should redirect the top window
 */
-export function redirect(path) {
+export function redirect(path, top = true) {
 	if (path[0] == '/') {
 		path = path.substring(1)
 	}
 	const url = location.href
 	const host = url.match(/.+\/\/.+?\//)[0]
-	location.assign(host + path)
+
+	let w = window
+	if (top) {
+		w = w.top
+	}
+
+	window.top.location.assign(host + path)
 }
 
 
@@ -28,7 +35,7 @@ export function extractName() {
 
 
 /**
-	* @returns {Promise<false | import("./Data").rawDataObject>} data or false
+	* @returns {Promise<false | import("./Data.js").rawDataObject>} data or false
 */
 export async function getData() {
 	const name = extractName()

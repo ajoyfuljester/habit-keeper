@@ -58,30 +58,52 @@ input:is([type='button'], [type='submit']) {
 	color: var(--clr-2);
 }
 
-input:is([type='button'], [type='submit']):hover {
+:is(input:is([type='button'], [type='submit']), a.button):hover {
 	background-color: var(--clr-3);
 }
 
-button.inline {
-	display: inline;
-	border: none;
-	background: none;
-	font: inherit;
-	cursor: pointer;
-	color: var(--clr-2);
-}
 
-button.inline:hover {
-	text-decoration: underline;
-}
 
 .highlight {
 	color: var(--clr-2);
 }
 
-a {
+[type="button"].inline {
+	display: inline;
+	border: none;
+	background-color: transparent;
+	font: inherit;
+	cursor: pointer;
+
+	padding: 0;
+}
+
+[type="button"].inline:hover {
+	background-color: transparent;
+}
+
+a, [type="button"].inline {
+	text-decoration: none;
+	font-weight: bold;
+
 	color: var(--clr-2);
 }
+
+a.button {
+	font-size: var(--bigger-font-size);
+	text-decoration: none;
+	font-weight: normal;
+	cursor: default;
+
+	border: solid 0.2em var(--clr-2);
+	padding: 0.2em 0.4em;
+
+	transition-duration: 300ms;
+
+	background-color: transparent;
+	color: var(--clr-2);
+}
+
 
 a.cell {
 	display: block;
@@ -120,3 +142,4 @@ a.cell:hover {
 	width: 100vw;
 	height: 4rem;
 }
+
