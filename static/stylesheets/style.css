@@ -11,7 +11,7 @@
 body {
 	margin: 0;
 	min-height: 100vh;
---clr-1: #fafafa;
+	--clr-1: #fafafa;
 	--clr-1-accent: #777;
 	--clr-2: #b2d;
 	--clr-3: #2d4;
@@ -21,6 +21,9 @@ body {
 	--bigger-font-size: 1.2rem;
 
 	background-color: var(--clr-1);
+
+	display: grid;
+	grid-template-columns: auto 1fr;
 }
 
 .card {
@@ -139,7 +142,7 @@ a.cell:hover {
 
 
 .iframe-menu {
-	width: 100vw;
-	height: 4rem;
+	width: 20ch;
+	height: 100vh;
 }
 
