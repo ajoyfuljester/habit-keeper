@@ -217,7 +217,6 @@ export class HabitView {
 	*/
 	updateSummary(date) {
 
-		console.log(Utils.dateToISO(date))
 
 		const elSummary = this.html.querySelector('.view-summary')
 
@@ -228,17 +227,9 @@ export class HabitView {
 
 
 		const count = this.data.habits.map(h => h.findOffsetByDate(date)).filter(o => !!o).length
-		console.log(this.data.habits)
-		console.log(this.data.habits.map(h => h.findOffsetByDate(date)))
-		console.log(this.data.habits.map(h => h.findOffsetByDate(date)).filter(o => !!o))
-		console.log(this.data.habits.map(h => h.findOffsetByDate(date)).filter(o => !!o).length)
-
-		console.log(index)
-		console.log(elSummary.children[index])
 
 		elSummary.children[index].innerText = count
 
-		console.log(count)
 
 
 		return 0
@@ -349,7 +340,7 @@ function prepareBaseViewElement(el, name) {
 function createOffsetSet({habits, dates, page}) {
 	const elOffsetSet = document.createElement('div')
 
-	const colorArray = Colors.gradient2({
+	const colorArray = Colors.gradientHL({
 		columns: dates.length,
 		rows: habits.length,
 		lightnessMin: 30,
@@ -357,6 +348,12 @@ function createOffsetSet({habits, dates, page}) {
 		hueMin: Utils.randomInteger(1, 360),
 		hueMax: Utils.randomInteger(1, 360),
 	})
+
+	// const randomColors = []
+	// for (let i = 0; i < 3; i++) {
+	// 	randomColors.push(`rgb(${Utils.randomInteger(0, 255)}, ${Utils.randomInteger(0, 255)}, ${Utils.randomInteger(0, 255)})`)
+	// }
+	// const colorArray = Colors.islands(Utils.dataToGrid({data: {habits}, dates}), randomColors)
 
 	for (const [y, habit] of habits.entries()) {
 		for (const [x, date] of dates.entries()) {

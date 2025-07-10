@@ -24,7 +24,6 @@ i wish you a good life and successful new habits or something
 - test the editor
 - css
 - add a screenshot to this file <- no because i can't with the GUIs i'm so bad
-- add user registration, add a button to return to login
 - add more colors
 - maybe require some kind of additional confirmation in requests to perform more dangerous actions
 - check if very bad requests crash the server

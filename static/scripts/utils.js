@@ -1,3 +1,6 @@
+import { Data } from "./Data.js";
+import { HabitView } from "./HabitView.js";
+
 /**
 	* @param {String} path - destination path (inside the server) that the client will be redirected to
 	* @param {boolean} [top=true] whether it should redirect the top window
@@ -150,6 +153,34 @@ export class DateList {
 export function map(sourceValue, sourceMin, sourceMax, destinationMin, destinationMax) {
 	const fraction = (sourceValue - sourceMin) / (sourceMax - sourceMin)
 	return ((destinationMax - destinationMin) * fraction) + destinationMin
+}
+
+
+/**
+	* @typedef {(Number | undefined)[][]} offsetGrid 2d array of offset values in a view 
+*/
+
+/**
+	* @param {HabitView} view habit view
+	* @returns {offsetGrid} 2d array of offset values in a view 
+*/
+export function dataToGrid(view) {
+	const grid = []
+
+	const habits = view.data.habits
+	const rows = habits.length
+	const dates = view.dates
+	const columns = dates.length
+
+	for (let y = 0; y < rows; y++) {
+		const row = []
+		for (let x = 0; x < columns; x++) {
+			row[x] = habits[y].findOffsetByDate(dates[x])?.value
+		}
+		grid.push(row)
+	}
+
+	return grid
 }
 
 

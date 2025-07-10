@@ -2,8 +2,8 @@ import * as Utils from './utils.js'
 
 /**
 	* @typedef {Object} HSL object with functions that handle converting arguments to css colors
-	* @property {hueLightness} HSLaaa.HL from hue and lightness
-	* @property {hueSaturation} HSLaaa.HL from hue and lightness
+	* @property {hueLightness} HSL.HL from hue and lightness
+	* @property {hueSaturation} HSL.HL from hue and lightness
 */
 
 
@@ -28,6 +28,7 @@ HSL.HL = (hue, lightness) => `hsl(${hue}deg, 100%, ${lightness}%)`;
 */
 HSL.HS = (hue, saturation) => `hsl(${hue}deg, ${Math.max(saturation % 100, 100)}%, 50%)`;
 
+// TODO: rewrite this to be more universal
 /**
 	* @typedef {Object} colorFunctionArgument object containing arguments for color function
 	* @property {Number} colorFunctionArgument.columns number of dates
@@ -46,8 +47,14 @@ HSL.HS = (hue, saturation) => `hsl(${hue}deg, ${Math.max(saturation % 100, 100)}
 
 // TODO: colors can be static or dynamic!!
 
+export const Functions = {
+
+
+
+}
+
 /** @type {colorFunction} */
-export function gradient2({columns, rows, lightnessMin, lightnessMax, hueMin, hueMax}) {
+export function gradientHL({columns, rows, lightnessMin, lightnessMax, hueMin, hueMax}) {
 	const colors = []
 	for (let y = 0; y < rows; y++) {
 		for (let x = 0; x < columns; x++) {
@@ -62,10 +69,10 @@ export function gradient2({columns, rows, lightnessMin, lightnessMax, hueMin, hu
 	return colors
 }
 
-// console.log(gradient2({x: 5, y: 5, lightnessMin: 20, lightnessMax: 80, hueMin: 0, hueMax: 360}))
 
 
 
+/** @type {colorFunction} */
 export function random({columns, rows}) {
 	const colors = []
 	for (let y = 0; y < rows; y++) {
@@ -79,4 +86,75 @@ export function random({columns, rows}) {
 	}
 
 	return colors
+}
+
+
+/**
+	* @param {import('./utils.js').offsetGrid} grid 
+	* @param {String[]} colors array of css colors
+*/
+export function islands(grid, colors) {
+	// empty 2d array
+	const result = grid.map(a => a.map(() => undefined))
+
+	let id = 1
+
+	for (let y = 0; y < result.length; y++) {
+		for (let x = 0; x < result[y].length; x++) {
+			if (islandsRecursive(grid, x, y, id, result) !== 0) {
+				id += 1
+			}
+		}
+	}
+	
+	const numberOfColors = colors.length
+
+	const resultResult = result.flat().map(id =>{
+		if (id === undefined) {
+			return 0;
+		}
+		return id;
+    } ).map(id => colors[id % numberOfColors])
+	console.log(resultResult)
+
+	return resultResult
+}
+
+
+/**
+	* @param {import('./utils.js').offsetGrid} grid 
+	* @param {Number} x 
+	* @param {Number} y 
+	* @param {Number} id 
+	* @param {(Number | undefined)[][]} result 
+	* @returns {Number} n number of offsets in an island?
+*/
+function islandsRecursive(grid, x, y, id, result) {
+	let n = 0
+
+	if ((grid[y][x] === undefined) || (result[y][x] !== undefined)) {
+		return n
+	}
+
+	result[y][x] = id
+	n += 1
+
+
+	if (x !== 0) {
+		n += islandsRecursive(grid, x - 1, y, id, result)
+	}
+
+	if (y !== 0) {
+		n += islandsRecursive(grid, x, y - 1, id, result)
+	}
+
+	if (x !== grid[0].length - 1) {
+		n += islandsRecursive(grid, x + 1, y, id, result)
+	}
+
+	if (y !== grid.length - 1) {
+		n += islandsRecursive(grid, x, y + 1, id, result)
+	}
+
+	return n
 }
