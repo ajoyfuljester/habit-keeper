@@ -1,49 +1,25 @@
 import * as Utils from './utils.js'
 
-/**
-	* @typedef {Object} HSL object with functions that handle converting arguments to css colors
-	* @property {hueLightness} HSL.HL from hue and lightness
-	* @property {hueSaturation} HSL.HL from hue and lightness
-*/
 
 
-/** @type {HSL} */
-const HSL = {
+
+
+export const Colors = [
+	{ name: "" },
+
+
+]
+
+
+const ColorToString = {
+	HSL: ({ h = 270, s = 100, l = 50}) => `hsl(${h}deg, ${Utils.clamp(0, s, 100)}%, ${Utils.clamp(0, l, 100)}%)`,
 }
 
-/**
-	* @callback hueLightness
-	* @param {Number} hue hue
-	* @param {Number} lightness lightness
-	* @returns {String} css hsl color
-*/
-HSL.HL = (hue, lightness) => `hsl(${hue}deg, 100%, ${lightness}%)`;
 
 
-/**
-	* @callback hueSaturation
-	* @param {Number} hue hue
-	* @param {Number} saturation saturation
-	* @returns {String} css hsl color
-*/
-HSL.HS = (hue, saturation) => `hsl(${hue}deg, ${Math.max(saturation % 100, 100)}%, 50%)`;
 
-// TODO: rewrite this to be more universal
-/**
-	* @typedef {Object} colorFunctionArgument object containing arguments for color function
-	* @property {Number} colorFunctionArgument.columns number of dates
-	* @property {Number} colorFunctionArgument.rows number of habits
-	* @property {Number} colorFunctionArgument.hueMin minimal hue
-	* @property {Number} colorFunctionArgument.hueMax maximal hue not always used
-	* @property {Number} colorFunctionArgument.lightnessMin minimal lightness
-	* @property {Number} colorFunctionArgument.lightnessMax maximal lightness
-*/
 
-/**
-	* @callback colorFunction
-	* @param {colorFunctionArgument} object with arguments 
-	* @returns {String[]} array with css colors for each cell
-*/
+
 
 // TODO: colors can be static or dynamic!!
 
@@ -53,15 +29,29 @@ export const Functions = {
 
 }
 
-/** @type {colorFunction} */
-export function gradientHL({columns, rows, lightnessMin, lightnessMax, hueMin, hueMax}) {
+/**
+	* @typedef {[Number, Number]} range
+*/
+
+/**
+	* @param {Object} colorArgument 
+	* @param {Number} colorArgument.columns number of columns
+	* @param {Number} colorArgument.rows number of rows
+	* @param {Object} colorArgument.ranges object with ranges for color parameters
+	* @param {range} colorArgument.ranges.h hue range
+	* @param {range} colorArgument.ranges.s saturation range
+	* @param {range} colorArgument.ranges.l lightness range
+	* @param {String} [colorArgument.dirH='h'] direction of the colors habit-wise
+	* @param {String} [colorArgument.dirD='l'] direction of the colors date-wise
+*/
+Colors[0] = ({columns, rows, ranges, dirH = 'h', dirD = 'l'}) => {
 	const colors = []
 	for (let y = 0; y < rows; y++) {
 		for (let x = 0; x < columns; x++) {
-			const color = HSL.HL(
-				Utils.map(y, 0, rows - 1, hueMin, hueMax),
-				Utils.map(x, 0, columns - 1, lightnessMin, lightnessMax)
-			)
+			const color = ColorToString.HSL({
+				[dirH]: Utils.map(y, 0, rows - 1, ranges[dirH][0], ranges[dirH][1]),
+				[dirD]: Utils.map(x, 0, columns - 1, ranges[dirD][0], ranges[dirD][1])
+			})
 			colors.push(color)
 		}
 	}

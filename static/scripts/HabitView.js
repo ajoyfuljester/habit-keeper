@@ -340,13 +340,15 @@ function prepareBaseViewElement(el, name) {
 function createOffsetSet({habits, dates, page}) {
 	const elOffsetSet = document.createElement('div')
 
-	const colorArray = Colors.gradientHL({
+	const colorArray = Colors.Colors[0]({
 		columns: dates.length,
 		rows: habits.length,
-		lightnessMin: 30,
-		lightnessMax: 80,
-		hueMin: Utils.randomInteger(1, 360),
-		hueMax: Utils.randomInteger(1, 360),
+		ranges: {
+			l: [30, 80],
+			h: [Utils.randomInteger(1, 360),Utils.randomInteger(1, 360)],
+		},
+		dirH: 'h',
+		dirD: 'l',
 	})
 
 	// const randomColors = []

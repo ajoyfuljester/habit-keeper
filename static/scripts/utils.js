@@ -184,3 +184,6 @@ export function dataToGrid(view) {
 }
 
 
+export function clamp(min, value, max) {
+	return Math.max(Math.min(value, max), min)
+}
