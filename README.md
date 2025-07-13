@@ -11,7 +11,7 @@ i wish you a good life and successful new habits or something
 - test creating a habit because i think something is wrong with the startingDate
 - add option in config to enable/disable user registration
 - add quick habit management (rename, create, colors?)
-- menu
+- actually check if a color function is dynamic. also i have to somehow store the arguments
 - add a button for logging out
 - add more color schemas
 - add support for external api to automatically create offsets?

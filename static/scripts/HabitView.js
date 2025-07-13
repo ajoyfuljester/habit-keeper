@@ -1,7 +1,7 @@
 import * as HTMLUtils from "./HTMLUtils.js"
 import * as Stats from "./stats.js"
 import * as Utils from "./utils.js"
-import * as Colors from "./colors.js"
+import { Colors }  from "./colors.js"
 import { Offset } from "./Offset.js"
 
 
@@ -16,11 +16,11 @@ export class HabitView {
 
 	/**
 		*
-		* @param {habitViewObject} habitViewObject object with initial fields `habits`, `dates`, `stats`
+		* @param {habitViewObject} habitViewObject object with initial fields `habits`, `dates`, `statIDs`, colorID
 		* @returns {HabitView} instance of `HabitView`
 	*/
-	constructor({data, dates, statIDs, page}) {
-		if (!(data && dates && (statIDs.length !== 0) && page)) {
+	constructor({data, dates, statIDs, page, colorFunctionId: colorID}) {
+		if (!(data && dates && (statIDs.length !== 0) && page && colorID)) {
 			console.error('INVALID VIEW')
 			console.warn({data, dates, statIDs, page})
 		}
@@ -29,6 +29,7 @@ export class HabitView {
 		this.dates = dates
 		this.statIDs = statIDs
 		this.page = page
+		this.colorID = colorID
 
 		this.#initiateHTML()
 
@@ -64,7 +65,7 @@ export class HabitView {
 		prepareBaseViewElement(elHabitNameSet, 'habit-names')
 		elData.appendChild(elHabitNameSet)
 
-		const elOffsetSet = createOffsetSet({habits: this.data.habits, dates: this.dates.dates, page: this.page})
+		const elOffsetSet = this.#createOffsetSet()
 		prepareBaseViewElement(elOffsetSet, 'offsets')
 		elData.appendChild(elOffsetSet)
 
@@ -85,6 +86,7 @@ export class HabitView {
 		elData.appendChild(elArrowRight)
 
 		this.html = elData
+		this.#updateColors()
 
 	}
 
@@ -106,6 +108,66 @@ export class HabitView {
 		return elData
 	}
 
+
+	/**
+		* @param {objectHabitsDates} objectHabitsDates habits and dates
+		* @returns {HTMLDivElement} element that contains offset representation for the given habits and dates
+	*/
+	#createOffsetSet() {
+		const elOffsetSet = document.createElement('div')
+
+
+		for (const habit of this.data.habits) {
+			for (const date of this.dates.dates) {
+				const el = document.createElement('button')
+
+				const offset = habit.dateToOffsetNumber(date)
+				el.addEventListener('click', () => this.page.handleOffsetToggle(el.classList.contains("offset"), habit.name, offset))
+
+
+				elOffsetSet.appendChild(el)
+
+				if (!habit.findOffset(offset)) {
+					continue
+				}
+
+				el.classList.add('offset')
+
+			}
+		}
+
+		return elOffsetSet
+
+	}
+
+
+	#updateColors() {
+		const colorArray = Colors[0].function({
+			columns: this.dates.length,
+			rows: this.data.habits.length,
+			ranges: {
+				l: [30, 80],
+				h: [Utils.randomInteger(1, 360),Utils.randomInteger(1, 360)],
+			},
+			dirH: 'h',
+			dirD: 'l',
+		})
+
+
+		// const randomColors = []
+		// for (let i = 0; i < 3; i++) {
+			// 	randomColors.push(`rgb(${Utils.randomInteger(0, 255)}, ${Utils.randomInteger(0, 255)}, ${Utils.randomInteger(0, 255)})`)
+			// }
+		// const colorArray = Colors.islands(Utils.dataToGrid({data: {habits}, dates}), randomColors)
+		for (let y = 0; y < this.data.habits.length; y++) {
+			for (let x = 0; x < this.dates.length; x++) {
+				const index = (y * this.dates.length) + x
+
+				const el = this.html.querySelector('.view-offsets').children[index] 
+				el.style.setProperty('--clr-offset', colorArray[index])
+			}
+		}
+	}
 
 
 	/**
@@ -167,8 +229,9 @@ export class HabitView {
 
 		const date = habit.offsetToDate(day)
 
-		this.updateSummary(date)
-		this.updateStats(habitName)
+		this.#updateSummary(date)
+		this.#updateStats(habitName)
+		this.#updateColors()
 
 
 		return 0
@@ -201,8 +264,9 @@ export class HabitView {
 
 		const date = habit.offsetToDate(day)
 
-		this.updateSummary(date)
-		this.updateStats(habitName)
+		this.#updateSummary(date)
+		this.#updateStats(habitName)
+		this.#updateColors()
 
 
 		return 0
@@ -215,7 +279,7 @@ export class HabitView {
 		* `0` - success
 		* `1` - corresponding summary column not found in the view 
 	*/
-	updateSummary(date) {
+	#updateSummary(date) {
 
 
 		const elSummary = this.html.querySelector('.view-summary')
@@ -244,7 +308,7 @@ export class HabitView {
 		* `0` - success
 		* `1` - corresponding habit was not found in the view
 	*/
-	updateStats(habitName) {
+	#updateStats(habitName) {
 		const row = this.data.findHabitIndexByName(habitName)
 		if (-1 === row) {
 			return 1
@@ -284,17 +348,17 @@ export class HabitView {
 		this.html.querySelector('.view-dates').remove()
 		this.html.appendChild(elDateSet)
 
-		const elOffsetSet = createOffsetSet({habits: this.data.habits, dates: this.dates.dates, page: this.page})
+		const elOffsetSet = this.#createOffsetSet()
 		prepareBaseViewElement(elOffsetSet, 'offsets')
 		this.html.querySelector('.view-offsets').remove()
 		this.html.appendChild(elOffsetSet)
 
 		for (const habitName of this.data.habits) {
-			this.updateStats(habitName)
+			this.#updateStats(habitName)
 		}
 
 		for (const date of this.dates) {
-			this.updateSummary(date)
+			this.#updateSummary(date)
 		}
 
 	}
@@ -326,61 +390,6 @@ function prepareBaseViewElement(el, name) {
 
 
 
-/**
-	* @typedef {Object} objectHabitsDates
-	* @property {Habit[]} objectHabitsDates.habits array of hsbits with the data I DON'T KNOW HOW TO WRITE DOCUMENTATION
-	* @property {Date[]} objectHabitsDates.dates array of dates to filter the data
-	* @property {Page} objectHabitsDates.page Page object for the onclick events to propagate
-*/
-
-/**
-	* @param {objectHabitsDates} objectHabitsDates habits and dates
-	* @returns {HTMLDivElement} element that contains offset representation for the given habits and dates
-*/
-function createOffsetSet({habits, dates, page}) {
-	const elOffsetSet = document.createElement('div')
-
-	const colorArray = Colors.Colors[0]({
-		columns: dates.length,
-		rows: habits.length,
-		ranges: {
-			l: [30, 80],
-			h: [Utils.randomInteger(1, 360),Utils.randomInteger(1, 360)],
-		},
-		dirH: 'h',
-		dirD: 'l',
-	})
-
-	// const randomColors = []
-	// for (let i = 0; i < 3; i++) {
-	// 	randomColors.push(`rgb(${Utils.randomInteger(0, 255)}, ${Utils.randomInteger(0, 255)}, ${Utils.randomInteger(0, 255)})`)
-	// }
-	// const colorArray = Colors.islands(Utils.dataToGrid({data: {habits}, dates}), randomColors)
-
-	for (const [y, habit] of habits.entries()) {
-		for (const [x, date] of dates.entries()) {
-			const el = document.createElement('button')
-
-			const offset = habit.dateToOffsetNumber(date)
-			el.addEventListener('click', () => page.handleOffsetToggle(el.classList.contains("offset"), habit.name, offset))
-
-			const index = (y * dates.length) + x
-
-			el.style.setProperty('--clr-offset', colorArray[index])
-			elOffsetSet.appendChild(el)
-
-			if (!habit.findOffset(offset)) {
-				continue
-			}
-
-			el.classList.add('offset')
-
-		}
-	}
-
-	return elOffsetSet
-
-}
 
 /**
 	* @param {Habit[]} habits habits to get the name and display it

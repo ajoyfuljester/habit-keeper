@@ -1,11 +1,23 @@
 import * as Utils from './utils.js'
 
 
+/**
+	* @callback colorFunction function which calculates colors for a view
+	* @returns {String[]} array of css colors
+*/
 
+/**
+	* @typedef {Object} colorObject object containing information about a color function
+	* @property {String} colorObject.name name of the function
+	* @property {Boolean} colorObject.isDynamic whether colors depend on the existing offsets
+	* @property {colorFunction} colorObject.function function which calculates the colors
+*/
 
-
+/** @type {colorObject[]} */
 export const Colors = [
-	{ name: "" },
+	{ name: "Gradient 2D HSL", isDynamic: false },
+	{ name: "Random", isDynamic: false },
+	{ name: "Islands", isDynamic: true },
 
 
 ]
@@ -23,14 +35,9 @@ const ColorToString = {
 
 // TODO: colors can be static or dynamic!!
 
-export const Functions = {
-
-
-
-}
 
 /**
-	* @typedef {[Number, Number]} range
+	* @typedef {[min: Number, max: Number]} range
 */
 
 /**
@@ -44,7 +51,7 @@ export const Functions = {
 	* @param {String} [colorArgument.dirH='h'] direction of the colors habit-wise
 	* @param {String} [colorArgument.dirD='l'] direction of the colors date-wise
 */
-Colors[0] = ({columns, rows, ranges, dirH = 'h', dirD = 'l'}) => {
+Colors[0].function = ({columns, rows, ranges, dirH = 'h', dirD = 'l'}) => {
 	const colors = []
 	for (let y = 0; y < rows; y++) {
 		for (let x = 0; x < columns; x++) {
@@ -62,8 +69,7 @@ Colors[0] = ({columns, rows, ranges, dirH = 'h', dirD = 'l'}) => {
 
 
 
-/** @type {colorFunction} */
-export function random({columns, rows}) {
+Colors[1].function = ({columns, rows}) => {
 	const colors = []
 	for (let y = 0; y < rows; y++) {
 		for (let x = 0; x < columns; x++) {
@@ -79,11 +85,15 @@ export function random({columns, rows}) {
 }
 
 
+
+// TODO: shaded islands or whatever
+
+
 /**
 	* @param {import('./utils.js').offsetGrid} grid 
 	* @param {String[]} colors array of css colors
 */
-export function islands(grid, colors) {
+Colors[2].function = (grid, colors) => {
 	// empty 2d array
 	const result = grid.map(a => a.map(() => undefined))
 
