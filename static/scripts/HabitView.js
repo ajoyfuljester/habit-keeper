@@ -1,7 +1,7 @@
 import * as HTMLUtils from "./HTMLUtils.js"
 import * as Stats from "./stats.js"
 import * as Utils from "./utils.js"
-import { Colors }  from "./colors.js"
+import * as Colors from "./colors.js"
 import { Offset } from "./Offset.js"
 
 
@@ -11,6 +11,8 @@ import { Offset } from "./Offset.js"
 	* @property {DateList} habitViewObject.dates DateList created from an array of `Date`, the dates that the data will be displayed for
 	* @property {Number[]} habitViewObject.statIDs array of numbers - stat ids, which will be computed and displayed
 	* @property {Page} habitViewObject.page parent of the view to whichm the events will be transmitted
+	* @property {import("./colors.js").colorFunctionArguments} habitViewObject.colorArgs `columns` and `rows` will be calculated automatically.
+	* arguments for the coloring function they depend on the function so many of them might do nothing
 	*/
 export class HabitView {
 
@@ -19,8 +21,8 @@ export class HabitView {
 		* @param {habitViewObject} habitViewObject object with initial fields `habits`, `dates`, `statIDs`, colorID
 		* @returns {HabitView} instance of `HabitView`
 	*/
-	constructor({data, dates, statIDs, page, colorFunctionId: colorID}) {
-		if (!(data && dates && (statIDs.length !== 0) && page && colorID)) {
+	constructor({data, dates, statIDs, page, colorArgs}) {
+		if (!(data && dates && (statIDs.length !== 0) && page && colorArgs)) {
 			console.error('INVALID VIEW')
 			console.warn({data, dates, statIDs, page})
 		}
@@ -29,7 +31,10 @@ export class HabitView {
 		this.dates = dates
 		this.statIDs = statIDs
 		this.page = page
-		this.colorID = colorID
+		this.colorArgs = colorArgs
+		this.colorArgs.columns = this.dates.length
+		this.colorArgs.rows = this.data.habits.length
+		this.colorArgs.isRepeat = true
 
 		this.#initiateHTML()
 
@@ -141,24 +146,18 @@ export class HabitView {
 	}
 
 
+	/**
+		* @returns {0 | 1} exitCode
+		* `0` - successfully updated colors
+		* `1` - colors were not updated because there is no need according to `this.colorArgs.isRepeat`
+	*/
 	#updateColors() {
-		const colorArray = Colors[0].function({
-			columns: this.dates.length,
-			rows: this.data.habits.length,
-			ranges: {
-				l: [30, 80],
-				h: [Utils.randomInteger(1, 360),Utils.randomInteger(1, 360)],
-			},
-			dirH: 'h',
-			dirD: 'l',
-		})
+		const colorArray = Colors.runColorFunction(this.colorArgs)
+		if (colorArray === null) {
+			return 1
+		}
 
 
-		// const randomColors = []
-		// for (let i = 0; i < 3; i++) {
-			// 	randomColors.push(`rgb(${Utils.randomInteger(0, 255)}, ${Utils.randomInteger(0, 255)}, ${Utils.randomInteger(0, 255)})`)
-			// }
-		// const colorArray = Colors.islands(Utils.dataToGrid({data: {habits}, dates}), randomColors)
 		for (let y = 0; y < this.data.habits.length; y++) {
 			for (let x = 0; x < this.dates.length; x++) {
 				const index = (y * this.dates.length) + x
@@ -167,6 +166,9 @@ export class HabitView {
 				el.style.setProperty('--clr-offset', colorArray[index])
 			}
 		}
+
+
+		return 0
 	}
 
 

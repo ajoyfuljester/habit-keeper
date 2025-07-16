@@ -16,7 +16,7 @@ import * as Utils from './utils.js'
 /** @type {colorObject[]} */
 export const Colors = [
 	{ name: "Gradient 2D HSL", isDynamic: false },
-	{ name: "Random", isDynamic: false },
+	{ name: "Random", isDynamic: true },
 	{ name: "Islands", isDynamic: true },
 
 
@@ -28,6 +28,42 @@ const ColorToString = {
 }
 
 
+
+/**
+	* @typedef {Object} colorFunctionArguments
+	* @property {Number} colorFunctionArguments.id
+	* @property {Number} colorFunctionArguments.columns
+	* @property {Number} colorFunctionArguments.rows
+	* @property {Object} colorFunctionArguments.ranges
+	* @property {range} colorFunctionArguments.ranges.h
+	* @property {range} colorFunctionArguments.ranges.s
+	* @property {range} colorFunctionArguments.ranges.l
+	* @property {'h' | 's' | 'l'} colorFunctionArguments.dirH
+	* @property {'h' | 's' | 'l'} colorFunctionArguments.dirD
+	* @property {Boolean} colorFunctionArguments.isRepeat if the function should be run multiple times - static/dynamic
+*/
+
+
+/**
+	* kind of dirty but who cares anyway
+	* @param {colorFunctionArguments} args 
+	* @returns {String[] | null} array of css colors
+*/
+export function runColorFunction(args) {
+	if (!args.isRepeat) {
+		return null
+	}
+
+	const colorObject =  Colors[args.id]
+	const colorArray = colorObject.function(args)
+	
+	if (!Colors[args.id].isDynamic) {
+		args.isRepeat = false
+	}
+
+	return colorArray
+
+}
 
 
 
@@ -73,10 +109,11 @@ Colors[1].function = ({columns, rows}) => {
 	const colors = []
 	for (let y = 0; y < rows; y++) {
 		for (let x = 0; x < columns; x++) {
-			const color = HSL.HS(
-				Utils.randomInteger(0, 359),
-				Utils.randomInteger(50, 100),
-			)
+			const color = ColorToString.HSL({
+				h: Utils.randomInteger(0, 359),
+				s: Utils.randomInteger(50, 100),
+				l: 50,
+			})
 			colors.push(color)
 		}
 	}

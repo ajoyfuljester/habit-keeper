@@ -24,11 +24,21 @@ function loadHabits(data) {
 		dates: new Utils.DateList(dates),
 		statIDs: statIDs,
 		page: page,
+		colorArgs: {
+			id: 0,
+			ranges: {
+				l: [30, 80],
+				h: [Utils.randomInteger(1, 360),Utils.randomInteger(1, 360)],
+			},
+			dirH: 'h',
+			dirD: 'l',
+		}
 	})
 	page.addView(view)
 	view.html.style.margin = 'auto'
 
 	document.querySelector('main').appendChild(view.html)
+
 
 }
 
@@ -52,3 +62,4 @@ async function main() {
 const exitCode = await main()
 
 console.log("exitCode:", exitCode)
+
