@@ -51,43 +51,43 @@ export class HabitView {
 		const elData = this.#prepareDataElement()
 
 		const elDateSet = HTMLUtils.createDateSet(this.dates.dates)
-		prepareBaseViewElement(elDateSet, 'dates')
+		HTMLUtils.prepareBaseViewElement(elDateSet, 'dates')
 		elData.appendChild(elDateSet)
 
 		const elStatSet = Stats.createStatSet({habits: this.data.habits, dates: this.dates.dates, statIDs: this.statIDs})
-		prepareBaseViewElement(elStatSet, 'stats')
+		HTMLUtils.prepareBaseViewElement(elStatSet, 'stats')
 		elData.appendChild(elStatSet)
 
 		const elStatHeader = createStatHeader()
-		prepareBaseViewElement(elStatHeader, 'stats-header')
+		HTMLUtils.prepareBaseViewElement(elStatHeader, 'stats-header')
 		elData.appendChild(elStatHeader)
 
 		const elHabitHeader = createHabitsHeader()
-		prepareBaseViewElement(elHabitHeader, 'habits-header')
+		HTMLUtils.prepareBaseViewElement(elHabitHeader, 'habits-header')
 		elData.appendChild(elHabitHeader)
 
 		const elHabitNameSet = createHabitNameSet(this.data.habits)
-		prepareBaseViewElement(elHabitNameSet, 'habit-names')
+		HTMLUtils.prepareBaseViewElement(elHabitNameSet, 'habit-names')
 		elData.appendChild(elHabitNameSet)
 
 		const elOffsetSet = this.#createOffsetSet()
-		prepareBaseViewElement(elOffsetSet, 'offsets')
+		HTMLUtils.prepareBaseViewElement(elOffsetSet, 'offsets')
 		elData.appendChild(elOffsetSet)
 
 		const elSummarySet = createSummarySet({habits: this.data.habits, dates: this.dates.dates})
-		prepareBaseViewElement(elSummarySet, 'summary')
+		HTMLUtils.prepareBaseViewElement(elSummarySet, 'summary')
 		elData.appendChild(elSummarySet)
 
 		const elEditorLink = createEditorLink()
-		prepareBaseViewElement(elEditorLink, 'editor-link')
+		HTMLUtils.prepareBaseViewElement(elEditorLink, 'editor-link')
 		elData.appendChild(elEditorLink)
 
 		const elArrowLeft = createArrowLeft(this)
-		prepareBaseViewElement(elArrowLeft, 'arrow-left')
+		HTMLUtils.prepareBaseViewElement(elArrowLeft, 'arrow-left')
 		elData.appendChild(elArrowLeft)
 
 		const elArrowRight = createArrowRight(this)
-		prepareBaseViewElement(elArrowRight, 'arrow-right')
+		HTMLUtils.prepareBaseViewElement(elArrowRight, 'arrow-right')
 		elData.appendChild(elArrowRight)
 
 		this.html = elData
@@ -345,13 +345,13 @@ export class HabitView {
 		this.dates = new Utils.DateList(dates)
 
 		const elDateSet = HTMLUtils.createDateSet(this.dates.dates)
-		prepareBaseViewElement(elDateSet, 'dates')
+		HTMLUtils.prepareBaseViewElement(elDateSet, 'dates')
 
 		this.html.querySelector('.view-dates').remove()
 		this.html.appendChild(elDateSet)
 
 		const elOffsetSet = this.#createOffsetSet()
-		prepareBaseViewElement(elOffsetSet, 'offsets')
+		HTMLUtils.prepareBaseViewElement(elOffsetSet, 'offsets')
 		this.html.querySelector('.view-offsets').remove()
 		this.html.appendChild(elOffsetSet)
 
@@ -377,16 +377,6 @@ export class HabitView {
 }
 
 
-/**
-	* @param {HTMLElement} el element to which classes and stuff will be applied
-	* @param {String} name class which will be prefixed with `view-` and added to the element, it's mostly for the grid
-*/
-function prepareBaseViewElement(el, name) {
-
-	el.classList.add('subgrid')
-	el.classList.add(`view-${name}`)
-
-}
 
 
 

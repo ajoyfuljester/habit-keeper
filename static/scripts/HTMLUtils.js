@@ -58,3 +58,13 @@ export function createDateSet(dates) {
 }
 
 
+/**
+	* @param {HTMLElement} el element to which classes and stuff will be applied
+	* @param {String} name class which will be prefixed with `view-` and added to the element, it's mostly for the grid
+*/
+export function prepareBaseViewElement(el, name) {
+
+	el.classList.add('subgrid')
+	el.classList.add(`view-${name}`)
+
+}
