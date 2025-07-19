@@ -100,6 +100,7 @@ export async function handleDataAction(req, _info, params) {
 const Action = {
 	habit: {},
 	offset: {},
+	list: {},
 }
 
 /**
@@ -284,6 +285,7 @@ class Data {
 		return {
 			user: this.user,
 			habits: this.habits,
+			lists: this.lists,
 		}
 	}
 
@@ -409,12 +411,31 @@ class Data {
 
 // TODO: write this, but maybe later
 class List {
-	constructor() {
+	/**
+		* @param {Object} listObject 
+		* @param {Item[]} [listObject.items = []] 
+	*/
+	constructor({items = []}) {
 		this.valid = true
-
+		this.items = items
 	}
 
 	toJSON() {
+
+	}
+}
+
+
+class Item {
+
+	constructor({name, isCompleted = false}) {
+		this.valid = true
+
+
+
+		this.name = name
+		this.isCompleted = isCompleted
+
 
 	}
 }

@@ -1,5 +1,5 @@
 import * as HTMLUtils from "./HTMLUtils.js"
-import { List } from "./List"
+import { List } from "./List.js"
 
 /**
 	* @callback CreateItemHTMLCallback
@@ -33,8 +33,8 @@ export class ListView {
 	*/
 	constructor({list}) {
 		if (!(list)) {
-			console.error('INVALID VIEW')
-			console.warn({data, dates, statIDs, page})
+			console.error('INVALID LIST VIEW')
+			console.warn({list})
 		}
 
 		this.list = list
