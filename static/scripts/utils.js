@@ -1,5 +1,3 @@
-import { Data } from "./Data.js";
-import { HabitView } from "./HabitView.js";
 
 /**
 	* @param {String} path - destination path (inside the server) that the client will be redirected to
@@ -71,6 +69,23 @@ export function dateToISO(dateToConvert) {
 	const day = date.getDate() .toString().padStart(2, '0')
 
 	return `${year}-${month}-${day}`
+
+	
+}
+
+/**
+	* @param {Date} dateToConvert - date object to convert
+	* @returns {String} time in ISO format (hh:mm:ss)
+	* @see umm actually i don't know if this is ISO,
+	* also probably the exact standard should be specified
+*/
+export function timeToISO(dateToConvert) {
+	const date = dateToConvert ?? new Date()
+	const hour = date.getHours().toString().padStart(2, '0')
+	const minute = date.getMinutes().toString().padStart(2, '0')
+	const second = date.getSeconds() .toString().padStart(2, '0')
+
+	return `${hour}:${minute}:${second}`
 
 	
 }

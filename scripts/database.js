@@ -294,7 +294,7 @@ export function verifyAdminPermission(name, neededMode) {
 */
 export function tokens({beforeOpen, afterOpen, beforeClosed, afterClosed, name}) {
 	const parameters = [beforeOpen, afterOpen, beforeClosed, afterClosed, name]
-	let query = 'SELECT * FROM tokens'
+	let query = 'SELECT * FROM token'
 	if (parameters.some(x => !!x)) {
 		query += ' WHERE (TRUE)' // REMEMBER parameters here need to be IN ORDER
 		if (beforeOpen !== undefined) {

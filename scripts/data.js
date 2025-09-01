@@ -164,7 +164,7 @@ export function extractToken(req) {
 */
 export function tokenResponse(req, {params, permissions, adminPermissions}) { // TODO: clean up this function
 	assert(!!permissions !== !!adminPermissions, 'both permissions and adminPermissions is set, does not make sense')
-	if ((permissions || adminPermissions) && !params) {
+	if (permissions && !params) {
 		console.warn('permissions provided, but no params')
 		console.trace()
 	}
@@ -185,6 +185,7 @@ export function tokenResponse(req, {params, permissions, adminPermissions}) { //
 		return [null, tokenOwner]
 	}
 
+	// name of the target whose resources want to be accessed
 	const name = params.pathname.groups.name
 	if (tokenOwner !== name && !verifyPermission(name, tokenOwner, permissions)) {
 		return [new Response(`not found: permission for ${tokenOwner}`, {status: 403}), null]

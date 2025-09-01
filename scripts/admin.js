@@ -44,7 +44,7 @@ export function handleAdminStats(req) {
 	*
 	* @see {@link AdminStatsObject}
 */
-function stats(tokenQueryParams) { // TODO write frontend for tokenQueryParams (validation included :sob:)
+function stats(tokenQueryParams = {}) { // TODO write frontend for tokenQueryParams (validation included :sob:)
 	const userData = users()
 	const tokenData = tokens(tokenQueryParams)
 
