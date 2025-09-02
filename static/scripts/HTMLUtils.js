@@ -68,3 +68,35 @@ export function prepareBaseViewElement(el, name) {
 	el.classList.add(`view-${name}`)
 
 }
+
+/**
+	* @param {...String} strings text in cells
+	* @returns {HTMLTableRowElement} table row element with cells filled with text from `strings`
+*/
+export function createRow(...strings) {
+	const elRow = document.createElement("tr")
+	for (const s of strings) {
+		const elCell = document.createElement("td")
+		elCell.textContent = s
+		elRow.appendChild(elCell)
+	}
+
+	return elRow
+
+}
+
+/**
+	* @param {...String} strings text in cells
+	* @returns {HTMLTableRowElement} table row element with header cells filled with text from `strings`
+*/
+export function createRowHeader(...strings) {
+	const elRow = document.createElement("tr")
+	for (const s of strings) {
+		const elCell = document.createElement("th")
+		elCell.textContent = s
+		elRow.appendChild(elCell)
+	}
+
+	return elRow
+
+}

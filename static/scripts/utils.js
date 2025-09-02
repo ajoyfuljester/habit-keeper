@@ -59,7 +59,7 @@ export async function getData() {
 
 
 /**
-	* @param {Date} dateToConvert - date object to convert
+	* @param {Date} dateToConvert date object to convert
 	* @returns {String} date in ISO format (YYYY-MM-DD)
 */
 export function dateToISO(dateToConvert) {
@@ -74,7 +74,7 @@ export function dateToISO(dateToConvert) {
 }
 
 /**
-	* @param {Date} dateToConvert - date object to convert
+	* @param {Date} dateToConvert date object to convert
 	* @returns {String} time in ISO format (hh:mm:ss)
 	* @see umm actually i don't know if this is ISO,
 	* also probably the exact standard should be specified
@@ -90,6 +90,17 @@ export function timeToISO(dateToConvert) {
 	
 }
 
+/**
+	* @param {Date} dateToConvert date object to convert
+	* @returns {String} date and time in ISO format (YYYY-MM-DD hh:mm:ss)
+	* @see umm actually i don't know if this is ISO,
+	* also probably the exact standard should be specified
+*/
+export function datetimeToISO(dateToConvert) {
+	return dateToISO(dateToConvert) + " " + timeToISO(dateToConvert)
+
+	
+}
 
 
 /**

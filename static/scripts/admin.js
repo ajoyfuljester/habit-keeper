@@ -1,4 +1,5 @@
-import { timeToISO } from "./utils.js"
+import * as Utils from "./utils.js"
+import * as HTMLUtils from "./HTMLUtils.js"
 
 
 /**
@@ -10,38 +11,30 @@ function createStatsElement(stats) {
 	elStats.classList.add("stats")
 
 
-	const elUsers = document.createElement("div")
+	const elUsers = document.createElement("table")
+	elUsers.appendChild(HTMLUtils.createRowHeader(
+		"name",
+		"adminMode",
+	))
 	for (const user of stats.userData) {
-		const el = document.createElement("div")
-
-		const elName = document.createElement("span")
-		elName.textContent = user.name
-		el.appendChild(elName)
-
-		const elAdmin = document.createElement("span")
-		elAdmin.textContent = user.adminMode
-		el.appendChild(elAdmin)
-
-
-		elUsers.appendChild(el)
+		elUsers.appendChild(HTMLUtils.createRow(
+			user.name,
+			user.adminMode,
+		))
 	}
 
 	elStats.appendChild(elUsers)
 
-	const elTokens = document.createElement("div")
+	const elTokens = document.createElement("table")
+	elTokens.appendChild(HTMLUtils.createRowHeader(
+		"name",
+		"expiration time",
+	))
 	for (const token of stats.tokenData) {
-		const el = document.createElement("div")
-
-		const elName = document.createElement("span")
-		elName.textContent = token.userName
-		el.appendChild(elName)
-
-		const elExpiration = document.createElement("span")
-		elExpiration.textContent = timeToISO(new Date(token.expirationDate))
-		el.appendChild(elExpiration)
-
-
-		elTokens.appendChild(el)
+		elTokens.appendChild(HTMLUtils.createRow(
+			token.userName,
+			Utils.datetimeToISO(new Date(token.expirationDate)),
+		))
 	}
 
 	elStats.appendChild(elTokens)
