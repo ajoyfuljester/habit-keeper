@@ -14,7 +14,7 @@ function createStatsElement(stats) {
 	const elUsers = document.createElement("table")
 	elUsers.appendChild(HTMLUtils.createRowHeader(
 		"name",
-		"adminMode",
+		"admin permissions",
 	))
 	for (const user of stats.userData) {
 		elUsers.appendChild(HTMLUtils.createRow(
@@ -33,9 +33,10 @@ function createStatsElement(stats) {
 	for (const token of stats.tokenData) {
 		elTokens.appendChild(HTMLUtils.createRow(
 			token.userName,
-			Utils.datetimeToISO(new Date(token.expirationDate)),
+			Utils.datetimeToISO(Utils.dateFromDB(token.expirationDate)),
 		))
 	}
+
 
 	elStats.appendChild(elTokens)
 

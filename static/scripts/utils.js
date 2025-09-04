@@ -65,7 +65,7 @@ export async function getData() {
 export function dateToISO(dateToConvert) {
 	const date = dateToConvert ?? new Date()
 	const year = date.getFullYear().toString().padStart(4, '0')
-	const month = date.getMonth().toString().padStart(2, '0')
+	const month = (date.getMonth() + 1).toString().padStart(2, '0')
 	const day = date.getDate() .toString().padStart(2, '0')
 
 	return `${year}-${month}-${day}`
@@ -210,6 +210,20 @@ export function dataToGrid(view) {
 }
 
 
+/**
+	* @param {Number} min lower bound, inclusive
+	* @param {Number} max higher bound, inclusive
+	* @param {Number} value number that might be clamped
+	* @returns {Number} clamped value if necessary to set [min, max]
+*/
 export function clamp(min, value, max) {
 	return Math.max(Math.min(value, max), min)
+}
+
+/**
+	* @param {Number} timestampInSeconds unix timestamp in seconds
+	* @returns {Date} `Date` object
+*/
+export function dateFromDB(timestampInSeconds) {
+	return new Date(timestampInSeconds * 1000)
 }
