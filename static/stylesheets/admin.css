@@ -2,30 +2,20 @@
 .stats {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-}
+	gap: 1rem;
 
-.stats > div {
-	display: flex;
-	flex-direction: column;
+	> table {
+		border-spacing: 0;
 
-	overflow-y: scroll;
-
-
-	> * {
-		
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 2em;
-
-		--l-padding: 0.3em;
-		padding: calc(2 * var(--l-padding)) var(--l-padding);
+		td, th {
+			text-align: center;
+			--l-padding: 0.4em;
+			padding: var(--l-padding) calc(2 * var(--l-padding));
+			
 
 
-		&:nth-child(2n - 1) {
+
 			background-color: var(--clr-1-accent);
 		}
-
 	}
-
 }
