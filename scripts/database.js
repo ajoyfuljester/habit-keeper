@@ -246,6 +246,48 @@ export function logoutAll(name) {
 
 
 /**
+	* @param {String} name name of the OWNER of permissions
+	* @returns {Object.<string, Number>} object with guest names as keys and permission level as values
+*/
+ function getPermissionsByOwner(name) {
+	/** @type {Permission[]} */
+	const rows = db.prepare('SELECT accessMode FROM permission WHERE owner = ?').all(name)
+
+	return rows.reduce((p, c) => {
+		p[c.guest] = c.accessMode
+		return p
+	}, {})
+}
+
+
+/**
+	* @param {String} name name of the GUEST of permissions
+	* @returns {Object.<string, Number>} object with owner names as keys and permission level as values
+*/
+function getPermissionsByGuest(name) {
+	/** @type {Permission[]} */
+	const rows = db.prepare('SELECT accessMode FROM permission WHERE guest = ?').all(name)
+
+	return rows.reduce((p, c) => {
+		p[c.owner] = c.accessMode
+		return p
+	}, {})
+
+}
+
+
+/**
+	* @param {String} name name of the GUEST of permissions
+	* @returns {{guests: Object.<string, Number>, owners: Object.<string, Number>}} array of permissions of the GUEST with `name`
+*/
+export function getPermissionsAll(name) {
+	const guests = getPermissionsByOwner(name)
+	const owners = getPermissionsByGuest(name)
+
+	return {guests, owners}
+}
+
+/**
 	* @param {String} owner - user name of the owner of the permission
 	* @param {String} guest - user name of the receiver of the permission
 	* @param {Number} neededMode - permission mode needed for an operation

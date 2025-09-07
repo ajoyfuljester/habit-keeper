@@ -45,8 +45,9 @@ i wish you a good life and successful new habits or something
 
 # IMPORTANT (for me):
 ## PERMISSIONS:
-1. read (1)
-2. write (2)
+1. read data (1)
+2. write data (2)
+3. read permissions (4)
 
 ## ADMIN PERMISSIONS:
 1. read (1)

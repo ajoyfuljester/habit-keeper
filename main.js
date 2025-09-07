@@ -140,6 +140,7 @@ const routes = [
 		pattern: new URLPattern({ pathname: "/api/login/default" }),
 		handler: handleDefaultLogin,
 	},
+	// TODO: merge these two routes below into one, check which http method is being used
 	{
 		pattern: new URLPattern({ pathname: "/api/data/:name/get" }),
 		handler: handleDataGet,
@@ -160,6 +161,12 @@ const routes = [
 		pattern: new URLPattern({ pathname: "/api/data/:name/action" }),
 		handler: handleDataAction,
 		method: ['POST'],
+	},
+	{
+		pattern: new URLPattern({ pathname: "/api/permission/:name" }),
+		handler: handlePermission,
+		// TODO: test what exactly happens when a different method is used
+		method: ["GET", "POST"],
 	},
 	{
 		pattern: new URLPattern({ pathname: "/api/who" }),
