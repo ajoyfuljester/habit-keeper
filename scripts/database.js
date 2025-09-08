@@ -249,7 +249,7 @@ export function logoutAll(name) {
 	* @param {String} name name of the OWNER of permissions
 	* @returns {Object.<string, Number>} object with guest names as keys and permission level as values
 */
- function getPermissionsByOwner(name) {
+function getPermissionsByOwner(name) {
 	/** @type {Permission[]} */
 	const rows = db.prepare('SELECT accessMode FROM permission WHERE owner = ?').all(name)
 
@@ -318,6 +318,26 @@ export function verifyAdminPermission(name, neededMode) {
 
 	return (neededMode & adminMode) == neededMode
 	
+}
+
+/**
+	* @param {String} owner name of the owner of permission
+	* @param {String} guest name of the guest of permission
+	* @param {Number} mode access permissions for the guest
+*/
+export function setPermission(owner, guest, mode) {
+	const rows = db.prepare('SELECT accessMode FROM permission WHERE owner = ? AND guest = ?').all(owner, guest)
+
+	if (rows.length == 0) {
+		db.prepare('INSERT INTO permission (owner, guest, accessMode) VALUES (?, ?, ?)').run(owner, guest, mode);
+
+	}
+
+	if (rows[0].accessMode != mode) {
+		db.prepare('UPDATE permission SET accessMode = ? WHERE owner = ? AND guest = ?').run(mode, owner, guest)
+	}
+
+
 }
 
 
