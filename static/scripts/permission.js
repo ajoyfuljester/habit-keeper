@@ -1,5 +1,4 @@
 import * as Utils from "./utils.js";
-import * as HTMLUtils from "./HTMLUtils.js";
 
 async function main() {
 	const name = Utils.extractName()
@@ -15,8 +14,7 @@ async function main() {
 		return 1
 	}
 
-	// TODO: add the correct type here
-	/** @type {import("../../scripts/database.js").Permission} */
+	/** @type {{guests: Object.<string, Number>, owners: Object.<string, Number>}} */
 	const data = await res.json()
 
 	console.log(data)
@@ -31,7 +29,7 @@ async function main() {
 
 
 /**
-	* @param {{guests: Object.<string, Number>, owners: Object.<string, Number>}} data array of permissions of the GUEST with `name`
+	* @param {{guests: Object.<string, Number>, owners: Object.<string, Number>}} data object with objects with permissions, where the name is a key and permission access mode is the value
 	* @returns {HTMLDivElement} element with data tables and other stuff
 */
 function createPemissionGetElement(data) {
@@ -64,12 +62,51 @@ function createPemissionGetElement(data) {
 	el.appendChild(elTableGuests)
 
 
+
+	const elOwners = document.createElement("div")
+
 	// TODO: also a search bar
 
+	const elOwnersSearchByName = document.createElement("input")
+	elOwnersSearchByName.type = "text"
+	elOwnersSearchByName.placeholder = "Search owners by name"
 
+	elOwnersSearchByName.addEventListener("input", event => {
+		const el = event.target
+
+		const ownersArray = Object.entries(data.owners).map(a => {
+			return {name: a[0], accessMode: a[1]}
+		})
+
+
+
+	})
+
+	// TODO: option to filter by access mode, could be more advanced for bit by bit
+
+	elOwners.appendChild(createTableOwners(data.owners))
+
+
+
+
+	el.appendChild(elOwners)
+
+
+	return el
+
+}
+
+
+
+
+/**
+	* @param {Object.<string, Number>} owners object of permission owners
+	* @returns {HTMLTableElement} html table element with 2 columns - name of the owner of permission and access mode
+*/
+function createTableOwners(owners) {
 	const elTableOwners = document.createElement("table")
 
-	for (const [name, accessMode] of Object.entries(data.guests)) {
+	for (const [name, accessMode] of Object.entries(owners)) {
 		const elRow = document.createElement('tr')
 
 		const elName = document.createElement('td')
@@ -85,10 +122,7 @@ function createPemissionGetElement(data) {
 
 	}
 
-	el.appendChild(elTableOwners)
-
-
-	return el
+	return elTableOwners
 
 }
 
