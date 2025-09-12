@@ -36,30 +36,24 @@ function createPemissionGetElement(data) {
 
 	const el = document.createElement('div')
 
-	const elTableGuests = document.createElement("table")
+	const elGuests = document.createElement("div")
+
 
 	// TODO: search bar
 	// table... rows... display none...
 	// also a button for deleting? or maybe an input for changing... also maybe a popup for creating/chaning
 
-	for (const [name, accessMode] of Object.entries(data.guests)) {
-		const elRow = document.createElement('tr')
+	const elGuestsSearchByName = document.createElement("input")
+	elGuestsSearchByName.type = "text"
+	elGuestsSearchByName.placeholder = "Search guests by name"
 
-		const elName = document.createElement('td')
-		elName.textContent = name
-		elRow.appendChild(elName)
+	elGuests.appendChild(elGuestsSearchByName)
 
-		const elAccessMode = document.createElement('td')
-		elAccessMode.textContent = accessMode
-		elRow.appendChild(elAccessMode)
+	const elGuestsCreator = createGuestsCreator()
 
+	elGuests.appendChild(createGuestsTable(data.guests))
 
-		elTableGuests.appendChild(elRow)
-
-	}
-
-
-	el.appendChild(elTableGuests)
+	el.appendChild(elGuests)
 
 
 
@@ -84,7 +78,7 @@ function createPemissionGetElement(data) {
 
 	// TODO: option to filter by access mode, could be more advanced for bit by bit
 
-	elOwners.appendChild(createTableOwners(data.owners))
+	elOwners.appendChild(createOwnersTable(data.owners))
 
 
 
@@ -103,7 +97,7 @@ function createPemissionGetElement(data) {
 	* @param {Object.<string, Number>} owners object of permission owners
 	* @returns {HTMLTableElement} html table element with 2 columns - name of the owner of permission and access mode
 */
-function createTableOwners(owners) {
+function createOwnersTable(owners) {
 	const elTableOwners = document.createElement("table")
 
 	for (const [name, accessMode] of Object.entries(owners)) {
@@ -125,6 +119,66 @@ function createTableOwners(owners) {
 	return elTableOwners
 
 }
+
+/**
+	* @param {Object.<string, Number>} guests object of permission guests
+	* @returns {HTMLTableElement} html table element with 2 columns - name of the guest of permission and access mode
+*/
+function createGuestsTable(guests) {
+	const elTable = document.createElement("table")
+
+	for (const [name, accessMode] of Object.entries(guests)) {
+		const elRow = document.createElement('tr')
+
+		const elName = document.createElement('td')
+		elName.textContent = name
+		elRow.appendChild(elName)
+
+		const elAccessMode = document.createElement('td')
+		elAccessMode.textContent = accessMode
+		elRow.appendChild(elAccessMode)
+
+
+		elTable.appendChild(elRow)
+
+	}
+
+	return elTable
+
+}
+
+
+/**
+	* @returns {HTMLFormElement} form element with inputs for creating a permission for someone
+*/
+function createGuestsCreator() {
+
+	const elForm = document.createElement("form")
+	
+	const elName = document.createElement("input")
+	elName.type = "text"
+	elName.placeholder = "Guest name"
+	elForm.appendChild(elName)
+	
+	// TODO: add a creator for for choosing individually permission types
+	const elAccessMode = document.createElement("input")
+	elAccessMode.type = "number"
+	elAccessMode.placeholder = "Permission access mode"
+	elAccessMode.value = 1
+	elForm.appendChild(elAccessMode)
+	
+	// TODO: handle submitting
+	const elSubmit = document.createElement("input")
+	elSubmit.type = "submit"
+	elSubmit.value = "Create permission"
+	elForm.appendChild(elSubmit)
+
+
+	return elForm
+
+
+}
+
 
 
 main()
