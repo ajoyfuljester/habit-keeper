@@ -277,8 +277,8 @@ function getPermissionsByGuest(name) {
 
 
 /**
-	* @param {String} name name of the GUEST of permissions
-	* @returns {{guests: Object.<string, Number>, owners: Object.<string, Number>}} array of permissions of the GUEST with `name`
+	* @param {String} name name of the user to find all permissions
+	* @returns {{guests: Object.<string, Number>, owners: Object.<string, Number>}} object with objects with permissions, where the name is a key and permission access mode is the value
 */
 export function getPermissionsAll(name) {
 	const guests = getPermissionsByOwner(name)

@@ -6,6 +6,7 @@ import { handleRegister } from './scripts/register.js'
 import { handleDataGet, handleDataSet, handleDataInit, handleWho, tokenResponse } from "./scripts/data.js";
 import { handleDataAction } from "./scripts/action.js";
 import { handleAdmin, handleAdminStats } from "./scripts/admin.js";
+import { handlePermission } from "./scripts/permission.js";
 import { init } from "./scripts/init.js";
 import _c from "./config.json" with {type: "json"};
 import { getCookies } from "jsr:@std/http/cookie"
@@ -88,6 +89,16 @@ const routes = [
 				return response
 			}
 			return serveFile(req, 'dynamic/editor.html')
+		},
+	},
+	{
+		pattern: new URLPattern({ pathname: "/u/:name/permissions" }),
+		handler: async (req, _info, params) => {
+			const response = await redirectingHandler(req, _info, params, 4)
+			if (response !== null) {
+				return response
+			}
+			return serveFile(req, 'dynamic/permissions.html')
 		},
 	},
 	{

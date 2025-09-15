@@ -1,4 +1,5 @@
 import * as Utils from "./utils.js";
+import "./fuse.js";
 
 async function main() {
 	const name = Utils.extractName()
@@ -50,6 +51,7 @@ function createPemissionGetElement(data) {
 	elGuests.appendChild(elGuestsSearchByName)
 
 	const elGuestsCreator = createGuestsCreator()
+	elGuests.appendChild(elGuestsCreator)
 
 	elGuests.appendChild(createGuestsTable(data.guests))
 
@@ -72,9 +74,23 @@ function createPemissionGetElement(data) {
 			return {name: a[0], accessMode: a[1]}
 		})
 
+		// TODO: create a type for options maybe
+		const options = {
+			keys: ['name'],
+		}
+
+		// const fuse = new Fuse(ownersArray, options)
+		//
+		// const result = fuse.search(el.value)
+		//
+		// console.log(result)
+
+
 
 
 	})
+
+	elOwners.appendChild(elOwnersSearchByName)
 
 	// TODO: option to filter by access mode, could be more advanced for bit by bit
 
