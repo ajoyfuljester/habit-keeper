@@ -196,5 +196,47 @@ function createGuestsCreator() {
 }
 
 
+function createPermissionDialog() {
+	const elDialog = document.createElement('dialog')
+
+
+
+	// this is in reverse bit order
+	const permissionDescriptions = ["Read data", "Write data", "Read permissions"]
+
+	const elPermissionCheckboxes = document.createElement("div")
+
+	for (const pd of permissionDescriptions) {
+		const elLabel = document.createElement("label")
+
+		const elDescription = document.createElement("span")
+		elDescription.textContent = pd
+		elLabel.appendChild(elDescription)
+
+
+		const elCheckbox = document.createElement("input")
+		elCheckbox.type = "checkbox"
+		elLabel.appendChild(elCheckbox)
+
+
+		elPermissionCheckboxes.appendChild(elLabel)
+
+	}
+
+	elDialog.appendChild(elPermissionCheckboxes)
+
+
+	const elConfirm = document.createElement('input')
+	elConfirm.type = "button"
+	elConfirm.value = "Confirm"
+
+	elDialog.appendChild(elConfirm)
+
+
+	return elDialog
+
+
+}
+
 
 main()
