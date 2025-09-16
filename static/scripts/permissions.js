@@ -238,5 +238,45 @@ function createPermissionDialog() {
 
 }
 
+/**
+	* @param {Number} mode whole access permissions
+	* @param {Number} permission permission that will be checked if are available
+	* @returns {Boolean} isAvailable access with the given permission mode
+*/
+function checkPermission(mode, permission) {
+	return (mode & permission) === permission
+}
+
+
+
+
+/**
+	* @param {String} guest name of the user, who will gain access
+	* @param {Number} accessMode given permissions
+	* @returns {0 | 1} error code, page is reloaded on code 0 success
+*/
+async function createPermission(guest, accessMode) {
+	const owner = Utils.extractName()
+	const req = new Request(`/api/permission/${owner}`, {
+		method: "POST",
+		body: JSON.stringify({
+			guest: guest,
+			accessMode: accessMode,
+		}),
+	})
+
+
+	const res = await fetch(req)
+
+	if (!res.ok) {
+		// TODO: display these failures on the screen
+		console.error("error: cannot create a permission", res)
+		return 1
+	}
+
+	location.reload()
+	return 0
+
+}
 
 main()
