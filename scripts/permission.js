@@ -1,13 +1,13 @@
 import { tokenResponse } from "./data.js";
 import * as db from "./database.js";
 
-/** @type {import("./data.js").Route} */
-export function handlePermission(req, _info, params) {
+/** @type {import("./data.js").RouteAsync} */
+export async function handlePermission(req, _info, params) {
 
 	if (req.method === "GET") {
 		return handlePermissionGet(req, _info, params)
 	} else if (req.method === "POST") {
-		return handlePermissionCreate(req, _info, params)
+		return await handlePermissionCreate(req, _info, params)
 	}
 
 
@@ -18,12 +18,14 @@ export function handlePermission(req, _info, params) {
 
 /** @type {import("./data.js").Route} */
 function handlePermissionGet(req, _info, params) {
-	const [res, name] = tokenResponse(req, {params, permissions: 4})
+	const [res, _] = tokenResponse(req, {params, permissions: 4})
 	if (res) {
 		return res
 	}
 
-	const permissionObject = db.getPermissionsAll(name)
+	const owner = params.pathname.groups.name
+
+	const permissionObject = db.getPermissionsAll(owner)
 
 
 	return new Response(JSON.stringify(permissionObject), { status: 200, headers: {'Content-Type': 'application/json'} });
@@ -35,7 +37,7 @@ function handlePermissionGet(req, _info, params) {
 
 /** @type {import("./data.js").RouteAsync} */
 async function handlePermissionCreate(req, _info, params) {
-	const [res, owner] = tokenResponse(req, {params, permissions: 4})
+	const [res, _] = tokenResponse(req, {params, permissions: 8})
 	if (res) {
 		return res
 	}
@@ -57,15 +59,23 @@ async function handlePermissionCreate(req, _info, params) {
 
 	const validation = validationResponse(data)
 
-	if (!validation) {
+	if (validation) {
 		return validation
 	}
 
+	const owner = params.pathname.groups.name
 
 
 	// NOTE: i feel like this might throw an error if the guest user does not exist
 	// TODO: test this
-	db.setPermission(owner, data.guest, data.accessMode)
+	console.log(owner, data.guest, data.accessMode)
+	try {
+		db.setPermission(owner, data.guest, data.accessMode)
+	} catch (error) {
+		console.log(error)
+	}
+
+	console.log("done?")
 
 
 	return new Response("success", {status: 201})
