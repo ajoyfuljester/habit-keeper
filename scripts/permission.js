@@ -66,16 +66,11 @@ async function handlePermissionCreate(req, _info, params) {
 	const owner = params.pathname.groups.name
 
 
-	// NOTE: i feel like this might throw an error if the guest user does not exist
-	// TODO: test this
-	console.log(owner, data.guest, data.accessMode)
 	try {
 		db.setPermission(owner, data.guest, data.accessMode)
 	} catch (error) {
-		console.log(error)
+		return new Response(`failure: user with name "${data.guest}" probably does not exist`, {status: 409})
 	}
-
-	console.log("done?")
 
 
 	return new Response("success", {status: 201})
