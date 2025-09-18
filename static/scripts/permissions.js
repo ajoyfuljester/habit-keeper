@@ -1,5 +1,6 @@
 import * as Utils from "./utils.js";
 import "./fuse.js";
+import * as HTMLUtils from "./HTMLUtils.js";
 
 async function main() {
 	const name = Utils.extractName()
@@ -107,6 +108,7 @@ function createPemissionGetElement(data) {
 }
 
 
+const permissionDescriptions = ["Read data", "Write data", "Read permissions"]
 
 
 /**
@@ -143,12 +145,30 @@ function createOwnersTable(owners) {
 function createGuestsTable(guests) {
 	const elTable = document.createElement("table")
 
+	const elRowHeader = HTMLUtils.createRowHeader("Name", ...permissionDescriptions, "Access mode")
+	elTable.appendChild(elRowHeader)
+
 	for (const [name, accessMode] of Object.entries(guests)) {
 		const elRow = document.createElement('tr')
 
 		const elName = document.createElement('td')
 		elName.textContent = name
 		elRow.appendChild(elName)
+
+
+		for (let i = 0; i < permissionDescriptions.length; i++) {
+			const el = document.createElement("td")
+
+			const elCheckBox = document.createElement("input")
+			elCheckBox.type = "checkbox"
+			elCheckBox.checked = checkPermission(accessMode, (i + 1) ** 2)
+			el.appendChild(elCheckBox)
+
+
+			elRow.appendChild(el)
+
+
+		}
 
 		const elAccessMode = document.createElement('td')
 		elAccessMode.textContent = accessMode
@@ -169,28 +189,59 @@ function createGuestsTable(guests) {
 */
 function createGuestsCreator() {
 
-	const elForm = document.createElement("form")
+	const elFormButDiv = document.createElement("div")
+
+	// TODO: headers. include this in a table?
 	
 	const elName = document.createElement("input")
 	elName.type = "text"
 	elName.placeholder = "Guest name"
-	elForm.appendChild(elName)
-	
+	elFormButDiv.appendChild(elName)
+
+	const elPermissionCheckboxes = permissionDescriptions.map(() => {
+		const elCheckbox = document.createElement("input")
+		elCheckbox.type = "checkbox"
+
+		elFormButDiv.appendChild(elCheckbox)
+
+		return elCheckbox
+
+	})
+
 	// TODO: add a creator for for choosing individually permission types
 	const elAccessMode = document.createElement("input")
 	elAccessMode.type = "number"
 	elAccessMode.placeholder = "Permission access mode"
-	elAccessMode.value = 1
-	elForm.appendChild(elAccessMode)
+	elAccessMode.value = 0
+	elAccessMode.addEventListener('input', () => {
+		let accessMode = elAccessMode.valueAsNumber
+		elPermissionCheckboxes.forEach(el => {
+			el.checked = (accessMode & 1)
+			accessMode = accessMode >> 1
+		})
+	})
+	elFormButDiv.appendChild(elAccessMode)
+
+
+
+	elPermissionCheckboxes.forEach(el => el.addEventListener('input', () => {
+		const accessMode = elPermissionCheckboxes.map(el => +el.checked).reduceRight((prev, bit) =>  ((prev * 2) + bit), 0)
+		elAccessMode.valueAsNumber = accessMode
+	}))
+	
 	
 	// TODO: handle submitting
 	const elSubmit = document.createElement("input")
 	elSubmit.type = "submit"
 	elSubmit.value = "Create permission"
-	elForm.appendChild(elSubmit)
+	elSubmit.addEventListener('click', () => {
+		createPermission(elName.value, elAccessMode.valueAsNumber)
+	})
+
+	elFormButDiv.appendChild(elSubmit)
 
 
-	return elForm
+	return elFormButDiv
 
 
 }
@@ -202,7 +253,6 @@ function createPermissionDialog() {
 
 
 	// this is in reverse bit order
-	const permissionDescriptions = ["Read data", "Write data", "Read permissions"]
 
 	const elPermissionCheckboxes = document.createElement("div")
 
@@ -253,10 +303,18 @@ function checkPermission(mode, permission) {
 /**
 	* @param {String} guest name of the user, who will gain access
 	* @param {Number} accessMode given permissions
-	* @returns {0 | 1} error code, page is reloaded on code 0 success
+	* @returns {0 | 1 | 2} error code, page is reloaded on code 0 success
+	* `1` - could not get name from url somehow
+	* `2` - request failed
 */
 async function createPermission(guest, accessMode) {
 	const owner = Utils.extractName()
+	if (!owner) {
+		return 1
+	}
+
+	console.table({guest, owner, accessMode})
+
 	const req = new Request(`/api/permission/${owner}`, {
 		method: "POST",
 		body: JSON.stringify({
@@ -271,10 +329,12 @@ async function createPermission(guest, accessMode) {
 	if (!res.ok) {
 		// TODO: display these failures on the screen
 		console.error("error: cannot create a permission", res)
-		return 1
+		return 2
 	}
 
+	// requests might not appear completed in browser dev tools
 	location.reload()
+
 	return 0
 
 }
