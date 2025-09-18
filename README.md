@@ -15,6 +15,8 @@ i wish you a good life and successful new habits or something
 - add a button for logging out
 - add more color schemas
 - add support for external api to automatically create offsets?
+- probably fix most of the routes because they might be getting the data of the token owner instead of the url name user
+- standardize responses, `error` and `failure`, choose one and stick with it
 - possibly split code into two (branches?), one with only api and the other one this or just client? DO THIS BEFORE CREATING A RELEASE!!!!!!
 - add views - should they be on the server? yes, but add it in the server config as an option
 - write the thing in the deno file for normal running or whatever
