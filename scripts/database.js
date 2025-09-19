@@ -251,7 +251,7 @@ export function logoutAll(name) {
 */
 function getPermissionsByOwner(name) {
 	/** @type {Permission[]} */
-	const rows = db.prepare('SELECT accessMode FROM permission WHERE owner = ?').all(name)
+	const rows = db.prepare('SELECT guest, accessMode FROM permission WHERE owner = ?').all(name)
 
 	return rows.reduce((p, c) => {
 		p[c.guest] = c.accessMode
@@ -266,7 +266,7 @@ function getPermissionsByOwner(name) {
 */
 function getPermissionsByGuest(name) {
 	/** @type {Permission[]} */
-	const rows = db.prepare('SELECT accessMode FROM permission WHERE guest = ?').all(name)
+	const rows = db.prepare('SELECT owner, accessMode FROM permission WHERE guest = ?').all(name)
 
 	return rows.reduce((p, c) => {
 		p[c.owner] = c.accessMode
@@ -330,10 +330,7 @@ export function setPermission(owner, guest, mode) {
 
 	if (rows.length == 0) {
 		db.prepare('INSERT INTO permission (owner, guest, accessMode) VALUES (?, ?, ?)').run(owner, guest, mode);
-
-	}
-
-	if (rows[0].accessMode != mode) {
+	} else if (rows[0].accessMode != mode) {
 		db.prepare('UPDATE permission SET accessMode = ? WHERE owner = ? AND guest = ?').run(mode, owner, guest)
 	}
 
