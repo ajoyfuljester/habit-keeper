@@ -38,23 +38,7 @@ function createPemissionGetElement(data) {
 
 	const el = document.createElement('div')
 
-	const elGuests = document.createElement("div")
-
-
-	// TODO: search bar
-	// table... rows... display none...
-	// also a button for deleting? or maybe an input for changing... also maybe a popup for creating/chaning
-
-	const elGuestsSearchByName = document.createElement("input")
-	elGuestsSearchByName.type = "text"
-	elGuestsSearchByName.placeholder = "Search guests by name"
-
-	elGuests.appendChild(elGuestsSearchByName)
-
-	const elGuestsCreator = createGuestsCreator()
-	elGuests.appendChild(elGuestsCreator)
-
-	elGuests.appendChild(createGuestsTable(data.guests))
+	const elGuests = createGuestsElement(data.guests)
 
 	el.appendChild(elGuests)
 
@@ -142,11 +126,33 @@ function createOwnersTable(owners) {
 	* @param {Object.<string, Number>} guests object of permission guests
 	* @returns {HTMLTableElement} html table element with 2 columns - name of the guest of permission and access mode
 */
-function createGuestsTable(guests) {
+function createGuestsElement(guests) {
+	const elGuests = document.createElement("div")
+
+	// TODO: search bar
+	// table... rows... display none...
+	// also a button for deleting? or maybe an input for changing... also maybe a popup for creating/chaning
+
+	const elSearchByName = document.createElement("input")
+	elSearchByName.type = "text"
+	elSearchByName.placeholder = "Search guests by name"
+
+	elGuests.appendChild(elSearchByName)
+
 	const elTable = document.createElement("table")
 
+	const elCreator = createGuestsCreator()
+	elTable.appendChild(elCreator)
+
+
+
+	const elTHead = document.createElement('thead')
 	const elRowHeader = HTMLUtils.createRowHeader("Name", ...permissionDescriptions, "Access mode")
-	elTable.appendChild(elRowHeader)
+	elTHead.appendChild(elRowHeader)
+	elTable.appendChild(elTHead)
+
+	const elTBody = document.createElement('tbody')
+
 
 	for (const [name, accessMode] of Object.entries(guests)) {
 		const elRow = document.createElement('tr')
@@ -162,6 +168,7 @@ function createGuestsTable(guests) {
 			const elCheckBox = document.createElement("input")
 			elCheckBox.type = "checkbox"
 			elCheckBox.checked = checkPermission(accessMode, (i + 1) ** 2)
+			elCheckBox.disabled = true
 			el.appendChild(elCheckBox)
 
 
@@ -175,40 +182,50 @@ function createGuestsTable(guests) {
 		elRow.appendChild(elAccessMode)
 
 
-		elTable.appendChild(elRow)
+		elTBody.appendChild(elRow)
 
 	}
 
-	return elTable
+	elTable.appendChild(elTBody)
+	elGuests.appendChild(elTable)
+
+
+	return elGuests
+
 
 }
 
 
 /**
-	* @returns {HTMLFormElement} form element with inputs for creating a permission for someone
+	* @returns {HTMLTableRowElement} form element with inputs for creating a permission for someone
 */
 function createGuestsCreator() {
 
-	const elFormButDiv = document.createElement("div")
+	const elTBody = document.createElement("tbody")
+	const elRow = document.createElement("tr")
 
-	// TODO: headers. include this in a table?
+	// TODO: headers
 	
+	const elCellName = document.createElement('td')
 	const elName = document.createElement("input")
 	elName.type = "text"
 	elName.placeholder = "Guest name"
-	elFormButDiv.appendChild(elName)
+	elCellName.appendChild(elName)
+	elRow.appendChild(elCellName)
 
 	const elPermissionCheckboxes = permissionDescriptions.map(() => {
+		const elCellCheckbox = document.createElement('td')
 		const elCheckbox = document.createElement("input")
 		elCheckbox.type = "checkbox"
 
-		elFormButDiv.appendChild(elCheckbox)
+		elCellCheckbox.appendChild(elCheckbox)
+		elRow.appendChild(elCellCheckbox)
 
 		return elCheckbox
 
 	})
 
-	// TODO: add a creator for for choosing individually permission types
+	const elCellAccessMode = document.createElement("td")
 	const elAccessMode = document.createElement("input")
 	elAccessMode.type = "number"
 	elAccessMode.placeholder = "Permission access mode"
@@ -220,7 +237,8 @@ function createGuestsCreator() {
 			accessMode = accessMode >> 1
 		})
 	})
-	elFormButDiv.appendChild(elAccessMode)
+	elCellAccessMode.appendChild(elAccessMode)
+	elRow.appendChild(elCellAccessMode)
 
 
 
@@ -230,7 +248,7 @@ function createGuestsCreator() {
 	}))
 	
 	
-	// TODO: handle submitting
+	const elCellSubmit = document.createElement("td")
 	const elSubmit = document.createElement("input")
 	elSubmit.type = "submit"
 	elSubmit.value = "Create permission"
@@ -238,10 +256,13 @@ function createGuestsCreator() {
 		createPermission(elName.value, elAccessMode.valueAsNumber)
 	})
 
-	elFormButDiv.appendChild(elSubmit)
+	elCellSubmit.appendChild(elSubmit)
+	elRow.appendChild(elCellSubmit)
+
+	elTBody.appendChild(elRow)
 
 
-	return elFormButDiv
+	return elTBody
 
 
 }
