@@ -1,0 +1,41 @@
+
+
+
+.notification-daemon {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	
+	display: flex;
+	flex-direction: column-reverse;
+
+	width: min(100dvw, 80ch);
+
+
+	font-size: 1.4rem;
+	
+
+}
+
+.notification {
+	--l-padding: 1em;
+	padding: calc(2 * var(--l-padding)) 1em;
+
+	background-color: var(--clr-2);
+	color: var(--clr-1);
+
+
+	&.priority-low {
+		background-color: var(--clr-3);
+	}
+
+	&.priority-medium {
+		background-color: var(--clr-2);
+	}
+
+	&.priority-high {
+		background-color: var(--clr-4);
+	}
+
+}
+
