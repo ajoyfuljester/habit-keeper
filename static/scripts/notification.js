@@ -24,6 +24,35 @@ class NotificationDaemon {
 	}
 
 
+
+	/**
+		* @param {NotificationLocal} notification nofication which will be displayed on the screen
+	*/
+	async notify(notification) {
+
+		this.notifications.push(notification)
+
+		this.html.appendChild(notification.html)
+
+
+		await notification.html.animate([
+			{opacity: 1},
+		], 600).finished
+
+		setTimeout(async () => {
+			await notification.html.animate([
+				{opacity: 0},
+			], 1000).finished
+
+			notification.html.remove()
+			// why doesn't javascript have functions for deleting precise items...
+			// i don't want to write it myself
+			this.notifications.shift()
+		}, 10000)
+
+	}
+
+
 }
 
 
@@ -57,6 +86,7 @@ class NotificationLocal {
 		elP.textContent = body
 		this.html.appendChild(elP)
 
+		this.html.animate()
 
 	}
 
