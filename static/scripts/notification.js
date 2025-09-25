@@ -1,16 +1,4 @@
-
-
-
-
-
-function main() {
-
-
-}
-
-
-
-class NotificationDaemon {
+export class NotificationDaemon {
 
 	constructor() {
 
@@ -56,7 +44,7 @@ class NotificationDaemon {
 }
 
 
-class NotificationLocal {
+export class NotificationLocal {
 
 	static priorityClasses = ["low", "medium", "high"]
 	/**
@@ -93,6 +81,3 @@ class NotificationLocal {
 
 }
 
-
-
-main()
