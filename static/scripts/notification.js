@@ -6,6 +6,7 @@ export class NotificationDaemon {
 		this.html.classList.add("notification-daemon")
 
 
+		/** @type {NotificationLocal[]} array of currently displayed notifications */
 		this.notifications = []
 
 
@@ -38,6 +39,19 @@ export class NotificationDaemon {
 			this.notifications.shift()
 		}, 10000)
 
+	}
+
+
+	/**
+		* @param {String} summary notification header
+		* @param {String} body notification text
+		* @param {Number} [timeoutInMiliseconds=2000] notification timeout delay
+		* @param {Number} [priority=1] notification priority level
+	*/
+	notifyRaw(summary, body, timeoutInMiliseconds, priority) {
+		const notification = new NotificationLocal(summary, body, timeoutInMiliseconds, priority)
+
+		return this.notify(notification)
 	}
 
 
@@ -74,10 +88,16 @@ export class NotificationLocal {
 		elP.textContent = body
 		this.html.appendChild(elP)
 
-		this.html.animate()
 
 	}
 
 
 }
 
+export function initDaemon() {
+	const nd = new NotificationDaemon()
+	document.body.appendChild(nd.html)
+
+	return nd
+
+}
