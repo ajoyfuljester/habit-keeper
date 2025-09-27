@@ -60,7 +60,7 @@ export class NotificationDaemon {
 
 export class NotificationLocal {
 
-	static priorityClasses = ["low", "medium", "high"]
+	static badnessLevels = ["good", "neutral", "bad"]
 	/**
 		* @param {String} summary notification header
 		* @param {String} body notification text
@@ -76,7 +76,7 @@ export class NotificationLocal {
 
 		this.html = document.createElement("div")
 		this.html.classList.add("notification")
-		this.html.classList.add(NotificationLocal.priorityClasses[priority])
+		this.html.classList.add("badness-" + NotificationLocal.badnessLevels[priority])
 
 		const elHeader = document.createElement("header")
 		const elH2 = document.createElement("h2")
@@ -101,3 +101,5 @@ export function initDaemon() {
 	return nd
 
 }
+
+export const GLOBAL_NOTIFICATION_DAEMON = new NotificationDaemon()

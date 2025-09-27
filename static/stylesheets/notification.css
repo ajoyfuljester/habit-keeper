@@ -25,15 +25,15 @@
 	color: var(--clr-1);
 
 
-	&.priority-low {
+	&.badness-good {
 		background-color: var(--clr-3);
 	}
 
-	&.priority-medium {
+	&.badness-neutral {
 		background-color: var(--clr-2);
 	}
 
-	&.priority-high {
+	&.badness-bad {
 		background-color: var(--clr-4);
 	}
 
