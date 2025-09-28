@@ -65,9 +65,9 @@ export class NotificationLocal {
 		* @param {String} summary notification header
 		* @param {String} body notification text
 		* @param {Number} [timeoutInMiliseconds=2000] notification timeout delay
-		* @param {Number} [priority=1] notification priority level
+		* @param {Number} [badnessLevel=1] notification badness level from 0 to 2
 	*/
-	constructor(summary, body, timeoutInMiliseconds = 2000, priority = 1) {
+	constructor(summary, body, timeoutInMiliseconds = 2000, badnessLevel = 1) {
 
 		this.summary = summary
 		this.body = body
@@ -76,7 +76,7 @@ export class NotificationLocal {
 
 		this.html = document.createElement("div")
 		this.html.classList.add("notification")
-		this.html.classList.add("badness-" + NotificationLocal.badnessLevels[priority])
+		this.html.classList.add("badness-" + NotificationLocal.badnessLevels[badnessLevel])
 
 		const elHeader = document.createElement("header")
 		const elH2 = document.createElement("h2")
