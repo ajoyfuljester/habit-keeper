@@ -23,7 +23,7 @@ export class HabitView {
 	*/
 	constructor({data, dates, statIDs, page, colorArgs}) {
 		if (!(data && dates && (statIDs.length !== 0) && page && colorArgs)) {
-			console.error('INVALID VIEW')
+			console.error('INVALID HABIT VIEW')
 			console.warn({data, dates, statIDs, page})
 		}
 
