@@ -46,12 +46,12 @@ export class NotificationDaemon {
 		* @param {String} summary notification header
 		* @param {String} body notification text
 		* @param {Number} [timeoutInMiliseconds=2000] notification timeout delay
-		* @param {Number} [priority=1] notification priority level
+		* @param {Number} [badnessLevel=1] notification badness level from 0 to 2
 	*/
-	notifyRaw(summary, body, timeoutInMiliseconds, priority) {
-		const notification = new NotificationLocal(summary, body, timeoutInMiliseconds, priority)
+	async notifyRaw(summary, body, badnessLevel, timeoutInMiliseconds) {
+		const notification = new NotificationLocal(summary, body, badnessLevel, timeoutInMiliseconds)
 
-		return this.notify(notification)
+		return await this.notify(notification)
 	}
 
 
@@ -67,7 +67,7 @@ export class NotificationLocal {
 		* @param {Number} [timeoutInMiliseconds=2000] notification timeout delay
 		* @param {Number} [badnessLevel=1] notification badness level from 0 to 2
 	*/
-	constructor(summary, body, timeoutInMiliseconds = 2000, badnessLevel = 1) {
+	constructor(summary, body, badnessLevel = 1, timeoutInMiliseconds = 2000) {
 
 		this.summary = summary
 		this.body = body
@@ -102,4 +102,5 @@ export function initDaemon() {
 
 }
 
-export const GLOBAL_NOTIFICATION_DAEMON = new NotificationDaemon()
+export const GLOBAL_NOTIFICATION_DAEMON = initDaemon()
+
