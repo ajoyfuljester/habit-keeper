@@ -9,17 +9,17 @@
 	display: flex;
 	flex-direction: column-reverse;
 
-	width: min(100dvw, 80ch);
+	width: min(100dvw, 60ch);
 
 
-	font-size: 1.4rem;
+	/* font-size: 1rem; */
 	
 
 }
 
 .notification {
 	--l-padding: 1em;
-	padding: calc(2 * var(--l-padding)) 1em;
+	padding: 1em calc(2 * var(--l-padding));
 
 	background-color: var(--clr-2);
 	color: var(--clr-1);

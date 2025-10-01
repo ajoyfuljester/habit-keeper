@@ -1,3 +1,6 @@
+@import "./notification.css";
+
+
 * {
 	box-sizing: border-box;
 }
