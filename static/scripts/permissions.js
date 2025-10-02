@@ -1,6 +1,7 @@
 import * as Utils from "./utils.js";
 import "./fuse.js";
 import * as HTMLUtils from "./HTMLUtils.js";
+import { GLOBAL_NOTIFICATION_DAEMON } from "./notification.js";
 
 async function main() {
 	const name = Utils.extractName()
@@ -204,7 +205,6 @@ function createGuestsCreator() {
 	const elTBody = document.createElement("tbody")
 	const elRow = document.createElement("tr")
 
-	// TODO: headers
 	
 	const elCellName = document.createElement('td')
 	const elName = document.createElement("input")
@@ -349,9 +349,13 @@ async function createPermission(guest, accessMode) {
 
 	if (!res.ok) {
 		// TODO: display these failures on the screen
-		console.error("error: cannot create a permission", res)
+
+		GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Permission NOT created", `Permission for user "${guest}" and access mode ${accessMode} has NOT been created`, 2)
+		console.error("failure: permission creation", res)
 		return 2
 	}
+
+	GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Permission created", `Permission for user "${guest}" and access mode ${accessMode} has been created`, 0)
 
 	// requests might not appear completed in browser dev tools
 	location.reload()

@@ -1,4 +1,5 @@
 import * as Utils from "./utils.js";
+import { GLOBAL_NOTIFICATION_DAEMON } from "./notification.js";
 
 /**
 	* @typedef {Object} HandleAction object with types of objects, which have functions with actions that user can perform using requests
@@ -45,9 +46,12 @@ HandleAction.habit.create = async (habitName) => {
 	const res = await fetch(req)
 	
 	if (!res.ok) {
-		console.error(res)
+		GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Habit NOT created", `Habit with the name "${habitName}" has NOT been created`, 2)
+		console.error("failure: habit creation", res)
 		return 1
 	}
+
+	GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Habit created", `Habit with the name "${habitName}" has been created`, 0)
 
 	return 0
 	
@@ -68,14 +72,16 @@ HandleAction.habit.delete = async (habitName) => {
 			what: habitName,
 		})
 	})
-	// TODO: logging here too
 	
 	const res = await fetch(req)
 	
 	if (!res.ok) {
-		console.error(res)
+		GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Habit NOT deleted", `Habit with the name "${habitName}" has NOT been deleted`, 2)
+		console.error("failure: habit deletion", res)
 		return 1
 	}
+
+	GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Habit deleted", `Habit with the name "${habitName}" has been deleted`, 0)
 
 	return 0
 	
@@ -104,9 +110,12 @@ HandleAction.habit.rename = async (oldHabitName, newHabitName) => {
 	const res = await fetch(req)
 	
 	if (!res.ok) {
-		console.error(res)
+		GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Habit NOT renamed", `Habit with the name "${oldHabitName}" has NOT been renamed to "${newHabitName}"`, 2)
+		console.error("failure: habit renaming", res)
 		return 1
 	}
+
+	GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Habit renamed", `Habit with the name "${oldHabitName}" has been renamed to "${newHabitName}"`, 0)
 
 	return 0
 	
@@ -135,9 +144,13 @@ HandleAction.offset.create = async (habitName, day, value = 1) => {
 	const res = await fetch(req)
 	
 	if (!res.ok) {
-		console.error("create offset failed", res)
+		GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Offset NOT created", `Offset for habit "${habitName}", day ${day} and value ${value} has NOT been created`, 2)
+		console.error("failure: offset creation", res)
 		return 1
 	}
+
+	GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Offset created", `Offset for habit "${habitName}", day ${day} and value ${value} has been created`, 0)
+
 	return 0
 
 }
@@ -164,9 +177,12 @@ HandleAction.offset.delete = async (habitName, day) => {
 	const res = await fetch(req)
 	
 	if (!res.ok) {
-		console.error("create offset failed", res)
+		GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Offset NOT deleted", `Offset for habit "${habitName}" and day ${day} has NOT been deleted`, 2)
+		console.error("failure: offset deletion", res)
 		return 1
 	}
+
+	GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Offset deleted", `Offset for habit "${habitName}" and day ${day} has been deleted`, 0)
 	return 0
 
 }
@@ -180,5 +196,11 @@ HandleAction.offset.delete = async (habitName, day) => {
 HandleAction.init = async (force = false) => {
 	const name = Utils.extractName()
 	const res = await fetch(`/api/data/${name}/init${force ? '/force' : ''}`)
+
+	if (!res.ok) {
+		GLOBAL_NOTIFICATION_DAEMON.notifyRaw("Initialization failed", `Initialization of a data file did not succeed`, 2)
+		console.error("failure: init", res)
+	}
+
 	return res.ok
 }
