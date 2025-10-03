@@ -38,6 +38,7 @@ async function main() {
 function createPemissionGetElement(data) {
 
 	const el = document.createElement('div')
+	el.classList.add("permissions")
 
 	const elGuests = createGuestsElement(data.guests)
 
@@ -52,6 +53,7 @@ function createPemissionGetElement(data) {
 	const elOwnersSearchByName = document.createElement("input")
 	elOwnersSearchByName.type = "text"
 	elOwnersSearchByName.placeholder = "Search owners by name"
+	elOwnersSearchByName.classList.add("search")
 
 	elOwnersSearchByName.addEventListener("input", event => {
 		const el = event.target
@@ -137,6 +139,7 @@ function createGuestsElement(guests) {
 	const elSearchByName = document.createElement("input")
 	elSearchByName.type = "text"
 	elSearchByName.placeholder = "Search guests by name"
+	elSearchByName.classList.add("search")
 
 	elGuests.appendChild(elSearchByName)
 
@@ -153,6 +156,8 @@ function createGuestsElement(guests) {
 	elTable.appendChild(elTHead)
 
 	const elTBody = document.createElement('tbody')
+	elTBody.classList.add("table-data")
+	elTBody.classList.add("permission-guests")
 
 
 	for (const [name, accessMode] of Object.entries(guests)) {
